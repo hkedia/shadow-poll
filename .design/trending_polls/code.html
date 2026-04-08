@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trending Polls | Shadow Poll</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0d0d19;
+        }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary": "#80fffa",
+                      "on-secondary": "#3a4143",
+                      "tertiary-fixed": "#52f3ee",
+                      "on-surface-variant": "#aaa8c5",
+                      "tertiary-dim": "#3de5df",
+                      "on-surface": "#e5e3ff",
+                      "surface-container-low": "#121220",
+                      "background": "#0d0d19",
+                      "inverse-on-surface": "#545462",
+                      "on-error-container": "#ff97a3",
+                      "tertiary-fixed-dim": "#3de5df",
+                      "surface-container-high": "#1e1e32",
+                      "primary-fixed": "#bfbaff",
+                      "secondary-dim": "#b3babc",
+                      "secondary-fixed": "#ebf2f4",
+                      "on-secondary-container": "#9ea5a7",
+                      "on-tertiary-fixed": "#004442",
+                      "primary-fixed-dim": "#b0aaff",
+                      "surface-tint": "#b0aaff",
+                      "surface-bright": "#292a44",
+                      "primary": "#b0aaff",
+                      "surface-container-lowest": "#000000",
+                      "on-error": "#490013",
+                      "on-tertiary-container": "#005856",
+                      "on-primary-fixed-variant": "#403794",
+                      "on-background": "#e5e3ff",
+                      "surface-container-highest": "#23243a",
+                      "on-primary-container": "#211376",
+                      "surface": "#0d0d19",
+                      "on-tertiary": "#00615f",
+                      "inverse-primary": "#5a53b0",
+                      "surface-variant": "#23243a",
+                      "primary-container": "#a19afd",
+                      "on-secondary-fixed-variant": "#5e6668",
+                      "inverse-surface": "#fcf8ff",
+                      "on-secondary-fixed": "#42494b",
+                      "on-tertiary-fixed-variant": "#006360",
+                      "surface-dim": "#0d0d19",
+                      "tertiary-container": "#52f3ee",
+                      "secondary-container": "#202729",
+                      "secondary-fixed-dim": "#dde4e6",
+                      "primary-dim": "#9992f5",
+                      "error": "#fd6f85",
+                      "on-primary-fixed": "#211376",
+                      "on-primary": "#2c2281",
+                      "error-container": "#8a1632",
+                      "surface-container": "#181829",
+                      "outline-variant": "#46465e",
+                      "error-dim": "#c8475d",
+                      "secondary": "#c1c8ca",
+                      "outline": "#74738e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Plus Jakarta Sans"],
+                      "label": ["Plus Jakarta Sans"]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0d0d19]/60 backdrop-blur-xl shadow-[0px_24px_48px_rgba(0,0,0,0.4)]">
+<div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-black tracking-tighter text-[#b0aaff] font-headline">Shadow Poll</div>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="font-headline font-bold tracking-tight text-lg text-[#aaa8c5] hover:text-[#b0aaff] transition-colors" href="#">Create Poll</a>
+<a class="font-headline font-bold tracking-tight text-lg text-[#b0aaff] border-b-2 border-[#b0aaff] pb-1" href="#">Trending Polls</a>
+</nav>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold px-6 py-2.5 rounded-full hover:bg-[#23243a]/50 transition-all active:scale-95 duration-200">
+                Connect Midnight Wallet
+            </button>
+</div>
+</header>
+<main class="flex-grow pt-32 pb-20 px-8 max-w-7xl mx-auto w-full">
+<!-- Hero & Search Section -->
+<section class="mb-16 relative">
+<div class="max-w-3xl">
+<h1 class="text-6xl font-headline font-extrabold tracking-tight mb-6 text-on-surface">
+                    Decide the <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-tertiary">Future</span> Anonymously.
+                </h1>
+<p class="text-lg text-on-surface-variant max-w-xl leading-relaxed mb-10">
+                    Explore active polls secured by Midnight's zero-knowledge technology. Your vote is your voice—completely private, forever immutable.
+                </p>
+</div>
+<div class="flex flex-col md:flex-row gap-4 items-center w-full">
+<div class="relative flex-grow w-full md:max-w-md group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-highest border-none rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search polls by topic or keyword..." type="text"/>
+</div>
+<div class="flex gap-2 p-1 bg-surface-container-low rounded-xl">
+<button class="px-6 py-2.5 rounded-lg bg-surface-container-high text-primary font-semibold shadow-sm">Trending</button>
+<button class="px-6 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-semibold">Newest</button>
+<button class="px-6 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-semibold">Ending Soon</button>
+</div>
+</div>
+</section>
+<!-- Bento Grid Polls -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Featured Poll (Wide) -->
+<div class="md:col-span-8 group relative overflow-hidden bg-surface-container-low rounded-3xl p-8 transition-all hover:bg-surface-container-high">
+<div class="absolute top-0 right-0 p-8">
+<span class="flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-bold border border-primary/20">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        LIVE
+                    </span>
+</div>
+<div class="max-w-lg">
+<span class="text-tertiary font-bold tracking-widest text-xs uppercase mb-4 block">Governance</span>
+<h2 class="text-3xl font-headline font-bold mb-6 text-on-surface leading-snug">Should the Midnight ecosystem implement a decentralized identity registry for DApps?</h2>
+<div class="space-y-4 mb-8">
+<div class="w-full bg-surface-container-highest rounded-xl p-4 flex justify-between items-center group/opt cursor-pointer hover:bg-primary/5 transition-colors">
+<span class="font-medium">Implement immediately</span>
+<span class="text-on-surface-variant text-sm">64%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-xl p-4 flex justify-between items-center group/opt cursor-pointer hover:bg-primary/5 transition-colors">
+<span class="font-medium">Wait for v2 protocol</span>
+<span class="text-on-surface-variant text-sm">36%</span>
+</div>
+</div>
+<div class="flex items-center gap-6 text-on-surface-variant text-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="how_to_vote">how_to_vote</span>
+<span class="font-bold text-on-surface">12,402 votes</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+<span>4 days remaining</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Small Poll -->
+<div class="md:col-span-4 bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between transition-all hover:bg-surface-container-high">
+<div>
+<span class="text-primary font-bold tracking-widest text-xs uppercase mb-4 block">Community</span>
+<h3 class="text-xl font-headline font-bold mb-4 text-on-surface leading-tight">Next theme for the Midnight Hackathon?</h3>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="bg-surface-container-highest text-xs px-3 py-1 rounded-full text-on-surface-variant">Privacy</span>
+<span class="bg-surface-container-highest text-xs px-3 py-1 rounded-full text-on-surface-variant">Gaming</span>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<div class="text-sm">
+<div class="font-bold text-on-surface">892 votes</div>
+<div class="text-on-surface-variant">12h left</div>
+</div>
+<button class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Medium Poll -->
+<div class="md:col-span-4 bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between transition-all hover:bg-surface-container-high">
+<div>
+<span class="text-[#f472b6] font-bold tracking-widest text-xs uppercase mb-4 block">Technology</span>
+<h3 class="text-xl font-headline font-bold mb-4 text-on-surface leading-tight">Which ZK-Proof scheme do you prefer for high-throughput?</h3>
+</div>
+<div class="flex justify-between items-end">
+<div class="text-sm">
+<div class="font-bold text-on-surface">3,210 votes</div>
+<div class="text-on-surface-variant">2 days left</div>
+</div>
+<button class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Secondary Wide Poll -->
+<div class="md:col-span-8 bg-surface-container-low rounded-3xl p-8 relative overflow-hidden transition-all hover:bg-surface-container-high">
+<div class="relative z-10 flex flex-col md:flex-row gap-8 items-center">
+<div class="w-full md:w-1/3 aspect-square rounded-2xl overflow-hidden shadow-2xl">
+<img class="w-full h-full object-cover grayscale opacity-50 hover:grayscale-0 transition-all duration-500" data-alt="abstract digital connection network with purple and blue glowing nodes in a dark void" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJA6pZENr9v2gFnjtqg4STafuLQ7abGUYsll0JNl-VoKnVkVBatplSf1L1jJzgimqETw5aw68Ds9i8uR9xliG69w1fk8GH2ekHlhNSN0cv6r4xaMK-BiSkfM8-B1eOvpkbuvvE5PxxtRWpZ2GFUAIW9-fEH5Ov7fijFmS9NBFxu2snW9BNHJpRsBSc7TTn1zUJWs_MewLhc9IxV99g4mF8ZxOe6gGlofvSVyvlSDT0BoNXS7KXx_P7nrhn_p_MEX6HAyjffZAmNIBZ"/>
+</div>
+<div class="flex-grow">
+<span class="text-tertiary font-bold tracking-widest text-xs uppercase mb-2 block">Culture</span>
+<h2 class="text-2xl font-headline font-bold mb-4 text-on-surface leading-snug">The best mascot for the new privacy-centric DAO?</h2>
+<p class="text-on-surface-variant text-sm mb-6 max-w-sm">A community-led decision for our visual identity across social channels.</p>
+<div class="flex items-center gap-6">
+<span class="text-sm font-bold text-on-surface">4,551 active votes</span>
+<button class="text-primary font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">
+                                Vote Now <span class="material-symbols-outlined text-sm" data-icon="north_east">north_east</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination/Load More -->
+<div class="mt-20 flex justify-center">
+<button class="flex items-center gap-3 px-10 py-4 bg-surface-container-high text-on-surface font-headline font-bold rounded-full hover:bg-surface-container-highest transition-all border border-outline-variant/10">
+                Load more active polls
+                <span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-[#121220] w-full mt-auto py-12 border-t border-outline-variant/5">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto gap-6">
+<div class="text-lg font-bold text-[#b0aaff] font-headline">Shadow Poll</div>
+<div class="flex items-center gap-8 font-['Plus_Jakarta_Sans'] text-sm text-[#aaa8c5]">
+<a class="hover:text-[#80fffa] transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-[#80fffa] transition-colors" href="#">About</a>
+<a class="hover:text-[#80fffa] transition-colors" href="#">Community</a>
+</div>
+<div class="font-['Plus_Jakarta_Sans'] text-sm text-[#aaa8c5]">
+                © 2024 Shadow Poll. <span class="text-tertiary/60">Securely Anonymous.</span>
+</div>
+</div>
+</footer>
+<!-- Floating Action Button - Only for Creating -->
+<button class="fixed bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-[0px_24px_48px_rgba(0,0,0,0.4)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined scale-125" data-icon="add">add</span>
+</button>
+</body></html>
