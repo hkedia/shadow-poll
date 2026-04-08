@@ -18,7 +18,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CONTRACT_SRC="contracts/src/poll.compact"
 MANAGED_DIR="contracts/managed"
 ZK_KEYS_DIR="public/zk-keys"
-COMPACT_VERSION="+0.28.0"
+COMPACT_VERSION="+0.30.0"
 
 # Optional --skip-zk flag
 SKIP_ZK_FLAG=""

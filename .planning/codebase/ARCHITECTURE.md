@@ -1,122 +1,134 @@
 # Architecture
 
-**Analysis Date:** 2026-04-08
+**Analysis Date:** 2026-04-09 (post Vite migration)
 
 ## Pattern Overview
 
-**Overall:** Next.js App Router (Server-First Rendering)
+**Overall:** Vite SPA with React Router (Client-Side Rendering)
 
-This is an early-stage project scaffolded via `create-next-app` with Next.js 16. The application source consists of the default scaffold with no custom business logic yet. Midnight Network blockchain SDK packages are declared as dependencies but are not yet imported or used anywhere.
+This is a fully functional anonymous polling application built on the Midnight blockchain. The frontend is a Vite-powered React SPA with React Router for client-side routing. The backend consists of a Bun.serve() production server for API routes and static file serving, plus Neon Postgres for off-chain metadata storage.
 
 **Key Characteristics:**
-- Next.js 16 App Router with React 19 Server Components by default
-- Tailwind CSS v4 for styling via PostCSS
-- Midnight Network SDK dependencies installed (blockchain/ZK-proof integration planned)
-- `graphql` and `graphql-yoga` dependencies installed (GraphQL API layer planned)
-- No database, no API routes, no authentication, no state management implemented yet
-- Bun as package manager (evidenced by `bun.lock`)
+- Vite 8 SPA with React 19 and React Router 7 for client-side routing
+- Tailwind CSS v4 via `@tailwindcss/vite` plugin (no PostCSS)
+- Midnight Network SDK for blockchain/ZK-proof integration (fully wired)
+- Neon Postgres for off-chain poll metadata storage
+- Bun.serve() production server (`server.ts`) for API routes, static files, and SPA fallback
+- TanStack React Query for data fetching and caching
+- Client-side ZK proof generation via Midnight SDK WASM modules
 
 ## Layers
 
-**Presentation Layer (React Server Components):**
-- Purpose: Renders pages and UI components
-- Location: `app/`
-- Contains: `page.tsx` (home page), `layout.tsx` (root layout), `globals.css` (global styles)
-- Depends on: Next.js framework, Tailwind CSS
+**Presentation Layer (React SPA):**
+- Purpose: Renders pages and UI components (client-side SPA)
+- Location: `src/` (`src/app.tsx` root, `src/routes/` for pages, `src/globals.css`)
+- Contains: Route components (home, create-poll, poll-detail, deploy, stats, verify), shared UI components
+- Depends on: React, React Router, TanStack Query, Tailwind CSS
 - Used by: End users via browser
 
+**Blockchain Integration Layer:**
+- Purpose: Midnight blockchain integration, contract service, wallet context
+- Location: `lib/midnight/`
+- Contains: Contract service, wallet provider, metadata store, invite codes, provider types
+- Depends on: Midnight SDK packages, WASM modules
+- Used by: Route components via React hooks
+
+**API/Data Layer:**
+- Purpose: Off-chain metadata API and database access
+- Location: `lib/api/`, `lib/db/`
+- Contains: Metadata request handler, Neon Postgres client, migrations
+- Depends on: `@neondatabase/serverless`
+- Used by: Bun.serve() server (`server.ts`)
+
+**Production Server:**
+- Purpose: Serves static files and API in production
+- Location: `server.ts` (project root)
+- Contains: Bun.serve() with API routing, static file serving, SPA fallback
+- Depends on: `lib/api/metadata-handler.ts`, `dist/` build output
+- Used by: Production deployment
+
 **Static Assets:**
-- Purpose: Serves static SVG images and favicon
+- Purpose: SVG icons, logos, ZK keys
 - Location: `public/`
-- Contains: `file.svg`, `globe.svg`, `next.svg`, `vercel.svg`, `window.svg`
-- Depends on: Nothing
-- Used by: Presentation layer via `<Image>` component and direct URL references
+- Contains: `favicon.svg`, `logo.svg`, `file.svg`, `globe.svg`, `window.svg`, `zk-keys/`
+- Used by: Presentation layer via `<img>` tags and direct URL references
 
 ## Data Flow
 
-**Current Request Lifecycle:**
-
+**Request Lifecycle (Dev):**
 1. Browser requests a URL
-2. Next.js App Router matches the route to `app/page.tsx`
-3. `app/layout.tsx` wraps the page with root HTML, fonts, and global styles
-4. Server Component renders to HTML and streams to browser
-5. Client hydration occurs (minimal — no client components exist yet)
+2. Vite dev server serves `index.html` with HMR client
+3. React Router matches route to component in `src/routes/`
+4. Component renders, potentially fetching data via TanStack Query
+5. API calls to `/api/*` are proxied by Vite to `http://localhost:3001`
+
+**Request Lifecycle (Production):**
+1. Browser requests a URL
+2. Bun.serve() handles the request
+3. `/api/polls/metadata` → metadata handler → Neon Postgres
+4. `/zk-keys/*` → public/ with CORS headers
+5. Static files → `dist/` (Vite build output)
+6. Everything else → `dist/index.html` (SPA fallback)
 
 **State Management:**
-- None implemented. No client-side state, no stores, no context providers.
+- TanStack React Query manages server state (polls, metadata, votes)
+- React useState/useReducer for local UI state
+- Wallet context provides Midnight SDK providers to components
 
-**Caching Strategy:**
-- Default Next.js caching behavior only. No custom caching configuration.
+**Blockchain Flow:**
+- Contract service calls go through Midnight SDK → blockchain
+- ZK proofs generated client-side via WASM modules
+- Metadata stored off-chain via API → Neon Postgres, verified by on-chain hash
 
 ## Key Abstractions
 
-**Root Layout (`app/layout.tsx`):**
-- Purpose: Defines the HTML document shell, loads Geist fonts, applies global CSS
-- Pattern: Next.js root layout convention (must export default function returning `<html>`)
-
-**Home Page (`app/page.tsx`):**
-- Purpose: Default landing page — currently scaffold boilerplate
-- Pattern: Next.js page convention (default export = route handler)
+- `MidnightProviderSet` — Bundled wallet, indexer, ZK, and proof providers
+- `useWalletContext()` — React hook for wallet connection state and providers
+- `usePoll()` / `usePolls()` — TanStack Query hooks for poll data
+- `contractService` — Functions for creating polls, casting votes, adding invite codes
 
 ## Entry Points
 
-**Application Entry:**
-- Location: `app/layout.tsx` (root layout, wraps all pages)
-- Triggers: Every page request
-- Responsibilities: HTML shell, font loading, global CSS
+**Application Entry (Browser):**
+- Location: `index.html` → `src/main.tsx` → `src/app.tsx`
+- Triggers: Browser page load
+- Responsibilities: React root, router setup, provider tree (QueryClient, WalletProvider)
 
-**Home Route:**
-- Location: `app/page.tsx`
-- Triggers: `GET /`
-- Responsibilities: Renders the landing page
+**Production Server:**
+- Location: `server.ts`
+- Triggers: `bun run serve` (production)
+- Responsibilities: API routes, static file serving, SPA fallback
 
-## Planned Integrations (Dependencies Installed, Not Yet Used)
+## Active Integrations
 
-**Midnight Network Blockchain SDK:**
-- `@midnight-ntwrk/compact-js` — Compact language JS runtime
-- `@midnight-ntwrk/ledger-v8` — Ledger integration (v8)
-- `@midnight-ntwrk/midnight-js-contracts` — Smart contract interactions
-- `@midnight-ntwrk/midnight-js-fetch-zk-config-provider` — ZK proof configuration
-- `@midnight-ntwrk/midnight-js-indexer-public-data-provider` — Public data indexer
-- `@midnight-ntwrk/midnight-js-network-id` — Network identification
-- `@midnight-ntwrk/midnight-js-types` — TypeScript type definitions
-
-**GraphQL:**
-- `graphql` — GraphQL core library
-- `graphql-yoga` — GraphQL server (likely for Next.js API routes)
+- `@midnight-ntwrk/compact-js` — Compact contract runtime
+- `@midnight-ntwrk/ledger-v8` — Ledger WASM bindings
+- `@midnight-ntwrk/midnight-js-contracts` — Contract deployment and interaction
+- `@midnight-ntwrk/midnight-js-fetch-zk-config-provider` — ZK proving key fetching
+- `@midnight-ntwrk/midnight-js-indexer-public-data-provider` — On-chain data reads
+- `@midnight-ntwrk/midnight-js-network-id` — Network configuration
+- `@neondatabase/serverless` — Neon Postgres for metadata storage
+- `graphql` + `graphql-yoga` — GraphQL for indexer queries
 
 ## Error Handling
 
-**Strategy:** Not yet implemented. Default Next.js error handling only.
-
-**Patterns:**
-- No custom `error.tsx` or `not-found.tsx` boundary files exist
-- No global error boundary configured
-
-## Cross-Cutting Concerns
-
-**Logging:** Not implemented. Console only.
-**Validation:** Not implemented.
-**Authentication:** Not implemented.
-
-## Database Schema
-
-No database is configured. No ORM, no database client, no schema files exist.
-
-## API Surface
-
-No API routes exist. The `app/` directory contains no `route.ts` files.
-
-**Planned:** `graphql-yoga` dependency suggests a GraphQL API endpoint will be created (likely at `app/api/graphql/route.ts` or similar).
+**Strategy:**
+- React Router error boundaries for route-level errors
+- TanStack Query error/loading states for async operations
+- Try/catch in contract service with user-facing error messages
+- `console` for development logging
 
 ## Module Boundaries
 
 | Module | Responsibility | Dependencies |
 |--------|---------------|--------------|
-| `app/layout.tsx` | Root HTML shell, fonts, global CSS | `next`, `next/font/google`, `globals.css` |
-| `app/page.tsx` | Home page rendering | `next/image` |
-| `app/globals.css` | Global styles and Tailwind theme | `tailwindcss` |
+| `src/app.tsx` | Root component, router, providers | `react-router`, `@tanstack/react-query` |
+| `src/routes/*` | Page components | `lib/midnight/*`, UI components |
+| `lib/midnight/*` | Blockchain integration | Midnight SDK packages |
+| `lib/api/*` | Metadata API handler | `lib/db/*`, `lib/midnight/metadata-store` |
+| `lib/db/*` | Database client and migrations | `@neondatabase/serverless` |
+| `server.ts` | Production server | `lib/api/*`, `dist/` |
 
 ---
 
-*Architecture analysis: 2026-04-08*
+*Architecture analysis: 2026-04-09*

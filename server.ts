@@ -1,7 +1,7 @@
 /**
  * Shadow Poll — Bun.serve() production server.
  *
- * Replaces the previous Next.js dev server with a lightweight Bun server that handles:
+ * Lightweight Bun server that handles:
  *   1. API routes (/api/polls/metadata → metadata handler)
  *   2. ZK keys static files (/zk-keys/* from public/ with CORS)
  *   3. Public static files (favicon, logo, etc. from public/)

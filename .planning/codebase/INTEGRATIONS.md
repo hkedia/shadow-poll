@@ -1,44 +1,47 @@
 # External Integrations
 
-**Analysis Date:** 2026-04-08
+**Analysis Date:** 2026-04-09 (post Vite migration)
 
 ## APIs & External Services
 
 **Midnight Network (Blockchain):**
-- Midnight Network - Privacy-focused blockchain for smart contract execution
+- Midnight Network — Privacy-focused blockchain for smart contract execution
   - SDK/Client: `@midnight-ntwrk/midnight-js-contracts` (v4.0.4)
   - Smart Contract Language: Compact (via `@midnight-ntwrk/compact-js` v2.5.0)
-  - Ledger: `@midnight-ntwrk/ledger-v8` (v8.0.3) - WASM-based ledger bindings
+  - Ledger: `@midnight-ntwrk/ledger-v8` (v8.0.3) — WASM-based ledger bindings
   - Network Config: `@midnight-ntwrk/midnight-js-network-id` (v4.0.4)
-  - ZK Proofs: `@midnight-ntwrk/midnight-js-fetch-zk-config-provider` (v4.0.4) - Retrieves proving/verifying keys
-  - Indexer: `@midnight-ntwrk/midnight-js-indexer-public-data-provider` (v4.0.4) - Public data via Pub-sub indexer
-  - Auth: Not yet configured (no env vars detected)
+  - ZK Proofs: `@midnight-ntwrk/midnight-js-fetch-zk-config-provider` (v4.0.4) — Retrieves proving/verifying keys
+  - Indexer: `@midnight-ntwrk/midnight-js-indexer-public-data-provider` (v4.0.4) — Public data via Pub-sub indexer
+  - Auth: Via 1am.xyz wallet extension (browser-based)
 
-**GraphQL:**
-- `graphql` (v16.13.2) + `graphql-yoga` (v5.21.0) - GraphQL server framework
-  - Likely intended for building a GraphQL API layer within Next.js API routes
-  - No GraphQL schema or resolvers implemented yet
+**GraphQL (Indexer Queries):**
+- `graphql` (v16.13.2) + `graphql-yoga` (v5.21.0) — Used for Midnight indexer queries
 
-**Google Fonts:**
-- Geist and Geist_Mono fonts loaded via `next/font/google` in `app/layout.tsx`
-  - Self-hosted at build time by Next.js (no runtime external calls)
+**Fonts:**
+- Manrope + Plus Jakarta Sans loaded via `@fontsource` packages (self-hosted, no external calls)
+- Material Symbols Outlined via Google Fonts CDN
 
 ## Data Storage
 
 **Databases:**
-- None configured. No ORM, database driver, or database connection detected.
+- Neon Postgres (serverless) via `@neondatabase/serverless` — HTTP-based driver
+  - Connection: `DATABASE_URL` environment variable
+  - Schema: Single `polls_metadata` table (poll_id, title, description, options, metadata_hash, created_at)
+  - Migrations: Lazy via `runMigrations()` with `CREATE TABLE IF NOT EXISTS`
 
 **File Storage:**
-- Local filesystem only (`public/` directory for static SVG assets)
+- Local filesystem only (`public/` directory for static assets and ZK keys)
 
 **Caching:**
-- None configured beyond Next.js built-in caching
+- TanStack React Query client-side caching with configurable stale times
 
 ## Authentication & Identity
 
 **Auth Provider:**
-- None configured. No auth library or provider detected.
-- Midnight Network may provide identity/privacy features via ZK proofs (not yet implemented)
+- 1am.xyz wallet browser extension — Midnight Network wallet
+  - Detection: Checks for `window.midnight` in browser
+  - Connection: SDK-based wallet connection flow
+  - Identity: Wallet address used as user identifier (no PII stored)
 
 ## Monitoring & Observability
 
@@ -46,54 +49,40 @@
 - None configured
 
 **Logs:**
-- No logging framework detected. Console only.
+- Console only — no structured logging framework
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Vercel (inferred from `.vercel` in `.gitignore` and Vercel links in scaffold `app/page.tsx`)
-- No `vercel.json` configuration file present
+- No specific hosting configured for v1
+- Production server: `bun run serve` (Bun.serve() in `server.ts`)
 
 **CI Pipeline:**
-- None configured. No `.github/workflows/`, no CI config files detected.
+- None configured — no `.github/workflows/` or CI config files
 
 ## Environment Configuration
 
-**Required env vars:**
-- None currently referenced in source code
-- `.env*` files are gitignored
-- No `.env.example` or `.env.local.example` file exists
+**Required env vars (client-side, `VITE_*` prefix):**
+- `VITE_POLL_CONTRACT_ADDRESS` — Deployed poll manager contract address
+- `VITE_INDEXER_URL` — Midnight Pub-sub indexer endpoint
+- `VITE_NODE_URL` — Midnight node endpoint
+- `VITE_PROOF_SERVER_URL` — ZK proof server endpoint
+
+**Required env vars (server-side):**
+- `DATABASE_URL` — Neon Postgres connection string
 
 **Secrets location:**
-- Not yet configured. Will likely need environment variables for:
-  - Midnight Network RPC/indexer endpoints
-  - ZK proof provider configuration
-  - Any future database connection strings
+- `.env*` files (gitignored)
 
-## Webhooks & Callbacks
+## Integration Architecture
 
-**Incoming:**
-- None configured
-
-**Outgoing:**
-- None configured
-
-## Integration Architecture Notes
-
-This project is in an early scaffold stage. The Midnight Network SDK packages are installed as dependencies but have not yet been imported or used in any source files. The intended architecture appears to be:
-
-1. **Frontend**: Next.js App Router with React 19 for the polling UI
+1. **Frontend**: Vite SPA with React 19 + React Router 7 for the polling UI
 2. **Smart Contracts**: Compact language contracts executed via `@midnight-ntwrk/compact-js` for privacy-preserving poll logic
-3. **GraphQL API**: `graphql-yoga` for building a GraphQL API layer (likely as Next.js route handlers)
-4. **Blockchain Indexing**: `@midnight-ntwrk/midnight-js-indexer-public-data-provider` for reading on-chain poll data
-5. **ZK Proofs**: `@midnight-ntwrk/midnight-js-fetch-zk-config-provider` for zero-knowledge proof generation/verification
-
-The Midnight Network SDK includes transitive dependencies installed in `node_modules/@midnight-ntwrk/`:
-- `compact-runtime` - Runtime for Compact smart contract execution
-- `onchain-runtime-v3` - On-chain runtime support
-- `platform-js` - Platform abstractions
-- `midnight-js-utils` - Shared utilities
+3. **Blockchain Indexing**: `@midnight-ntwrk/midnight-js-indexer-public-data-provider` for reading on-chain poll data via GraphQL
+4. **ZK Proofs**: Client-side proof generation via WASM modules, keys fetched from `/zk-keys/`
+5. **Metadata Storage**: Neon Postgres for off-chain poll metadata, verified by on-chain commitment hash
+6. **Production Server**: Bun.serve() handles API routes, static files, and SPA fallback
 
 ---
 
-*Integration audit: 2026-04-08*
+*Integration audit: 2026-04-09*

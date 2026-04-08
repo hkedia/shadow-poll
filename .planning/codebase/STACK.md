@@ -1,51 +1,57 @@
 # Technology Stack
 
-**Analysis Date:** 2026-04-08
+**Analysis Date:** 2026-04-09 (post Vite migration)
 
 ## Languages
 
 **Primary:**
-- TypeScript 5.9.3 - All application code (`app/**/*.tsx`, `app/**/*.ts`)
-- TSX - React component files
+- TypeScript 5.x — All application code (`src/**/*.tsx`, `src/**/*.ts`, `lib/**/*.ts`)
+- TSX — React component files
+- Compact — Midnight smart contract language (`contracts/src/`)
 
 **Secondary:**
-- CSS - Global styles via Tailwind CSS (`app/globals.css`)
+- CSS — Global styles via Tailwind CSS (`src/globals.css`)
 
 ## Runtime
 
 **Environment:**
-- Node.js v25.9.0
-- Bun 1.3.11 (used as package manager; lockfile: `bun.lock`)
+- Bun 1.3+ — Package manager, dev runtime, and production server
 
 **Package Manager:**
-- Bun 1.3.11
-- Lockfile: `bun.lock` (lockfileVersion 1)
+- Bun — Lockfile: `bun.lock`
 
 ## Frameworks
 
 **Core:**
-- Next.js 16.2.2 - Full-stack React framework (App Router)
-- React 19.2.4 - UI library
-- React DOM 19.2.4 - DOM renderer
-
-**Testing:**
-- Not detected - No test framework configured
+- Vite 8 — Dev server + production bundler
+- React 19.2.4 — UI library (client-side SPA, no server components)
+- React Router 7 — Client-side routing
+- React DOM 19.2.4 — DOM renderer
 
 **Build/Dev:**
-- Next.js built-in compiler (Turbopack for dev, SWC for production)
-- PostCSS via `postcss.config.mjs` with `@tailwindcss/postcss` plugin
+- Vite with `@vitejs/plugin-react` 6 (React Fast Refresh + JSX transform)
+- `vite-plugin-wasm` 3 — WASM module loading for Midnight SDK
+- Tailwind CSS 4 via `@tailwindcss/vite` plugin (no PostCSS)
+
+**Testing:**
+- Not configured — No test framework installed
 
 ## Key Dependencies
 
-**Critical:**
+**Core Application:**
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `next` | 16.2.2 | Full-stack React framework with App Router |
+| `vite` | 8 | Dev server + production bundler |
+| `@vitejs/plugin-react` | 6 | React Fast Refresh + JSX transform |
 | `react` | 19.2.4 | UI component library |
 | `react-dom` | 19.2.4 | React DOM renderer |
+| `react-router` | 7 | Client-side SPA routing |
+| `@tanstack/react-query` | 5.x | Data fetching, caching, optimistic updates |
 | `graphql` | 16.13.2 | GraphQL query language runtime |
-| `graphql-yoga` | 5.21.0 | GraphQL server framework (for building API endpoints) |
+| `graphql-yoga` | 5.21.0 | GraphQL server framework (indexer queries) |
+| `@neondatabase/serverless` | 1.x | Neon Postgres serverless driver |
+| `vite-plugin-wasm` | 3 | WASM module loading for Midnight SDK |
 
 **Midnight Network SDK (blockchain/smart contract layer):**
 
@@ -63,57 +69,59 @@
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `tailwindcss` | 4.2.2 | Utility-first CSS framework |
-| `@tailwindcss/postcss` | ^4 | PostCSS integration for Tailwind v4 |
-| `typescript` | 5.9.3 | Static type checking |
-| `eslint` | 9.39.4 | Code linting |
-| `eslint-config-next` | 16.2.2 | Next.js ESLint rules (core-web-vitals + TypeScript) |
+| `tailwindcss` | 4.x | Utility-first CSS framework |
+| `@tailwindcss/vite` | 4 | Vite plugin for Tailwind v4 |
+| `typescript` | 5.x | Static type checking |
+| `eslint` | 9.x | Code linting |
+| `@radix-ui/*` | various | Accessible UI primitives (Dialog, Dropdown, Separator) |
+| `lucide-react` | 1.x | Icon library |
 
 ## Configuration
 
 **Environment:**
-- `.env*` files listed in `.gitignore` — no `.env` or `.env.example` files committed
-- No environment variables currently referenced in source code (project is in early scaffold stage)
+- `.env*` files listed in `.gitignore` — environment variables use `VITE_*` prefix for client-side, `DATABASE_URL` for server-side
+- `VITE_POLL_CONTRACT_ADDRESS` — deployed contract address
+- `VITE_INDEXER_URL` — Midnight indexer endpoint
+- `VITE_NODE_URL` — Midnight node endpoint
+- `VITE_PROOF_SERVER_URL` — ZK proof server endpoint
+- `DATABASE_URL` — Neon Postgres connection string (server-side only)
 
 **Build:**
-- `next.config.ts` - Next.js configuration (currently default/empty)
-- `tsconfig.json` - TypeScript config (target: ES2017, strict: true, module: esnext, moduleResolution: bundler)
-- `postcss.config.mjs` - PostCSS with Tailwind CSS v4 plugin
-- `eslint.config.mjs` - ESLint flat config with Next.js core-web-vitals and TypeScript presets
+- `vite.config.ts` — Vite configuration with WASM plugin, React plugin, Tailwind plugin, path aliases
+- `tsconfig.json` — TypeScript config (target: ESNext, strict: true, module: esnext, moduleResolution: bundler, jsx: react-jsx)
+- `eslint.config.mjs` — ESLint 9 flat config with global ignores for `dist/`, `build/`, `contracts/managed/`
+- `index.html` — Vite SPA entry point (root of project, references `src/main.tsx`)
 
 **TypeScript Path Aliases:**
-- `@/*` → `./*` (project root alias)
+- `@/*` → `./*` (project root alias via both Vite resolve.alias and tsconfig paths)
 
 ## Platform Requirements
 
 **Development:**
-- Node.js v25+ or Bun 1.3+
+- Bun 1.3+
 - Run `bun install` to install dependencies
-- Run `bun run dev` to start dev server (Next.js dev mode)
+- Run `bun run dev` to start Vite dev server (HMR enabled)
+- API proxy in dev: Vite proxies `/api` requests to `http://localhost:3001`
 
 **Production:**
-- Vercel deployment hints (`.vercel` in `.gitignore`, Vercel links in scaffold page)
-- Run `bun run build` then `bun run start` for production
-- No Dockerfile or custom deployment configuration detected
+- Run `bun run build` then `bun run serve` for production (Bun.serve() in `server.ts`)
 
 ## Development Tools
 
 **Linter:**
-- ESLint 9.39.4 with flat config (`eslint.config.mjs`)
-- Extends: `eslint-config-next/core-web-vitals` + `eslint-config-next/typescript`
-- Ignores: `.next/`, `out/`, `build/`, `next-env.d.ts`
+- ESLint 9.x with flat config (`eslint.config.mjs`)
+- Ignores: `dist/`, `build/`, `contracts/managed/`
 - Run via: `bun run lint`
 
 **Formatter:**
-- Not detected - No Prettier, Biome, or other formatter configured
+- No Prettier or formatter configured — relies on ESLint and editor defaults
 
 **Type Checking:**
-- TypeScript 5.9.3 in strict mode
-- Target: ES2017
+- TypeScript 5.x in strict mode
+- Target: ESNext
 - Module: ESNext with bundler resolution
 - Incremental compilation enabled
-- Next.js TypeScript plugin enabled
 
 ---
 
-*Stack analysis: 2026-04-08*
+*Stack analysis: 2026-04-09*

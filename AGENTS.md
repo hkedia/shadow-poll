@@ -143,29 +143,32 @@ An anonymous polling application built on the Midnight blockchain. Users connect
 ## Technology Stack
 
 ## Languages
-- TypeScript 5.9.3 - All application code (`app/**/*.tsx`, `app/**/*.ts`)
-- TSX - React component files
-- CSS - Global styles via Tailwind CSS (`app/globals.css`)
+- TypeScript 5.x — All application code (`src/**/*.tsx`, `src/**/*.ts`, `lib/**/*.ts`)
+- TSX — React component files
+- CSS — Global styles via Tailwind CSS (`src/globals.css`)
+- Compact — Midnight smart contract language (`contracts/src/`)
 ## Runtime
-- Node.js v25.9.0
-- Bun 1.3.11 (used as package manager; lockfile: `bun.lock`)
-- Bun 1.3.11
-- Lockfile: `bun.lock` (lockfileVersion 1)
+- Bun 1.3+ — Package manager, dev runtime, and production server (`bun.lock`)
 ## Frameworks
-- Next.js 16.2.2 - Full-stack React framework (App Router)
-- React 19.2.4 - UI library
-- React DOM 19.2.4 - DOM renderer
-- Not detected - No test framework configured
-- Next.js built-in compiler (Turbopack for dev, SWC for production)
-- PostCSS via `postcss.config.mjs` with `@tailwindcss/postcss` plugin
+- Vite 8 — Dev server + bundler (replaces Next.js as of Phase 08)
+- React 19.2.4 — UI library (client-side SPA, no server components)
+- React Router 7 — Client-side routing
+- React DOM 19.2.4 — DOM renderer
+- Tailwind CSS 4 via `@tailwindcss/vite` plugin (no PostCSS)
 ## Key Dependencies
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `next` | 16.2.2 | Full-stack React framework with App Router |
+| `vite` | 8 | Dev server + production bundler |
+| `@vitejs/plugin-react` | 6 | React Fast Refresh + JSX transform |
 | `react` | 19.2.4 | UI component library |
 | `react-dom` | 19.2.4 | React DOM renderer |
+| `react-router` | 7 | Client-side SPA routing |
+| `@tanstack/react-query` | 5.x | Data fetching, caching, optimistic updates |
 | `graphql` | 16.13.2 | GraphQL query language runtime |
-| `graphql-yoga` | 5.21.0 | GraphQL server framework (for building API endpoints) |
+| `graphql-yoga` | 5.21.0 | GraphQL server framework |
+| `@neondatabase/serverless` | 1.x | Neon Postgres serverless driver |
+| `vite-plugin-wasm` | 3 | WASM module loading for Midnight SDK |
+
 | Package | Version | Purpose |
 |---------|---------|---------|
 | `@midnight-ntwrk/compact-js` | 2.5.0 | TypeScript execution environment for Compact smart contracts |
@@ -175,176 +178,177 @@ An anonymous polling application built on the Midnight blockchain. Users connect
 | `@midnight-ntwrk/midnight-js-fetch-zk-config-provider` | 4.0.4 | ZK proving/verifying key retrieval |
 | `@midnight-ntwrk/midnight-js-indexer-public-data-provider` | 4.0.4 | Public data provider via Midnight Pub-sub indexer |
 | `@midnight-ntwrk/ledger-v8` | 8.0.3 | Ledger WASM bindings (v8 runtime) |
+
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `tailwindcss` | 4.2.2 | Utility-first CSS framework |
-| `@tailwindcss/postcss` | ^4 | PostCSS integration for Tailwind v4 |
-| `typescript` | 5.9.3 | Static type checking |
-| `eslint` | 9.39.4 | Code linting |
-| `eslint-config-next` | 16.2.2 | Next.js ESLint rules (core-web-vitals + TypeScript) |
+| `tailwindcss` | 4.x | Utility-first CSS framework |
+| `@tailwindcss/vite` | 4 | Vite plugin for Tailwind v4 |
+| `typescript` | 5.x | Static type checking |
+| `eslint` | 9.x | Code linting |
+| `@radix-ui/*` | various | Accessible UI primitives (Dialog, Dropdown, Separator) |
+| `lucide-react` | 1.x | Icon library |
 ## Configuration
-- `.env*` files listed in `.gitignore` — no `.env` or `.env.example` files committed
-- No environment variables currently referenced in source code (project is in early scaffold stage)
-- `next.config.ts` - Next.js configuration (currently default/empty)
-- `tsconfig.json` - TypeScript config (target: ES2017, strict: true, module: esnext, moduleResolution: bundler)
-- `postcss.config.mjs` - PostCSS with Tailwind CSS v4 plugin
-- `eslint.config.mjs` - ESLint flat config with Next.js core-web-vitals and TypeScript presets
-- `@/*` → `./*` (project root alias)
+- `.env*` files listed in `.gitignore` — environment variables use `VITE_*` prefix for client-side, `DATABASE_URL` for server-side
+- `vite.config.ts` — Vite configuration with WASM plugin, React plugin, Tailwind plugin, path aliases
+- `tsconfig.json` — TypeScript config (target: ESNext, strict: true, module: esnext, moduleResolution: bundler, jsx: react-jsx)
+- `eslint.config.mjs` — ESLint 9 flat config with global ignores for `dist/`, `build/`, `contracts/managed/`
+- `@/*` → `./*` (project root alias via both Vite resolve.alias and tsconfig paths)
+- `index.html` — Vite SPA entry point (root of project, references `src/main.tsx`)
 ## Platform Requirements
-- Node.js v25+ or Bun 1.3+
+- Bun 1.3+
 - Run `bun install` to install dependencies
-- Run `bun run dev` to start dev server (Next.js dev mode)
-- Vercel deployment hints (`.vercel` in `.gitignore`, Vercel links in scaffold page)
-- Run `bun run build` then `bun run start` for production
-- No Dockerfile or custom deployment configuration detected
+- Run `bun run dev` to start Vite dev server (HMR enabled)
+- Run `bun run build` then `bun run serve` for production (Bun.serve() in `server.ts`)
+- API proxy in dev: Vite proxies `/api` requests to `http://localhost:3001`
 ## Development Tools
-- ESLint 9.39.4 with flat config (`eslint.config.mjs`)
-- Extends: `eslint-config-next/core-web-vitals` + `eslint-config-next/typescript`
-- Ignores: `.next/`, `out/`, `build/`, `next-env.d.ts`
+- ESLint 9.x with flat config (`eslint.config.mjs`)
+- Ignores: `dist/`, `build/`, `contracts/managed/`
 - Run via: `bun run lint`
-- Not detected - No Prettier, Biome, or other formatter configured
-- TypeScript 5.9.3 in strict mode
-- Target: ES2017
+- No Prettier or formatter configured — relies on ESLint and editor defaults
+- TypeScript 5.x in strict mode
+- Target: ESNext
 - Module: ESNext with bundler resolution
 - Incremental compilation enabled
-- Next.js TypeScript plugin enabled
 <!-- GSD:stack-end -->
 
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
 ## Conventions
 
 ## Naming Conventions
-- kebab-case for config files: `eslint.config.mjs`, `postcss.config.mjs`, `next.config.ts`
-- lowercase for Next.js App Router files: `page.tsx`, `layout.tsx`, `globals.css`
+- kebab-case for config files: `eslint.config.mjs`, `vite.config.ts`
+- kebab-case for route files: `src/routes/create-poll.tsx`, `src/routes/poll-detail.tsx`
 - Use kebab-case for any new non-route files (e.g., utility modules, lib files)
-- PascalCase for component function names: `Home`, `RootLayout`
-- Default exports for page and layout components (required by Next.js App Router)
-- Named exports for metadata objects: `export const metadata: Metadata`
-- camelCase for all functions and variables: `geistSans`, `geistMono`
-- PascalCase for React component functions: `RootLayout`, `Home`
-- camelCase: `geistSans`, `geistMono`, `nextConfig`, `eslintConfig`
-- CSS custom properties use `--kebab-case`: `--font-geist-sans`, `--color-background`
-- PascalCase for types: `Metadata`, `NextConfig`
-- Prefer `type` imports with `import type { ... }` syntax (see `app/layout.tsx` line 1, `next.config.ts` line 1)
-- Inline types for component props using `Readonly<{ ... }>` pattern (see `app/layout.tsx` line 22-24)
-- camelCase for module-level constants: `geistSans`, `nextConfig`
-- No UPPER_SNAKE_CASE constants observed yet — follow camelCase for non-environment values
+- PascalCase for component function names: `App`, `CreatePoll`, `PollDetail`
+- Named exports for components: `export function ComponentName()`
+- camelCase for all functions and variables
+- PascalCase for React component functions
+- CSS custom properties use `--kebab-case`: `--color-background`, `--color-primary`
+- PascalCase for types: `PollMetadata`, `MidnightProviderSet`
+- Prefer `type` imports with `import type { ... }` syntax
+- Inline types for component props using `Readonly<{ ... }>` pattern
+- camelCase for module-level constants
 ## Code Style
 - No Prettier config detected — relies on ESLint and editor defaults
 - Indentation: 2 spaces (observed across all files)
-- Quotes: double quotes for strings (`"next"`, `"latin"`, `"Create Next App"`)
+- Quotes: double quotes for strings
 - Semicolons: yes (all statements terminated with semicolons)
-- Trailing commas: yes (in multiline objects and arrays — see `tsconfig.json`, component props)
+- Trailing commas: yes (in multiline objects and arrays)
 - Line length: no explicit limit configured
 - ESLint 9 with flat config: `eslint.config.mjs`
-- Extends `eslint-config-next/core-web-vitals` and `eslint-config-next/typescript`
-- Run via: `npm run lint` or `eslint`
+- Global ignores: `dist/`, `build/`, `contracts/managed/`
+- Run via: `bun run lint`
 ## Component Patterns
 - Functional components only (no class components)
-- Use `export default function ComponentName()` pattern for pages/layouts
-- Server Components by default (Next.js App Router convention — no `"use client"` directive unless needed)
-- Inline destructured props with `Readonly<>` wrapper for type safety:
-- Wrap all props in `Readonly<{ ... }>` for immutability
-- No client-side state management library installed
-- Use React's built-in `useState`/`useReducer` for client components when needed
-- Server Components should fetch data directly (no state needed)
-- Not yet established — use `handleX` for internal handlers, `onX` for prop callbacks when adding interactivity
+- Client-side SPA — all components are client components (no server components)
+- React Router for page routing (`src/routes/`)
+- `src/app.tsx` — root App component with router and providers
+- `src/main.tsx` — React DOM entry point
+- Inline destructured props with `Readonly<>` wrapper for type safety
+- TanStack React Query for server state management
+- React `useState`/`useReducer` for local UI state
+- `handleX` for internal handlers, `onX` for prop callbacks
 ## Styling
-- Import via `@import "tailwindcss"` in `app/globals.css`
-- Tailwind theme extended inline with `@theme inline { }` block in `app/globals.css`
-- CSS custom properties for theming: `--background`, `--foreground`
-- Dark mode: media query based (`prefers-color-scheme: dark`) plus `dark:` Tailwind utilities
-- Fonts: Geist Sans and Geist Mono loaded via `next/font/google`, applied as CSS variables
+- Import via `@import "tailwindcss"` in `src/globals.css`
+- Tailwind theme extended inline with `@theme inline { }` block in `src/globals.css`
+- CSS custom properties for theming (Aether Privacy design system)
+- Dark mode by default (class-based)
+- Fonts: Manrope + Plus Jakarta Sans loaded via `@fontsource` packages
+- Material Symbols Outlined for icons
 - Use Tailwind utility classes directly on elements
 - Use CSS custom properties for design tokens (colors, fonts)
 - Responsive design via Tailwind breakpoint prefixes (`sm:`, `md:`)
 ## Error Handling
-- Not yet established in the codebase (scaffold only)
-- Use Next.js App Router error boundaries: create `error.tsx` files in route segments
-- Use `not-found.tsx` for 404 handling per route segment
-- Use `loading.tsx` for loading states per route segment
-- No logging framework installed
-- Use `console` for development; plan for structured logging if backend logic grows
+- React Router error boundaries for route-level errors
+- TanStack Query error/loading states for async data
+- `console` for development logging
 ## TypeScript Patterns
 - Enforce strict null checks, strict function types, no implicit any
-- Use `import type { X }` for type-only imports (enforced pattern in `app/layout.tsx`, `next.config.ts`)
-- This enables tree-shaking of type imports at build time
-- Use `Readonly<>` for component props (see `app/layout.tsx`)
+- Use `import type { X }` for type-only imports
+- Use `Readonly<>` for component props
 - Use `React.ReactNode` for children props
-- Strict mode prevents implicit `any`
 - Avoid explicit `any` — use `unknown` with type narrowing instead
-- `@/*` maps to project root (configured in `tsconfig.json`)
-- Use `@/app/...`, `@/lib/...`, etc. for absolute imports
+- `@/*` maps to project root (configured in both `tsconfig.json` and `vite.config.ts`)
+- Use `@/src/...`, `@/lib/...`, etc. for absolute imports
 ## Import Organization
 - Type imports before value imports from the same source
 - Separate external and internal imports with a blank line
 - Use path alias `@/` for non-relative imports within the project
 ## Git Conventions
-- Only one commit exists: `"Initial commit from Create Next App"` (generated)
-- No established convention yet — use imperative present tense (e.g., "Add polling feature", "Fix vote counting bug")
+- Imperative present tense for commit messages (e.g., "Add polling feature", "Fix vote counting bug")
 - Primary branch: `main`
-- No feature branches exist yet — use `feature/`, `fix/`, `chore/` prefixes when branching
-- Not established yet
 <!-- GSD:conventions-end -->
 
 <!-- GSD:architecture-start source:ARCHITECTURE.md -->
 ## Architecture
 
 ## Pattern Overview
-- Next.js 16 App Router with React 19 Server Components by default
-- Tailwind CSS v4 for styling via PostCSS
-- Midnight Network SDK dependencies installed (blockchain/ZK-proof integration planned)
-- `graphql` and `graphql-yoga` dependencies installed (GraphQL API layer planned)
-- No database, no API routes, no authentication, no state management implemented yet
-- Bun as package manager (evidenced by `bun.lock`)
+- Vite 8 SPA with React 19 and React Router 7 for client-side routing
+- Tailwind CSS v4 via `@tailwindcss/vite` plugin (no PostCSS)
+- Midnight Network SDK for blockchain/ZK-proof integration (fully wired)
+- Neon Postgres for off-chain poll metadata storage
+- Bun.serve() production server (`server.ts`) for API routes, static files, and SPA fallback
+- TanStack React Query for data fetching and caching
 ## Layers
-- Purpose: Renders pages and UI components
-- Location: `app/`
-- Contains: `page.tsx` (home page), `layout.tsx` (root layout), `globals.css` (global styles)
-- Depends on: Next.js framework, Tailwind CSS
+- Purpose: Renders pages and UI components (client-side SPA)
+- Location: `src/` (`src/app.tsx` root, `src/routes/` for pages, `src/globals.css`)
+- Contains: Route components (home, create-poll, poll-detail, deploy, stats, verify), shared UI components
+- Depends on: React, React Router, TanStack Query, Tailwind CSS
 - Used by: End users via browser
-- Purpose: Serves static SVG images and favicon
-- Location: `public/`
-- Contains: `file.svg`, `globe.svg`, `next.svg`, `vercel.svg`, `window.svg`
-- Depends on: Nothing
-- Used by: Presentation layer via `<Image>` component and direct URL references
+- Purpose: Midnight blockchain integration, contract service, wallet context
+- Location: `lib/midnight/`
+- Contains: Contract service, wallet provider, metadata store, invite codes, provider types
+- Depends on: Midnight SDK packages, WASM modules
+- Used by: Route components via React hooks
+- Purpose: Off-chain metadata API and database access
+- Location: `lib/api/`, `lib/db/`
+- Contains: Metadata request handler, Neon Postgres client, migrations
+- Depends on: `@neondatabase/serverless`
+- Used by: Bun.serve() server (`server.ts`)
+- Purpose: Serves static files and API in production
+- Location: `server.ts` (project root)
+- Contains: Bun.serve() with API routing, static file serving, SPA fallback
+- Depends on: `lib/api/metadata-handler.ts`, `dist/` build output
+- Used by: Production deployment
 ## Data Flow
-- None implemented. No client-side state, no stores, no context providers.
-- Default Next.js caching behavior only. No custom caching configuration.
+- TanStack React Query manages server state (polls, metadata, votes)
+- React useState/useReducer for local UI state
+- Wallet context provides Midnight SDK providers to components
+- Contract service calls go through Midnight SDK → blockchain
+- Metadata stored off-chain via API → Neon Postgres, verified by on-chain hash
 ## Key Abstractions
-- Purpose: Defines the HTML document shell, loads Geist fonts, applies global CSS
-- Pattern: Next.js root layout convention (must export default function returning `<html>`)
-- Purpose: Default landing page — currently scaffold boilerplate
-- Pattern: Next.js page convention (default export = route handler)
+- `MidnightProviderSet` — Bundled wallet, indexer, ZK, and proof providers
+- `useWalletContext()` — React hook for wallet connection state and providers
+- `usePoll()` / `usePolls()` — TanStack Query hooks for poll data
+- `contractService` — Functions for creating polls, casting votes, adding invite codes
 ## Entry Points
-- Location: `app/layout.tsx` (root layout, wraps all pages)
-- Triggers: Every page request
-- Responsibilities: HTML shell, font loading, global CSS
-- Location: `app/page.tsx`
-- Triggers: `GET /`
-- Responsibilities: Renders the landing page
-## Planned Integrations (Dependencies Installed, Not Yet Used)
-- `@midnight-ntwrk/compact-js` — Compact language JS runtime
-- `@midnight-ntwrk/ledger-v8` — Ledger integration (v8)
-- `@midnight-ntwrk/midnight-js-contracts` — Smart contract interactions
-- `@midnight-ntwrk/midnight-js-fetch-zk-config-provider` — ZK proof configuration
-- `@midnight-ntwrk/midnight-js-indexer-public-data-provider` — Public data indexer
-- `@midnight-ntwrk/midnight-js-network-id` — Network identification
-- `@midnight-ntwrk/midnight-js-types` — TypeScript type definitions
-- `graphql` — GraphQL core library
-- `graphql-yoga` — GraphQL server (likely for Next.js API routes)
+- Location: `index.html` → `src/main.tsx` → `src/app.tsx`
+- Triggers: Browser page load
+- Responsibilities: React root, router setup, provider tree (QueryClient, WalletProvider)
+- Location: `server.ts`
+- Triggers: `bun run serve` (production)
+- Responsibilities: API routes, static file serving, SPA fallback
+## Active Integrations
+- `@midnight-ntwrk/compact-js` — Compact contract runtime
+- `@midnight-ntwrk/ledger-v8` — Ledger WASM bindings
+- `@midnight-ntwrk/midnight-js-contracts` — Contract deployment and interaction
+- `@midnight-ntwrk/midnight-js-fetch-zk-config-provider` — ZK proving key fetching
+- `@midnight-ntwrk/midnight-js-indexer-public-data-provider` — On-chain data reads
+- `@midnight-ntwrk/midnight-js-network-id` — Network configuration
+- `@neondatabase/serverless` — Neon Postgres for metadata storage
+- `graphql` + `graphql-yoga` — GraphQL for indexer queries
 ## Error Handling
-- No custom `error.tsx` or `not-found.tsx` boundary files exist
-- No global error boundary configured
-## Cross-Cutting Concerns
-## Database Schema
-## API Surface
+- React Router error boundaries for route-level errors
+- TanStack Query error/loading states for async operations
+- Try/catch in contract service with user-facing error messages
 ## Module Boundaries
 | Module | Responsibility | Dependencies |
 |--------|---------------|--------------|
-| `app/layout.tsx` | Root HTML shell, fonts, global CSS | `next`, `next/font/google`, `globals.css` |
-| `app/page.tsx` | Home page rendering | `next/image` |
-| `app/globals.css` | Global styles and Tailwind theme | `tailwindcss` |
+| `src/app.tsx` | Root component, router, providers | `react-router`, `@tanstack/react-query` |
+| `src/routes/*` | Page components | `lib/midnight/*`, UI components |
+| `lib/midnight/*` | Blockchain integration | Midnight SDK packages |
+| `lib/api/*` | Metadata API handler | `lib/db/*`, `lib/midnight/metadata-store` |
+| `lib/db/*` | Database client and migrations | `@neondatabase/serverless` |
+| `server.ts` | Production server | `lib/api/*`, `dist/` |
 <!-- GSD:architecture-end -->
 
 <!-- GSD:skills-start source:skills/ -->
