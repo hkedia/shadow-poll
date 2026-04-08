@@ -119,7 +119,9 @@ export function VotePanel({ options, pollId, isExpired, isConnected, pollType }:
               <div className="w-2 h-2 rounded-full bg-on-primary" />
             )}
           </div>
-          <span className="text-xl font-semibold text-on-surface">{option}</span>
+          <span className="text-lg sm:text-xl font-semibold text-on-surface break-words">
+            {option}
+          </span>
         </label>
       ))}
 
@@ -136,7 +138,7 @@ export function VotePanel({ options, pollId, isExpired, isConnected, pollType }:
             <button
               type="button"
               onClick={connect}
-              className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-bold text-lg flex items-center gap-3 active:scale-95 duration-200 shadow-lg"
+              className="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-3 active:scale-95 duration-200 shadow-lg"
             >
               <span className="material-symbols-outlined">wallet</span>
               Connect Wallet
@@ -147,7 +149,7 @@ export function VotePanel({ options, pollId, isExpired, isConnected, pollType }:
             type="button"
             onClick={handleVote}
             disabled={isVoteDisabled}
-            className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-10 py-5 rounded-full font-bold text-lg flex items-center gap-3 active:scale-95 duration-200 shadow-2xl shadow-primary/30 disabled:opacity-50 disabled:pointer-events-none transition-all"
+            className="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-container text-on-primary px-10 py-5 rounded-full font-bold text-lg flex items-center justify-center gap-3 active:scale-95 duration-200 shadow-2xl shadow-primary/30 disabled:opacity-50 disabled:pointer-events-none transition-all"
           >
             {activeMutation.isPending ? (
               <>

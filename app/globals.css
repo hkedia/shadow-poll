@@ -37,6 +37,11 @@
   --muted-foreground: #aaa8c5;
 }
 
+html,
+body {
+  min-height: 100%;
+}
+
 @theme inline {
   /* Colors */
   --color-background: var(--background);

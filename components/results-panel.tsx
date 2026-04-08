@@ -33,9 +33,9 @@ export function ResultsPanel({ options, tallies, expirationBlock }: ResultsPanel
   }
 
   return (
-    <div className="bg-[rgba(35,36,58,0.6)] backdrop-blur-[30px] p-8 rounded-xl border border-outline-variant/10 space-y-8">
+    <div className="bg-[rgba(35,36,58,0.6)] backdrop-blur-[30px] p-5 sm:p-8 rounded-xl border border-outline-variant/10 space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-end">
         <h3 className="font-headline text-2xl font-bold">Live Results</h3>
         <div className="flex items-center gap-2 text-tertiary">
           <div className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
@@ -51,8 +51,8 @@ export function ResultsPanel({ options, tallies, expirationBlock }: ResultsPanel
 
         return (
           <div key={index} className="space-y-3">
-            <div className="flex justify-between items-center font-semibold">
-              <span className="text-on-surface">{option}</span>
+            <div className="flex justify-between items-center gap-4 font-semibold">
+              <span className="text-on-surface break-words">{option}</span>
               <span
                 className={`text-xl tracking-tight ${
                   isFirst ? "text-primary" : "text-on-surface-variant"
@@ -79,7 +79,7 @@ export function ResultsPanel({ options, tallies, expirationBlock }: ResultsPanel
       })}
 
       {/* Footer */}
-      <div className="pt-4 border-t border-outline-variant/10 flex items-center justify-between text-sm text-on-surface-variant">
+      <div className="pt-4 border-t border-outline-variant/10 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-on-surface-variant">
         <span>{total.toString()} total votes</span>
         <ExpirationBadge expirationBlock={expirationBlock} />
       </div>

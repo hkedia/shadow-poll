@@ -57,7 +57,7 @@ export default function PollDetailPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         <div className="lg:col-span-7 space-y-6">
           <Skeleton className="h-6 w-48 bg-surface-container-highest" />
           <Skeleton className="h-16 w-full bg-surface-container-highest" />
@@ -121,7 +121,7 @@ export default function PollDetailPage() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
       {/* Left Column: Poll Identity & Voting */}
       <div className="lg:col-span-7 space-y-10">
         <div className="space-y-4">
@@ -140,19 +140,19 @@ export default function PollDetailPage() {
           )}
 
           {/* Poll title */}
-          <h1 className="text-5xl md:text-6xl font-headline font-extrabold tracking-tight leading-tight text-on-surface">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-extrabold tracking-tight leading-tight text-on-surface text-balance">
             {metadata?.title ?? "Untitled Poll"}
           </h1>
 
           {/* Description */}
           {metadata?.description && (
-            <p className="text-on-surface-variant text-lg max-w-2xl leading-relaxed">
+            <p className="text-on-surface-variant text-base sm:text-lg max-w-2xl leading-relaxed">
               {metadata.description}
             </p>
           )}
 
           {/* Privacy description */}
-          <p className="text-on-surface-variant text-lg max-w-2xl leading-relaxed">
+          <p className="text-on-surface-variant text-base sm:text-lg max-w-2xl leading-relaxed">
             This poll is protected by zero-knowledge proofs on the Midnight network.
             Your identity remains shielded while your vote is cryptographically verified.
           </p>

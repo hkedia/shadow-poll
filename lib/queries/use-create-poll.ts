@@ -30,6 +30,13 @@ export interface CreatePollResult {
   inviteCodes?: InviteCode[]; // populated only for invite_only polls
 }
 
+type CreatePollResponse = {
+  private?: {
+    result?: Uint8Array;
+  };
+  result?: Uint8Array;
+};
+
 /**
  * Mutation hook for creating a new poll on-chain.
  *
@@ -79,8 +86,7 @@ export function useCreatePoll() {
 
       // 5. Deploy or find the Poll Manager contract
       const contractAddress = getContractAddress();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let contract: any;
+      let contract: unknown;
 
       if (!contractAddress) {
         // No contract deployed yet — deploy a fresh one (D-20: single contract)
@@ -109,9 +115,9 @@ export function useCreatePoll() {
 
       // 7. Extract poll ID from the transaction result
       // The create_poll circuit returns Bytes<32> as the poll ID
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pollIdBytes: Uint8Array = (result as any)?.private?.result
-        ?? (result as any)?.result
+      const createPollResponse = result as CreatePollResponse;
+      const pollIdBytes: Uint8Array = createPollResponse.private?.result
+        ?? createPollResponse.result
         ?? new Uint8Array(32);
       const pollId = bytesToHex(pollIdBytes);
 

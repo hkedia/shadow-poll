@@ -10,7 +10,7 @@ interface HeaderProps {
 export function Header({ walletSlot }: HeaderProps) {
   return (
     <header className="fixed top-0 w-full z-50 bg-[#0d0d19]/60 backdrop-blur-xl shadow-[0px_24px_48px_rgba(0,0,0,0.4)]">
-      <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"

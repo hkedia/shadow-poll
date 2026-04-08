@@ -1,14 +1,11 @@
 "use client";
 
-import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export function InstallPrompt() {
-  const { connect } = useWalletContext();
-
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="flex flex-1 items-center justify-center px-4 py-8">
       <Card className="w-full max-w-sm bg-[var(--surface-container-low)] border-[var(--outline-variant)] rounded-xl">
         <CardContent className="p-8 flex flex-col items-center text-center gap-6">
           {/* Wallet icon placeholder */}

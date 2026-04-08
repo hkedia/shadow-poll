@@ -27,7 +27,7 @@ export function PollCard({ poll, tallies }: PollCardProps) {
 
   return (
     <Link href={`/poll/${poll.id}`} className="block">
-      <div className="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between transition-all hover:bg-surface-container-high h-full min-h-[280px]">
+      <div className="bg-surface-container-low rounded-3xl p-5 sm:p-8 flex flex-col justify-between transition-all hover:bg-surface-container-high h-full min-h-[280px]">
         <div>
           <span className={`font-bold tracking-widest text-xs uppercase mb-4 flex items-center gap-1.5 ${
             isInviteOnly ? "text-tertiary" : "text-primary"
@@ -44,7 +44,7 @@ export function PollCard({ poll, tallies }: PollCardProps) {
               <Skeleton className="h-6 w-1/2 bg-surface-container-highest" />
             </div>
           ) : (
-            <h3 className="text-xl font-headline font-bold mb-4 text-on-surface leading-tight">
+            <h3 className="text-xl font-headline font-bold mb-4 text-on-surface leading-tight break-words">
               {metadata?.title ?? "Untitled Poll"}
             </h3>
           )}
@@ -63,7 +63,7 @@ export function PollCard({ poll, tallies }: PollCardProps) {
           )}
         </div>
 
-        <div className="flex justify-between items-end">
+        <div className="flex justify-between items-end gap-4">
           <div className="text-sm">
             <div className="font-bold text-on-surface">{totalVotes} votes</div>
             <ExpirationBadge expirationBlock={poll.data.expiration_block} />

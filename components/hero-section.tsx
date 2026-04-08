@@ -11,7 +11,7 @@ export function HeroSection() {
   const isConnecting = status === "connecting";
 
   return (
-    <section className="flex flex-col items-start md:items-center justify-center min-h-[60vh] py-12 md:py-16 relative">
+    <section className="flex flex-col items-start md:items-center justify-center flex-1 py-8 md:py-12 relative">
       {/* Decorative glow orb */}
       <div
         aria-hidden="true"
@@ -20,7 +20,7 @@ export function HeroSection() {
 
       <div className="relative z-10 flex flex-col items-start md:items-center gap-6 text-left md:text-center md:max-w-2xl">
         {/* Headline — bold with gradient accent word */}
-        <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-[var(--on-surface)]">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[var(--on-surface)]">
           Forge Your{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] to-[var(--tertiary)]">
             Voice

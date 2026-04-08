@@ -23,9 +23,9 @@ function FeaturedPollCard({ poll }: { poll: PollWithId }) {
 
   return (
     <Link href={`/poll/${poll.id}`} className="block md:col-span-8">
-      <div className="group relative overflow-hidden bg-surface-container-low rounded-3xl p-8 transition-all hover:bg-surface-container-high h-full">
+      <div className="group relative overflow-hidden bg-surface-container-low rounded-3xl p-5 sm:p-8 transition-all hover:bg-surface-container-high h-full">
         {/* LIVE badge */}
-        <div className="absolute top-0 right-0 p-8">
+        <div className="absolute top-0 right-0 p-5 sm:p-8">
           <span className="flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-bold border border-primary/20">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             LIVE
@@ -43,7 +43,7 @@ function FeaturedPollCard({ poll }: { poll: PollWithId }) {
               <Skeleton className="h-8 w-3/4 bg-surface-container-highest" />
             </div>
           ) : (
-            <h2 className="text-3xl font-headline font-bold mb-6 text-on-surface leading-snug">
+            <h2 className="text-2xl sm:text-3xl font-headline font-bold mb-6 text-on-surface leading-snug pr-20 sm:pr-0">
               {metadata?.title ?? "Untitled Poll"}
             </h2>
           )}
@@ -56,13 +56,13 @@ function FeaturedPollCard({ poll }: { poll: PollWithId }) {
                   key={i}
                   className="w-full bg-surface-container-highest rounded-xl p-4 flex justify-between items-center cursor-pointer hover:bg-primary/5 transition-colors"
                 >
-                  <span className="font-medium">{option}</span>
+                  <span className="font-medium break-words">{option}</span>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="flex items-center gap-6 text-on-surface-variant text-sm">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-on-surface-variant text-sm">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-lg">how_to_vote</span>
               <span className="font-bold text-on-surface">
@@ -86,16 +86,16 @@ function TrendingPolls() {
   return (
     <>
       {/* Hero & heading */}
-      <section className="mb-16 relative">
+      <section className="mb-12 md:mb-16 relative">
         <div className="max-w-3xl">
-          <h1 className="text-6xl font-headline font-extrabold tracking-tight mb-6 text-on-surface">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-extrabold tracking-tight mb-6 text-on-surface text-balance">
             Decide the{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-tertiary">
               Future
             </span>{" "}
             Anonymously.
           </h1>
-          <p className="text-lg text-on-surface-variant max-w-xl leading-relaxed mb-10">
+          <p className="text-base sm:text-lg text-on-surface-variant max-w-xl leading-relaxed mb-10">
             Explore active polls secured by Midnight&apos;s zero-knowledge technology.
             Your vote is your voice — completely private, forever immutable.
           </p>
@@ -185,20 +185,7 @@ export default function HomePage() {
 
   // When connected, show trending polls
   if (status === "connected") {
-    return (
-      <>
-        <TrendingPolls />
-
-        {/* Floating Action Button — Create Poll */}
-        <Link
-          href="/create"
-          className="fixed bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-[0px_24px_48px_rgba(0,0,0,0.4)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40"
-          aria-label="Create Poll"
-        >
-          <span className="material-symbols-outlined scale-125">add</span>
-        </Link>
-      </>
-    );
+    return <TrendingPolls />;
   }
 
   // All other states (disconnected, connecting, idle, error) — show hero

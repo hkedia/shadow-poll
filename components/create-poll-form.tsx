@@ -126,12 +126,12 @@ export function CreatePollForm() {
       {/* Left Column: Question and Options */}
       <div className="md:col-span-8 space-y-6">
         {/* Question Card */}
-        <div className="bg-surface-container-low rounded-xl p-8">
+        <div className="bg-surface-container-low rounded-xl p-5 sm:p-8">
           <label className="block font-headline font-bold text-primary mb-4 tracking-wide uppercase text-xs">
             Primary Question
           </label>
           <textarea
-            className="w-full bg-surface-container-highest border-none rounded-xl p-5 text-xl font-body text-on-surface placeholder:text-outline focus:ring-1 focus:ring-primary/20 transition-all resize-none"
+            className="w-full bg-surface-container-highest border-none rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-body text-on-surface placeholder:text-outline focus:ring-1 focus:ring-primary/20 transition-all resize-none"
             placeholder="What would you like to ask the world?"
             rows={2}
             maxLength={200}
@@ -147,8 +147,8 @@ export function CreatePollForm() {
         </div>
 
         {/* Options Card */}
-        <div className="bg-surface-container-low rounded-xl p-8">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-surface-container-low rounded-xl p-5 sm:p-8">
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-6">
             <label className="font-headline font-bold text-primary tracking-wide uppercase text-xs">
               Poll Options
             </label>
@@ -203,11 +203,11 @@ export function CreatePollForm() {
       {/* Right Column: Settings and Publish */}
       <div className="md:col-span-4 space-y-6">
         {/* Poll Type Toggle */}
-        <div className="bg-surface-container-low rounded-xl p-8">
+        <div className="bg-surface-container-low rounded-xl p-5 sm:p-8">
           <h3 className="font-headline font-bold text-primary mb-6 tracking-wide uppercase text-xs">
             Poll Type
           </h3>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               onClick={() => setPollType("public")}
@@ -261,7 +261,7 @@ export function CreatePollForm() {
         </div>
 
         {/* Duration Settings Card */}
-        <div className="bg-surface-container-low rounded-xl p-8">
+        <div className="bg-surface-container-low rounded-xl p-5 sm:p-8">
           <h3 className="font-headline font-bold text-primary mb-6 tracking-wide uppercase text-xs">
             Poll Duration
           </h3>
@@ -297,7 +297,7 @@ export function CreatePollForm() {
         </div>
 
         {/* Publish Card */}
-        <div className="bg-surface-container-low rounded-xl p-8 relative overflow-hidden">
+        <div className="bg-surface-container-low rounded-xl p-5 sm:p-8 relative overflow-hidden">
           {/* Decorative glow */}
           <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
 
