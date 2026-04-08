@@ -55,3 +55,4 @@ deployment.json
 
 # LevelDB private state store created by deploy script
 shadow-poll-deploy-state/
+midnight-level-db/
