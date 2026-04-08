@@ -154,7 +154,7 @@ Plans:
 
 Plans:
 - [x] 08-01-PLAN.md — Vite config, entry points, static SDK imports, delete stub + Turbopack workarounds
-- [ ] 08-02-PLAN.md — React Router app shell, move routes to src/routes/, update all Next.js imports
+- [x] 08-02-PLAN.md — React Router app shell, move routes to src/routes/, update all Next.js imports
 - [ ] 08-03-PLAN.md — Bun.serve() production server, metadata API handler migration
 
 **UI hint**: yes
