@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Data Layer** - Wire up GraphQL indexer reads and API routes for on-chain data access (completed 2026-04-08)
 - [x] **Phase 4: Core Polling** - End-to-end public poll creation, voting, and browsing with live tallies (completed 2026-04-08)
 - [x] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention (completed 2026-04-08)
-- [ ] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard (in progress)
+- [x] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard (in progress) (completed 2026-04-08)
 
 ## Phase Details
 
@@ -117,7 +117,7 @@ Plans:
 
 Plans:
 - [x] 06-01-PLAN.md — Proof & stats service layer (proof-badge.ts, use-participation-proof, use-verify-proof, use-stats)
-- [ ] 06-02-PLAN.md — Proof & stats UI pages (ProofPanel, /verify page, /stats page, Poll Detail update, header nav)
+- [x] 06-02-PLAN.md — Proof & stats UI pages (ProofPanel, /verify page, /stats page, Poll Detail update, header nav)
 
 **UI hint**: yes
 
@@ -173,4 +173,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 3. Data Layer | 2/2 | Complete   | 2026-04-08 |
 | 4. Core Polling | 3/3 | Complete | 2026-04-08 |
 | 5. Invite-Only Polls | 3/3 | Complete | 2026-04-08 |
-| 6. ZK Proofs & Analytics | 1/2 | In Progress|  |
+| 6. ZK Proofs & Analytics | 2/2 | Complete   | 2026-04-08 |
