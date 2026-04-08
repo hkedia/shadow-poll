@@ -4,6 +4,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { pollKeys } from "./use-poll";
 import type { PollTallies } from "@/lib/midnight/ledger-utils";
+import { findPollContract, callCastVote, getContractAddress } from "@/lib/midnight/contract-service";
+import { createWitnesses, getSecretKeyFromWallet, getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
+import { hexToBytes } from "@/lib/midnight/ledger-utils";
 
 /** Parameters for casting a vote. */
 export interface CastVoteParams {
@@ -14,33 +17,45 @@ export interface CastVoteParams {
 /**
  * Mutation hook for casting a vote on a poll.
  *
+ * Calls the cast_vote circuit on-chain via the contract service.
  * Implements optimistic tally updates (DATA-04):
  * - On mutate: immediately increments the chosen option's count in the cache
  * - On error: rolls back to the previous tally counts
  * - On settlement: invalidates the query to fetch the real on-chain state
- *
- * NOTE: The actual on-chain transaction (calling the cast_vote circuit) will be
- * implemented in Phase 4. This hook defines the optimistic update pattern and
- * cache management. Phase 4 will fill in the mutationFn with the real SDK call.
  */
 export function useVoteMutation() {
   const queryClient = useQueryClient();
   const { providers } = useWalletContext();
 
   return useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mutationFn: async (_params: CastVoteParams): Promise<void> => {
+    mutationFn: async (params: CastVoteParams): Promise<void> => {
       if (!providers) {
         throw new Error("Wallet not connected");
       }
 
-      // Phase 4 will implement the actual on-chain transaction:
-      // 1. Get the deployed contract instance via providers
-      // 2. Call contract.cast_vote(hexToBytes(params.pollId), BigInt(params.optionIndex))
-      // 3. Wait for transaction confirmation
-      //
-      // For now, throw to indicate the real implementation is pending
-      throw new Error("Vote transaction not yet implemented — wired in Phase 4");
+      const contractAddress = getContractAddress();
+      if (!contractAddress) {
+        throw new Error("No contract deployed");
+      }
+
+      // Get witness inputs from wallet and indexer
+      const secretKey = await getSecretKeyFromWallet(providers.walletProvider);
+      const blockNumber = await getCurrentBlockNumber(providers.indexerConfig.indexerUri);
+      const witnesses = createWitnesses(secretKey, blockNumber);
+
+      // Connect to the deployed contract
+      const contract = await findPollContract(
+        providers,
+        contractAddress,
+        secretKey,
+        blockNumber,
+      );
+
+      // Call the cast_vote circuit on-chain
+      await callCastVote(contract, {
+        pollId: hexToBytes(params.pollId),
+        optionIndex: params.optionIndex,
+      });
     },
 
     onMutate: async (params: CastVoteParams) => {

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import type { ReactNode } from "react";
@@ -9,6 +11,13 @@ interface MobileDrawerProps {
 }
 
 export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
+  const pathname = usePathname();
+
+  const links = [
+    { href: "/", label: "Trending Polls", icon: "trending_up" },
+    { href: "/create", label: "Create Poll", icon: "add_circle" },
+  ];
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -32,8 +41,31 @@ export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
               <Separator className="bg-outline-variant" />
             </>
           )}
-          {/* Nav links placeholder — Phase 4 will add Home, Create Poll, etc. */}
-          {/* nav-links-placeholder */}
+          {/* Navigation links */}
+          <nav aria-label="Mobile navigation" className="flex flex-col gap-2 px-2">
+            {links.map((link) => {
+              const isActive = link.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(link.href);
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition-colors ${
+                    isActive
+                      ? "text-primary bg-primary/10"
+                      : "text-on-surface-variant hover:text-primary hover:bg-surface-container-high"
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
+                    {link.icon}
+                  </span>
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
       </SheetContent>
     </Sheet>

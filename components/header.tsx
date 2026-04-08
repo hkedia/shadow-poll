@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MobileDrawer } from "@/components/mobile-drawer";
+import { HeaderNav } from "@/components/header-nav";
 import type { ReactNode } from "react";
 
 interface HeaderProps {
@@ -18,9 +19,9 @@ export function Header({ walletSlot }: HeaderProps) {
           Shadow Poll
         </Link>
 
-        {/* Nav links area — hidden in Phase 1 (D-06), Phase 4 will add links */}
+        {/* Nav links — client component for active state highlighting */}
         <nav aria-label="Main navigation" className="hidden md:flex items-center gap-8">
-          {/* phase-4-nav-links */}
+          <HeaderNav />
         </nav>
 
         {/* Desktop wallet slot */}
