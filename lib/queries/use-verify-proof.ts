@@ -65,7 +65,7 @@ export function useVerifyProof(pollId: string, nullifier: string): VerifyProofRe
       if (!state) return false;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ledgerState = parseLedger(state as any);
+      const ledgerState = parseLedger(state.data);
       return ledgerState.vote_nullifiers.member(nullifierBytes);
     },
     enabled: isConnected && Boolean(contractAddress) && hasParams,

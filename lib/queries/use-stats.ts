@@ -85,8 +85,8 @@ export function useStats() {
         providers.indexerConfig.indexerWsUri,
       );
       const state = await publicDataProvider.queryContractState(contractAddress);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ledgerState = state ? parseLedger(state as any) : null;
+      // state is ContractState; parseLedger expects StateValue | ChargedState — pass state.data
+      const ledgerState = state ? parseLedger(state.data) : null;
 
       // Aggregate statistics
       let totalVotes = BigInt(0);

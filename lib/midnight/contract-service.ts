@@ -275,10 +275,9 @@ export async function fetchAllPolls(
   if (!state) return [];
 
   // Parse the raw contract state into typed ledger data.
-  // Cast through any because our structural IndexerPublicDataProvider returns
-  // unknown, but the real SDK returns ContractState (which is StateValue).
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ledgerState = parseLedger(state as any);
+  // queryContractState returns a ContractState object; parseLedger expects
+  // StateValue | ChargedState — so we pass state.data (the ChargedState).
+  const ledgerState = parseLedger(state.data);
   const polls: PollWithId[] = [];
 
   // Iterate the polls Map using Symbol.iterator
@@ -318,7 +317,7 @@ export async function fetchPollWithTallies(
   if (!state) return null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ledgerState = parseLedger(state as any);
+  const ledgerState = parseLedger(state.data);
   const pollIdBytes = hexToBytes(pollIdHex);
   const pollData = readPoll(ledgerState, pollIdBytes);
 

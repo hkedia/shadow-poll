@@ -3,6 +3,10 @@
 // direct import of @midnight-ntwrk/midnight-js-types.
 // Wallet, proof, and midnight provider types are structural subsets of the real SDK types.
 
+import type { ContractState } from "@midnight-ntwrk/compact-runtime";
+
+export type { ContractState };
+
 export type ConnectionStatus =
   | "idle"           // initial state before detection
   | "not_detected"   // 1am.xyz extension not found
@@ -18,7 +22,7 @@ export type ConnectionStatus =
  * The actual SDK provider satisfies this and more.
  */
 export interface IndexerPublicDataProvider {
-  queryContractState(contractAddress: string, config?: unknown): Promise<unknown>;
+  queryContractState(contractAddress: string, config?: unknown): Promise<ContractState | null>;
   watchForContractState(contractAddress: string): Promise<unknown>;
   watchForDeployTxData(contractAddress: string): Promise<unknown>;
 }

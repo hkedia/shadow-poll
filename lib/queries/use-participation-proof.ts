@@ -67,7 +67,7 @@ export function useParticipationProof(pollId: string): ParticipationProof {
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ledgerState = parseLedger(state as any);
+      const ledgerState = parseLedger(state.data);
       const hasVoted = ledgerState.vote_nullifiers.member(nullifierBytes);
 
       if (!hasVoted) {
