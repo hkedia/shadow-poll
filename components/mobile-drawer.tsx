@@ -12,9 +12,9 @@ export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
 
   const links = [
     { href: "/", label: "Home", icon: "home" },
-    { href: "/trending", label: "Trending Polls", icon: "trending_up" },
+    { href: "/active", label: "Active Polls", icon: "radio_button_checked" },
+    { href: "/closed", label: "Closed Polls", icon: "lock_clock" },
     { href: "/create", label: "Create Poll", icon: "add_circle" },
-    { href: "/stats", label: "Stats", icon: "analytics" },
   ];
 
   return (
