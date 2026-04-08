@@ -10,6 +10,7 @@ export function HeaderNav() {
   const links = [
     { href: "/", label: "Trending Polls" },
     { href: "/create", label: "Create Poll" },
+    { href: "/stats", label: "Analytics" },
   ];
 
   return (
