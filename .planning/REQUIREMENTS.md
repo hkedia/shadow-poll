@@ -19,10 +19,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Smart Contracts
 
-- [ ] **CONT-01**: Compact contract exists for creating polls with title, description, options, and poll type
-- [ ] **CONT-02**: Compact contract exists for casting votes on a poll
-- [ ] **CONT-03**: Contract compilation pipeline with scripts in /contracts produces deployable artifacts
-- [ ] **CONT-04**: Compiled ZK proving/verifying keys are served from public folder with proper CORS
+- [x] **CONT-01**: Compact contract exists for creating polls with title, description, options, and poll type
+- [x] **CONT-02**: Compact contract exists for casting votes on a poll
+- [x] **CONT-03**: Contract compilation pipeline with scripts in /contracts produces deployable artifacts
+- [x] **CONT-04**: Compiled ZK proving/verifying keys are served from public folder with proper CORS
 - [ ] **CONT-05**: Invite-only poll votes are verified via ZK proof of valid invite code in contract
 - [ ] **CONT-06**: Contract prevents the same wallet from voting twice on the same poll
 
@@ -44,19 +44,19 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Pages & UI
 
-- [ ] **PAGE-01**: Home / Trending Polls page displays polls from the indexer sorted by activity
-- [ ] **PAGE-02**: Create Poll page has form with public/invite-only toggle and submits on-chain
-- [ ] **PAGE-03**: Poll Detail page at /poll/[id] shows details, tallies, and voting UI
+- [x] **PAGE-01**: Home / Trending Polls page displays polls from the indexer sorted by activity
+- [x] **PAGE-02**: Create Poll page has form with public/invite-only toggle and submits on-chain
+- [x] **PAGE-03**: Poll Detail page at /poll/[id] shows details, tallies, and voting UI
 - [x] **PAGE-04**: UI uses shadcn/ui components with dark-first theme
 - [ ] **PAGE-05**: Stats / Analytics page shows global trends, participation rates, aggregate vote counts
 - [x] **PAGE-06**: All pages are responsive and usable on mobile screens
 
 ### Data Layer
 
-- [ ] **DATA-01**: App reads poll data from the public Midnight Preview indexer GraphQL endpoint
-- [ ] **DATA-02**: GraphQL client (graphql-yoga) configured for indexer queries
-- [ ] **DATA-03**: Thin API routes proxy indexer queries and serve static contract artifacts
-- [ ] **DATA-04**: Vote tallies update optimistically before on-chain confirmation
+- [x] **DATA-01**: App reads poll data from the public Midnight Preview indexer GraphQL endpoint
+- [x] **DATA-02**: GraphQL client (graphql-yoga) configured for indexer queries
+- [x] **DATA-03**: Thin API routes proxy indexer queries and serve static contract artifacts
+- [x] **DATA-04**: Vote tallies update optimistically before on-chain confirmation
 
 ## v2 Requirements
 
@@ -106,10 +106,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WALL-05 | Phase 1 | Complete |
 | WALL-06 | Phase 1 | Complete |
 | WALL-07 | Phase 1 | Complete |
-| CONT-01 | Phase 2 | Pending |
-| CONT-02 | Phase 2 | Pending |
-| CONT-03 | Phase 2 | Pending |
-| CONT-04 | Phase 2 | Pending |
+| CONT-01 | Phase 2 | Complete |
+| CONT-02 | Phase 2 | Complete |
+| CONT-03 | Phase 2 | Complete |
+| CONT-04 | Phase 2 | Complete |
 | CONT-05 | Phase 5 | Pending |
 | CONT-06 | Phase 5 | Pending |
 | POLL-01 | Phase 4 | Complete |
@@ -122,16 +122,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ZKPR-01 | Phase 6 | Pending |
 | ZKPR-02 | Phase 6 | Pending |
 | ZKPR-03 | Phase 6 | Pending |
-| PAGE-01 | Phase 4 | Pending |
-| PAGE-02 | Phase 4 | Pending |
-| PAGE-03 | Phase 4 | Pending |
+| PAGE-01 | Phase 4 | Complete |
+| PAGE-02 | Phase 4 | Complete |
+| PAGE-03 | Phase 4 | Complete |
 | PAGE-04 | Phase 1 | Complete |
 | PAGE-05 | Phase 6 | Pending |
 | PAGE-06 | Phase 1 | Complete |
-| DATA-01 | Phase 3 | Pending |
-| DATA-02 | Phase 3 | Pending |
-| DATA-03 | Phase 3 | Pending |
-| DATA-04 | Phase 3 | Pending |
+| DATA-01 | Phase 3 | Complete |
+| DATA-02 | Phase 3 | Complete |
+| DATA-03 | Phase 3 | Complete |
+| DATA-04 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total

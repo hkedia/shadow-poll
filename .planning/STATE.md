@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 4 plan 02 complete (2/3 plans done)
-last_updated: "2026-04-08T09:33:39.248Z"
+stopped_at: Completed 04-03-PLAN.md — Phase 4 complete (3/3 plans done)
+last_updated: "2026-04-08T09:50:36.124Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 9
-  percent: 90
+  completed_plans: 10
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 **Core value:** Users can vote on polls anonymously with cryptographic guarantees
-**Current focus:** Phase 4 (Core Polling) — Plan 01 complete, Plans 02-03 remaining
+**Current focus:** Phase 4 complete — ready for Phase 5 (Invite-Only Polls)
 
 ## Current Position
 
-Phase: 4 of 6 (Core Polling) — IN PROGRESS
-Plan: 2 of 3 in current phase
-Status: Ready to execute
+Phase: 4 of 6 (Core Polling) — COMPLETE
+Plan: 3 of 3 in current phase
+Status: Phase complete — ready for Phase 5
 Last activity: 2026-04-08
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Progress: [████████░░] 80%
 
 *Updated after each plan completion*
 | Phase 04 P02 | 4min | 2 tasks | 7 files |
+| Phase 04 P03 | 13min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Recent decisions affecting current work:
 - [Phase 04]: Contract-service functions take MidnightProviderSet directly — hooks pass providers unchanged from useWalletContext
 - [Phase 04]: HeaderNav extracted as client component for active state highlighting — Header stays server component
 - [Phase 04]: useCreatePoll extracts poll ID from result.private.result with fallback chain
+- [Phase 04]: PollCard self-fetches metadata via useMetadata(poll.id) — avoids N+1 at page level
+- [Phase 04]: BLOCKS_PER_DAY = BigInt(4320) for duration-to-blocks conversion (~20 sec/block on Preview)
+- [Phase 04]: Block-based expiration polling via getCurrentBlockNumber() with 30s refresh interval
 
 ### Blockers/Concerns
 
@@ -99,6 +103,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-08T09:33:39.238Z
-Stopped at: Phase 4 plan 02 complete (2/3 plans done)
+Last session: 2026-04-08T09:50:36.113Z
+Stopped at: Completed 04-03-PLAN.md — Phase 4 complete (3/3 plans done)
 Resume file: None

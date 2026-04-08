@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Wallet & UI Foundation** - Connect 1am.xyz wallet with provider assembly; establish dark theme and responsive layout (completed 2026-04-08)
 - [x] **Phase 2: Smart Contracts** - Write and compile Compact contracts for poll creation and vote casting (completed 2026-04-08)
 - [x] **Phase 3: Data Layer** - Wire up GraphQL indexer reads and API routes for on-chain data access (completed 2026-04-08)
-- [ ] **Phase 4: Core Polling** - End-to-end public poll creation, voting, and browsing with live tallies
+- [x] **Phase 4: Core Polling** - End-to-end public poll creation, voting, and browsing with live tallies (completed 2026-04-08)
 - [ ] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention
 - [ ] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard
 
@@ -82,7 +82,7 @@ Plans:
 Plans:
 - [x] 04-01-PLAN.md — Contract interaction service layer (witnesses, providers, deploy/call)
 - [x] 04-02-PLAN.md — Data hooks wiring + header navigation links
-- [ ] 04-03-PLAN.md — UI pages (Trending Polls, Create Poll, Poll Detail with voting)
+- [x] 04-03-PLAN.md — UI pages (Trending Polls, Create Poll, Poll Detail with voting)
 
 **UI hint**: yes
 
@@ -160,6 +160,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 1. Wallet & UI Foundation | 3/3 | Complete   | 2026-04-08 |
 | 2. Smart Contracts | 2/2 | Complete   | 2026-04-08 |
 | 3. Data Layer | 2/2 | Complete   | 2026-04-08 |
-| 4. Core Polling | 0/3 | Not started | - |
+| 4. Core Polling | 3/3 | Complete | 2026-04-08 |
 | 5. Invite-Only Polls | 0/0 | Not started | - |
 | 6. ZK Proofs & Analytics | 0/0 | Not started | - |
