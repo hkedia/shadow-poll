@@ -19,7 +19,6 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention (completed 2026-04-08)
 - [x] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard (in progress) (completed 2026-04-08)
 - [ ] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility
-- [ ] **Phase 8: NIGHT Token Payment** - Poll creation costs 5 tNIGHT (NIGHT on mainnet); fee collected atomically by the smart contract; configurable amount, network-aware token, UI cost disclosure, and insufficient-balance error handling
 
 ## Phase Details
 
@@ -139,30 +138,10 @@ Plans:
 
 **UI hint**: no
 
-### Phase 8: NIGHT Token Payment
-**Goal**: Poll creation costs 5 tNIGHT (NIGHT on mainnet); the fee is collected atomically by the smart contract, configurable in one place, network-aware, and clearly disclosed in the UI before submission
-**Depends on**: Phase 2 (contract), Phase 3 (providers), Phase 4 (create poll flow)
-**Requirements**: PAYM-01, PAYM-02, PAYM-03, PAYM-04, PAYM-05
-**Success Criteria** (what must be TRUE):
-  1. Creating a poll deducts 5 tNIGHT from the user's shielded wallet — verified by the contract atomically
-  2. Changing `POLL_CREATION_FEE` in `lib/midnight/fee-config.ts` is the only edit needed to change the fee amount
-  3. The Create Poll page shows "Creating this poll costs 5 tNIGHT" before the user submits
-  4. A user with insufficient tNIGHT sees "Insufficient tNIGHT balance. You need 5 tNIGHT to create a poll." — not a generic error
-  5. Voters (cast_vote, cast_invite_vote) are unaffected — they still pay only DUST (sponsored by 1am wallet)
-**Plans**: 3 plans
-
-Plans:
-- [ ] 08-01-PLAN.md — fee-config.ts, networkId in MidnightProviderSet, receive() in create_poll Compact circuit, callCreatePoll update
-- [ ] 08-02-PLAN.md — Service layer: feeTokenId derivation, PollCreationError, INSUFFICIENT_BALANCE error catching in use-create-poll.ts
-- [ ] 08-03-PLAN.md — UI: fee banner in CreatePollForm, INSUFFICIENT_BALANCE error display
-
-**UI hint**: yes
-
 ## Requirement Coverage
 
-All 38 v1 requirements mapped to exactly one phase. 100% coverage.
+All 33 v1 requirements mapped to exactly one phase. 100% coverage.
 5 infrastructure requirements (INFRA-01..05) added in Phase 7.
-5 payment requirements (PAYM-01..05) added in Phase 8.
 
 | Requirement | Phase | Description |
 |-------------|-------|-------------|
@@ -204,16 +183,11 @@ All 38 v1 requirements mapped to exactly one phase. 100% coverage.
 | INFRA-03 | 7 | GET /api/polls/metadata (no pollId) returns all polls metadata |
 | INFRA-04 | 7 | POST /api/polls/metadata is idempotent (upsert) |
 | INFRA-05 | 7 | App deploys on Vercel with DATABASE_URL env var |
-| PAYM-01 | 8 | Poll creation costs 5 tNIGHT — collected atomically by contract |
-| PAYM-02 | 8 | Fee amount is a single configurable constant in fee-config.ts |
-| PAYM-03 | 8 | Token denomination is network-aware (tNIGHT on testnet, NIGHT on mainnet) |
-| PAYM-04 | 8 | Create Poll UI shows cost before submission |
-| PAYM-05 | 8 | Insufficient balance shows a specific, user-friendly error message |
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -224,4 +198,3 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 5. Invite-Only Polls | 3/3 | Complete | 2026-04-08 |
 | 6. ZK Proofs & Analytics | 2/2 | Complete   | 2026-04-08 |
 | 7. Persistent Data Layer | 0/1 | Pending | — |
-| 8. NIGHT Token Payment | 0/3 | Pending | — |
