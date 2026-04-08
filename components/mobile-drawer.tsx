@@ -11,8 +11,9 @@ export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
   const { pathname } = useLocation();
 
   const links = [
-    { href: "/", label: "Trending Polls", icon: "trending_up" },
+    { href: "/trending", label: "Trending Polls", icon: "trending_up" },
     { href: "/create", label: "Create Poll", icon: "add_circle" },
+    { href: "/stats", label: "Stats", icon: "analytics" },
   ];
 
   return (
@@ -41,8 +42,8 @@ export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
           {/* Navigation links */}
           <nav aria-label="Mobile navigation" className="flex flex-col gap-2 px-2">
             {links.map((link) => {
-              const isActive = link.href === "/"
-                ? pathname === "/"
+              const isActive = link.href === "/trending"
+                ? pathname === "/trending" || pathname === "/"
                 : pathname.startsWith(link.href);
 
               return (

@@ -5,7 +5,7 @@ export function HeaderNav() {
   const { pathname } = useLocation();
 
   const links = [
-    { href: "/", label: "Trending Polls" },
+    { href: "/trending", label: "Trending Polls" },
     { href: "/create", label: "Create Poll" },
     { href: "/stats", label: "Stats" },
   ];
@@ -13,8 +13,8 @@ export function HeaderNav() {
   return (
     <>
       {links.map((link) => {
-        const isActive = link.href === "/"
-          ? pathname === "/"
+        const isActive = link.href === "/trending"
+          ? pathname === "/trending" || pathname === "/"
           : pathname.startsWith(link.href);
 
         return (

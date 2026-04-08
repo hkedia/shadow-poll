@@ -11,7 +11,7 @@ export function Footer() {
             alt="Shadow Poll"
             width={260}
             height={40}
-            className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity"
+            className="h-8 w-auto opacity-90 hover:opacity-100 transition-opacity"
           />
         </Link>
 

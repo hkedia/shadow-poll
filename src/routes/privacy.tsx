@@ -117,8 +117,7 @@ export default function PrivacyPage() {
         <p className="text-on-surface-variant leading-relaxed text-sm">
           Poll metadata is retained indefinitely so that historical polls remain readable. On-chain
           state is permanent by the nature of the blockchain. Because no personal data is stored,
-          there is nothing to delete on your behalf. If you believe any data linked to you exists,
-          contact us at the address below.
+          there is nothing to delete on your behalf.
         </p>
       </section>
 
@@ -128,20 +127,6 @@ export default function PrivacyPage() {
           We may update this policy as the application evolves. Material changes will be noted on this
           page with a new effective date. Continued use of Shadow Poll after a change constitutes
           acceptance of the updated policy.
-        </p>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-2xl font-headline font-bold text-on-surface">8. Contact</h2>
-        <p className="text-on-surface-variant leading-relaxed text-sm">
-          Questions about this policy? Reach us at{" "}
-          <a
-            href="mailto:privacy@shadowpoll.xyz"
-            className="text-primary hover:underline"
-          >
-            privacy@shadowpoll.xyz
-          </a>
-          .
         </p>
       </section>
     </div>

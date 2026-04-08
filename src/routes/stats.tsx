@@ -87,29 +87,44 @@ export default function StatsPage() {
   const isConnected = status === "connected";
   const { stats, isLoading, isError, error, refetch } = useStats();
 
-  // Needs wallet
+  // Not connected — show page header + connect prompt banner (no full-page gate)
   if (!isConnected) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-      <div className="text-center py-20 max-w-md mx-auto">
-        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-          <span className="material-symbols-outlined text-primary text-4xl">analytics</span>
+      <div className="space-y-10">
+        {/* Page header */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 text-tertiary text-sm font-semibold tracking-wider uppercase">
+            <span className="material-symbols-outlined text-lg">analytics</span>
+            Live from Midnight Blockchain
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-headline font-extrabold tracking-tight text-on-surface">
+            Global Analytics
+          </h1>
+          <p className="text-on-surface-variant max-w-xl">
+            Aggregate statistics derived entirely from on-chain contract state.
+            No personal data is tracked — only public vote tallies.
+          </p>
         </div>
-        <h1 className="text-3xl font-headline font-extrabold text-on-surface mb-3">
-          Analytics
-        </h1>
-        <p className="text-on-surface-variant mb-8">
-          Connect your 1am.xyz wallet to view global poll statistics from the Midnight blockchain.
-        </p>
-        <button
-          type="button"
-          onClick={connect}
-          className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-3 mx-auto active:scale-95 transition-all shadow-lg"
-        >
-          <span className="material-symbols-outlined">wallet</span>
-          Connect Wallet
-        </button>
-      </div>
+
+        {/* Inline connect prompt */}
+        <div className="bg-surface-container-low rounded-2xl p-6 ring-1 ring-primary/20 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-primary text-2xl">wallet</span>
+          </div>
+          <div className="flex-1">
+            <p className="font-headline font-bold text-on-surface mb-1">Connect your wallet to load stats</p>
+            <p className="text-on-surface-variant text-sm">
+              Statistics are fetched directly from the Midnight blockchain via your wallet&apos;s indexer connection.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={connect}
+            className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-3 rounded-full font-bold shrink-0 active:scale-95 transition-all shadow-md hover:shadow-lg"
+          >
+            Connect Wallet
+          </button>
+        </div>
       </div>
     );
   }
