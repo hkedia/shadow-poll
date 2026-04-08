@@ -33,6 +33,12 @@ Bun.serve({
       return handleMetadataRequest(req);
     }
 
+    // --- Indexer API routes (direct GraphQL queries to Midnight indexer) ---
+    if (url.pathname.startsWith("/api/indexer/")) {
+      const { handleIndexerRequest } = await import("./lib/api/indexer-handler");
+      return handleIndexerRequest(req);
+    }
+
     // --- CORS headers for zk-keys ---
     if (url.pathname.startsWith("/zk-keys/")) {
       const file = Bun.file(join(PUBLIC_DIR, url.pathname));
