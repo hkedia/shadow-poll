@@ -48,7 +48,11 @@ Plans:
   2. A Compact contract exists that accepts a vote on a poll — and compiles without errors
   3. Running the compilation pipeline in /contracts produces deployable WASM artifacts and ZK keys
   4. Compiled proving/verifying keys are accessible from the public folder with correct CORS headers
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Write Poll Manager Compact contract with create_poll and cast_vote circuits
+- [ ] 02-02-PLAN.md — Build compilation pipeline script and serve ZK keys from public/
 
 ### Phase 3: Data Layer
 **Goal**: The app can read on-chain poll data from the Midnight Preview indexer through configured GraphQL and API routes
@@ -144,7 +148,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Wallet & UI Foundation | 3/3 | Complete   | 2026-04-08 |
-| 2. Smart Contracts | 0/0 | Not started | - |
+| 2. Smart Contracts | 0/2 | Not started | - |
 | 3. Data Layer | 0/0 | Not started | - |
 | 4. Core Polling | 0/0 | Not started | - |
 | 5. Invite-Only Polls | 0/0 | Not started | - |
