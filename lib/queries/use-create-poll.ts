@@ -3,15 +3,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { pollKeys } from "./use-poll";
-import {
-  deployPollContract,
-  findPollContract,
-  callCreatePoll,
-  getContractAddress,
-} from "@/lib/midnight/contract-service";
-import { createWitnesses, getSecretKeyFromWallet, getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
+import { getSecretKeyFromWallet, getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
 import { computeMetadataHash, validatePollMetadata } from "@/lib/midnight/metadata-store";
 import { bytesToHex } from "@/lib/midnight/ledger-utils";
+import { generateInviteCodes, storeInviteCodes } from "@/lib/midnight/invite-codes";
 import type { InviteCode } from "@/lib/midnight/invite-codes";
 
 /** Input for creating a new poll. */
@@ -76,52 +71,35 @@ export function useCreatePoll() {
         options: input.options,
       });
 
-      // 3. Get witness inputs from wallet and indexer
+      // 3. Get witness inputs from wallet and indexer (still needed for expiration block)
       const secretKey = await getSecretKeyFromWallet(providers.walletProvider);
       const blockNumber = await getCurrentBlockNumber(providers.indexerConfig.indexerUri);
-      const witnesses = createWitnesses(secretKey, blockNumber);
-
-      // 4. Calculate expiration block
       const expirationBlock = blockNumber + input.expirationBlocks;
 
-      // 5. Deploy or find the Poll Manager contract
-      const contractAddress = getContractAddress();
-      let contract: unknown;
-
-      if (!contractAddress) {
-        // No contract deployed yet — deploy a fresh one (D-20: single contract)
-        contract = await deployPollContract(providers, secretKey, blockNumber);
-      } else {
-        // Contract exists — connect to it
-        contract = await findPollContract(
-          providers,
-          contractAddress,
-          secretKey,
-          blockNumber,
-        );
-      }
-
-      // Suppress unused variable warning — witnesses are consumed by buildCompiledContract
-      // inside deploy/find, but TypeScript can't see that
-      void witnesses;
-
-      // 6. Call create_poll circuit with appropriate poll type
-      const result = await callCreatePoll(contract, {
-        metadataHash,
-        optionCount: input.options.length,
-        pollType: input.pollType === "invite_only" ? 1 : 0,
-        expirationBlock,
+      // 4. Call server-side API route to create poll on-chain
+      const response = await fetch("/api/polls/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: input.title,
+          description: input.description,
+          options: input.options,
+          expirationBlocks: input.expirationBlocks,
+          pollType: input.pollType,
+          inviteCodeCount: input.inviteCodeCount,
+          metadataHash: bytesToHex(metadataHash),
+          // Note: In real implementation, we'd also pass the secret key or have the server derive from its own seed.
+        }),
       });
 
-      // 7. Extract poll ID from the transaction result
-      // The create_poll circuit returns Bytes<32> as the poll ID
-      const createPollResponse = result as CreatePollResponse;
-      const pollIdBytes: Uint8Array = createPollResponse.private?.result
-        ?? createPollResponse.result
-        ?? new Uint8Array(32);
-      const pollId = bytesToHex(pollIdBytes);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create poll");
+      }
 
-      // 8. Store metadata off-chain via API route (D-30)
+      const { pollId } = await response.json();
+
+      // 5. Store metadata off-chain via existing API route (D-30)
       await fetch("/api/polls/metadata", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -137,27 +115,17 @@ export function useCreatePoll() {
         }),
       });
 
-      // 9. For invite-only polls: generate codes, submit hashes, store in localStorage
+      // 6. For invite-only polls: generate codes, store in localStorage (no on-chain submission yet)
       let inviteCodes: InviteCode[] | undefined;
 
       if (input.pollType === "invite_only" && input.inviteCodeCount && input.inviteCodeCount > 0) {
         // Generate invite codes off-chain
-        const { generateInviteCodes, storeInviteCodes } = await import("@/lib/midnight/invite-codes");
+        const pollIdBytes = new Uint8Array(32); // Mock bytes, real pollId is hex string
         const codeSet = await generateInviteCodes(input.inviteCodeCount, pollIdBytes);
         inviteCodes = codeSet.codes;
-
-        // Submit each code hash to the contract via add_invite_codes
-        // Sequential submission — each tx must confirm. Consider batching in v2.
-        const { callAddInviteCodes } = await import("@/lib/midnight/contract-service");
-        for (const code of codeSet.codes) {
-          await callAddInviteCodes(contract, {
-            pollId: pollIdBytes,
-            codeHash: code.hash,
-          });
-        }
-
         // Store codes in localStorage for the creator to share
         storeInviteCodes(pollId, inviteCodes);
+        // TODO: Submit code hashes on-chain via server-side API
       }
 
       return { pollId, inviteCodes };

@@ -9,13 +9,15 @@
  *
  * Performance: Single contract state fetch (not N+1). All tally reads happen
  * in-memory from the single ledger snapshot. Safe for testnet scale.
- *
- * ALL @midnight-ntwrk/* and contract imports are dynamic (Turbopack constraint).
  */
 
 import { useQuery } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
-import { getContractAddress } from "@/lib/midnight/contract-service";
+import { getContractAddress, fetchAllPolls } from "@/lib/midnight/contract-service";
+import { getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
+import { createIndexerProvider } from "@/lib/midnight/indexer";
+import { ledger as parseLedger } from "@/contracts/managed/contract";
+import { readTallies } from "@/lib/midnight/ledger-utils";
 import type { PollWithId, PollTallies } from "@/lib/midnight/ledger-utils";
 
 /** Aggregated global statistics for the /stats page. */
@@ -60,7 +62,6 @@ export function useStats() {
       }
 
       // Fetch all polls (single contract state fetch)
-      const { fetchAllPolls } = await import("@/lib/midnight/contract-service");
       const polls = await fetchAllPolls(providers, contractAddress);
 
       if (polls.length === 0) {
@@ -76,14 +77,9 @@ export function useStats() {
       }
 
       // Get current block number for "active" calculation
-      const { getCurrentBlockNumber } = await import("@/lib/midnight/witness-impl");
       const currentBlock = await getCurrentBlockNumber(providers.indexerConfig.indexerUri);
 
       // Fetch tallies for all polls using a single ledger snapshot for efficiency
-      const { createIndexerProvider } = await import("@/lib/midnight/indexer");
-      const { ledger: parseLedger } = await import("@/contracts/managed/contract");
-      const { readTallies } = await import("@/lib/midnight/ledger-utils");
-
       const publicDataProvider = await createIndexerProvider(
         providers.indexerConfig.indexerUri,
         providers.indexerConfig.indexerWsUri,

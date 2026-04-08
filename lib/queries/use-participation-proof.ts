@@ -7,13 +7,15 @@
  *
  * Implements: ZKPR-01 (client-side participation proof generation)
  * Design decisions: D-60 (hybrid off-chain proof), D-62 (verify page reads on-chain)
- *
- * ALL @midnight-ntwrk/* and contract imports are dynamic (Turbopack constraint).
  */
 
 import { useQuery } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { getContractAddress } from "@/lib/midnight/contract-service";
+import { getSecretKeyFromWallet } from "@/lib/midnight/witness-impl";
+import { hexToBytes, bytesToHex, deriveNullifier } from "@/lib/midnight/ledger-utils";
+import { createIndexerProvider } from "@/lib/midnight/indexer";
+import { ledger as parseLedger } from "@/contracts/managed/contract";
 
 /** Return type for useParticipationProof */
 export interface ParticipationProof {
@@ -46,19 +48,14 @@ export function useParticipationProof(pollId: string): ParticipationProof {
         return { hasVoted: false, nullifier: null, proofUrl: null };
       }
 
-      // Step 1: Get the voter's secret key from the wallet (dynamic import — Turbopack safe)
-      const { getSecretKeyFromWallet } = await import("@/lib/midnight/witness-impl");
+      // Step 1: Get the voter's secret key from the wallet
       const voterSk = await getSecretKeyFromWallet(providers.walletProvider);
 
       // Step 2: Convert hex poll ID to bytes and derive the nullifier
-      const { hexToBytes, bytesToHex, deriveNullifier } = await import("@/lib/midnight/ledger-utils");
       const pollIdBytes = hexToBytes(pollId);
       const nullifierBytes = await deriveNullifier(pollIdBytes, voterSk);
 
       // Step 3: Query the on-chain vote_nullifiers map
-      const { createIndexerProvider } = await import("@/lib/midnight/indexer");
-      const { ledger: parseLedger } = await import("@/contracts/managed/contract");
-
       const publicDataProvider = await createIndexerProvider(
         providers.indexerConfig.indexerUri,
         providers.indexerConfig.indexerWsUri,

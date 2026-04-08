@@ -2,9 +2,8 @@
  * Contract interaction service for Shadow Poll.
  *
  * This is the single module through which ALL contract interactions flow.
- * It wraps the Midnight SDK's contract APIs behind dynamic imports to comply
- * with the Turbopack stubbing constraint (all @midnight-ntwrk/* imports must
- * be dynamic — never at module top level).
+ * It wraps the Midnight SDK's contract APIs with static imports (Vite bundles
+ * WASM packages via vite-plugin-wasm — no dynamic import workarounds needed).
  *
  * Exports:
  *   - deployPollContract — deploys a fresh Poll Manager contract
@@ -18,6 +17,13 @@
  *   - fetchPollWithTallies — fetches a single poll with its vote tallies
  */
 
+import { CompiledContract } from "@midnight-ntwrk/compact-js";
+import { Contract, PollType, ledger as parseLedger } from "@/contracts/managed/contract";
+import { createWitnesses } from "./witness-impl";
+import { assembleMidnightProviders } from "./providers";
+import { deployContract, findDeployedContract } from "@midnight-ntwrk/midnight-js-contracts";
+import { createIndexerProvider } from "./indexer";
+import { bytesToHex, hexToBytes, readPoll, readTallies } from "./ledger-utils";
 import type { PollWithId, PollTallies } from "./ledger-utils";
 import type { MidnightProviderSet } from "./types";
 import type { PollData } from "@/contracts/managed/contract";
@@ -39,17 +45,11 @@ export interface CastVoteParams {
 /**
  * Builds a compiled contract with witnesses and asset paths attached.
  * This is the shared setup for both deploy and find operations.
- *
- * ALL imports are dynamic (Turbopack constraint).
  */
 async function buildCompiledContract(
   secretKey: Uint8Array,
   blockNumber: bigint,
 ) {
-  const { CompiledContract } = await import("@midnight-ntwrk/compact-js");
-  const { Contract } = await import("@/contracts/managed/contract");
-  const { createWitnesses } = await import("./witness-impl");
-
   const witnesses = createWitnesses(secretKey, blockNumber);
 
   // The compiled contract's Contract class and the SDK's Contract.Any have
@@ -68,10 +68,8 @@ async function buildCompiledContract(
 
 /**
  * Assembles MidnightProviders from the app's MidnightProviderSet.
- * Wraps the providers.ts assembleMidnightProviders with dynamic import.
  */
 async function getProviders(providerSet: MidnightProviderSet) {
-  const { assembleMidnightProviders } = await import("./providers");
   return assembleMidnightProviders(providerSet);
 }
 
@@ -92,8 +90,6 @@ export async function deployPollContract(
   secretKey: Uint8Array,
   blockNumber: bigint,
 ) {
-  const { deployContract } = await import("@midnight-ntwrk/midnight-js-contracts");
-
   const providers = await getProviders(providerSet);
   const compiledContract = await buildCompiledContract(secretKey, blockNumber);
 
@@ -125,8 +121,6 @@ export async function findPollContract(
   secretKey: Uint8Array,
   blockNumber: bigint,
 ) {
-  const { findDeployedContract } = await import("@midnight-ntwrk/midnight-js-contracts");
-
   const providers = await getProviders(providerSet);
   const compiledContract = await buildCompiledContract(secretKey, blockNumber);
 
@@ -153,8 +147,6 @@ export async function findPollContract(
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function callCreatePoll(contract: any, params: CreatePollParams) {
-  const { PollType } = await import("@/contracts/managed/contract");
-
   const pollTypeEnum = params.pollType === 1
     ? PollType.invite_only
     : PollType.public_poll;
@@ -250,13 +242,13 @@ export async function callAddInviteCodes(contract: any, params: AddInviteCodePar
 /**
  * Returns the canonical contract address from the environment variable.
  *
- * Strategy (per open question 1): Uses NEXT_PUBLIC_POLL_CONTRACT_ADDRESS.
+ * Strategy (per open question 1): Uses VITE_POLL_CONTRACT_ADDRESS.
  * If set, findPollContract uses it. If empty, the app deploys on first use.
  *
  * @returns The contract address string, or null if not configured
  */
 export function getContractAddress(): string | null {
-  const address = process.env.NEXT_PUBLIC_POLL_CONTRACT_ADDRESS;
+  const address = import.meta.env.VITE_POLL_CONTRACT_ADDRESS;
   return address && address.trim().length > 0 ? address.trim() : null;
 }
 
@@ -274,10 +266,6 @@ export async function fetchAllPolls(
   providerSet: MidnightProviderSet,
   contractAddress: string,
 ): Promise<PollWithId[]> {
-  const { createIndexerProvider } = await import("./indexer");
-  const { ledger: parseLedger } = await import("@/contracts/managed/contract");
-  const { bytesToHex } = await import("./ledger-utils");
-
   const publicDataProvider = await createIndexerProvider(
     providerSet.indexerConfig.indexerUri,
     providerSet.indexerConfig.indexerWsUri,
@@ -321,10 +309,6 @@ export async function fetchPollWithTallies(
   contractAddress: string,
   pollIdHex: string,
 ): Promise<{ poll: PollWithId; tallies: PollTallies } | null> {
-  const { createIndexerProvider } = await import("./indexer");
-  const { ledger: parseLedger } = await import("@/contracts/managed/contract");
-  const { hexToBytes, readPoll, readTallies, bytesToHex } = await import("./ledger-utils");
-
   const publicDataProvider = await createIndexerProvider(
     providerSet.indexerConfig.indexerUri,
     providerSet.indexerConfig.indexerWsUri,

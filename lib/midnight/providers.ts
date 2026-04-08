@@ -1,3 +1,7 @@
+import { Transaction, CostModel } from "@midnight-ntwrk/ledger-v8";
+import { setNetworkId } from "@midnight-ntwrk/midnight-js-network-id";
+import { FetchZkConfigProvider } from "@midnight-ntwrk/midnight-js-fetch-zk-config-provider";
+import { createIndexerProvider } from "./indexer";
 import type {
   MidnightProviderSet,
   WalletProviderApi,
@@ -37,8 +41,6 @@ function fromHex(hex: string): Uint8Array {
  *
  * The balanceTx implementation adds dust fees server-side via ProofStation —
  * the user pays zero NIGHT and zero dust.
- *
- * ALL @midnight-ntwrk imports in balanceTx are dynamic (Turbopack constraint).
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function buildWalletProvider(enabledApi: any, shieldedAddresses: any): WalletProviderApi {
@@ -58,7 +60,6 @@ function buildWalletProvider(enabledApi: any, shieldedAddresses: any): WalletPro
       const result = await enabledApi.balanceUnsealedTransaction(hex);
 
       // Deserialize the balanced transaction returned by the wallet
-      const { Transaction } = await import("@midnight-ntwrk/ledger-v8");
       const balancedBytes = fromHex(result.tx);
       return Transaction.deserialize("signature", "proof", "binding", balancedBytes);
     },
@@ -73,14 +74,11 @@ function buildWalletProvider(enabledApi: any, shieldedAddresses: any): WalletPro
  *
  * The provingProvider comes from api.getProvingProvider(zkConfigProvider),
  * where zkConfigProvider tells the prover where to fetch circuit keys.
- *
- * ALL @midnight-ntwrk imports are dynamic (Turbopack constraint).
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function buildProofProvider(provingProvider: any): ProofProviderApi {
   return {
     async proveTx(unprovenTx: unknown): Promise<unknown> {
-      const { CostModel } = await import("@midnight-ntwrk/ledger-v8");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (unprovenTx as any).prove(provingProvider, CostModel.initialCostModel());
     },
@@ -119,7 +117,7 @@ function buildMidnightProvider(enabledApi: any): MidnightProviderApi {
  *   5. api.getShieldedAddresses() → coin + encryption public keys for walletProvider
  *   6. Build structured walletProvider, proofProvider, midnightProvider
  *
- * Stores indexer config for lazy IndexerPublicDataProvider creation (Turbopack constraint).
+ * Stores indexer config for lazy IndexerPublicDataProvider creation.
  *
  * @param enabledApi - The ConnectedAPI returned by window.midnight['1am'].connect('preview')
  */
@@ -129,21 +127,15 @@ export async function assembleProviders(enabledApi: any): Promise<MidnightProvid
   const config = await enabledApi.getConfiguration();
 
   // 2. Set the global network ID for the ledger WASM module.
-  //    Dynamic import required due to Turbopack stubbing.
-  const { setNetworkId } = await import("@midnight-ntwrk/midnight-js-network-id");
   setNetworkId(config.networkId);
 
   // 3. Build the ZK config provider using the SDK's FetchZkConfigProvider.
   //    It fetches circuit keys from the app's public/zk-keys/ folder at proving time.
-  //    Dynamic import required due to Turbopack stubbing.
   const baseUrl = typeof window !== "undefined"
     ? window.location.origin
     : "http://localhost:3000";
   const zkKeysUrl = `${baseUrl}/zk-keys`;
 
-  const { FetchZkConfigProvider } = await import(
-    "@midnight-ntwrk/midnight-js-fetch-zk-config-provider"
-  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const zkConfigProvider: ZkConfigProvider = new (FetchZkConfigProvider as any)(
     zkKeysUrl,
@@ -158,8 +150,6 @@ export async function assembleProviders(enabledApi: any): Promise<MidnightProvid
   const shieldedAddresses = await enabledApi.getShieldedAddresses();
 
   // 6. Store indexer connection config for lazy IndexerPublicDataProvider creation.
-  //    Cannot create the real SDK provider here because Turbopack stubs the dynamic
-  //    import of @midnight-ntwrk/midnight-js-indexer-public-data-provider.
   const indexerConfig = {
     indexerUri: config.indexerUri as string,
     indexerWsUri: config.indexerWsUri as string,
@@ -192,13 +182,10 @@ export async function assembleProviders(enabledApi: any): Promise<MidnightProvid
  *   5. midnightProvider — submits txs via api.submitTransaction
  *   6. privateStateProvider — in-memory private state (sufficient for testnet)
  *
- * ALL @midnight-ntwrk imports are dynamic (Turbopack constraint).
- *
  * @param providerSet - The MidnightProviderSet from useWallet()
  */
 export async function assembleMidnightProviders(providerSet: MidnightProviderSet) {
   // 1. Create real SDK PublicDataProvider via the indexer factory
-  const { createIndexerProvider } = await import("./indexer");
   const publicDataProvider = await createIndexerProvider(
     providerSet.indexerConfig.indexerUri,
     providerSet.indexerConfig.indexerWsUri,

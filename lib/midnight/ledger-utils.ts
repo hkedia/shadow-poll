@@ -3,11 +3,9 @@
  *
  * These functions parse raw ledger state from the indexer into typed poll data.
  * They mirror the on-chain data structures from the Poll Manager Compact contract.
- *
- * IMPORTANT: Functions that use the compact-runtime (deriveTallyKey, derivePollId)
- * must be called via dynamic import in client code due to Turbopack stubbing.
  */
 
+import { persistentHash, CompactTypeVector, CompactTypeBytes } from "@midnight-ntwrk/compact-runtime";
 import type { PollData, Ledger } from "@/contracts/managed/contract";
 
 /** Poll data with its ID, for UI consumption. */
@@ -61,16 +59,11 @@ export function bigintToBytes32(value: bigint): Uint8Array {
 /**
  * Derives a tally key matching the contract's derive_tally_key pure circuit.
  * tally_key = persistentHash<Vector<2, Bytes<32>>>([poll_id, option_index_as_bytes])
- *
- * Uses dynamic import for the compact runtime (cannot be statically imported in client code).
  */
 export async function deriveTallyKey(
   pollId: Uint8Array,
   optionIndex: number,
 ): Promise<Uint8Array> {
-  const { persistentHash, CompactTypeVector, CompactTypeBytes } = await import(
-    "@midnight-ntwrk/compact-runtime"
-  );
   const optionBytes = bigintToBytes32(BigInt(optionIndex));
   // Construct the runtime type descriptor for Vector<2, Bytes<32>>
   const vectorType = new CompactTypeVector(2, new CompactTypeBytes(32));
@@ -86,9 +79,6 @@ export async function derivePollId(
   creator: Uint8Array,
   countBytes: Uint8Array,
 ): Promise<Uint8Array> {
-  const { persistentHash, CompactTypeVector, CompactTypeBytes } = await import(
-    "@midnight-ntwrk/compact-runtime"
-  );
   const vectorType = new CompactTypeVector(3, new CompactTypeBytes(32));
   return persistentHash(vectorType, [metadataHash, creator, countBytes]);
 }
@@ -104,9 +94,6 @@ export async function deriveNullifier(
   pollId: Uint8Array,
   voterSk: Uint8Array,
 ): Promise<Uint8Array> {
-  const { persistentHash, CompactTypeVector, CompactTypeBytes } = await import(
-    "@midnight-ntwrk/compact-runtime"
-  );
   const vectorType = new CompactTypeVector(2, new CompactTypeBytes(32));
   return persistentHash(vectorType, [pollId, voterSk]);
 }
@@ -122,9 +109,6 @@ export async function deriveInviteKey(
   pollId: Uint8Array,
   inviteCode: Uint8Array,
 ): Promise<Uint8Array> {
-  const { persistentHash, CompactTypeVector, CompactTypeBytes } = await import(
-    "@midnight-ntwrk/compact-runtime"
-  );
   const vectorType = new CompactTypeVector(2, new CompactTypeBytes(32));
   return persistentHash(vectorType, [pollId, inviteCode]);
 }

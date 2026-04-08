@@ -17,7 +17,7 @@
  *   - formatCodesForCSV — CSV content with code and hash columns
  */
 
-import { bytesToHex, hexToBytes } from "./ledger-utils";
+import { bytesToHex, hexToBytes, deriveInviteKey } from "./ledger-utils";
 
 /** A single invite code with its derived on-chain hash. */
 export interface InviteCode {
@@ -66,8 +66,6 @@ export async function generateInviteCodes(
   count: number,
   pollId: Uint8Array,
 ): Promise<InviteCodeSet> {
-  const { deriveInviteKey } = await import("./ledger-utils");
-
   const codes: InviteCode[] = [];
 
   for (let i = 0; i < count; i++) {

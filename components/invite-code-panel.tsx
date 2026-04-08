@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatCodesForCopy, formatCodesForCSV } from "@/lib/midnight/invite-codes";
 import type { InviteCode } from "@/lib/midnight/invite-codes";
 
 interface InviteCodePanelProps {
@@ -20,7 +21,6 @@ export function InviteCodePanel({ codes, pollId, pollTitle, onDone }: InviteCode
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   async function handleCopyAll() {
-    const { formatCodesForCopy } = await import("@/lib/midnight/invite-codes");
     const text = formatCodesForCopy(codes);
     await navigator.clipboard.writeText(text);
     setCopied(true);
@@ -28,7 +28,6 @@ export function InviteCodePanel({ codes, pollId, pollTitle, onDone }: InviteCode
   }
 
   async function handleDownloadCSV() {
-    const { formatCodesForCSV } = await import("@/lib/midnight/invite-codes");
     const csv = formatCodesForCSV(codes, pollTitle);
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

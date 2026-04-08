@@ -9,12 +9,14 @@
  * Design decisions: D-62 (verify page reads on-chain vote_nullifiers live)
  *
  * Requires wallet connection for indexer access.
- * ALL @midnight-ntwrk/* and contract imports are dynamic (Turbopack constraint).
  */
 
 import { useQuery } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { getContractAddress } from "@/lib/midnight/contract-service";
+import { hexToBytes } from "@/lib/midnight/ledger-utils";
+import { createIndexerProvider } from "@/lib/midnight/indexer";
+import { ledger as parseLedger } from "@/contracts/managed/contract";
 
 /** Return type for useVerifyProof */
 export interface VerifyProofResult {
@@ -51,13 +53,9 @@ export function useVerifyProof(pollId: string, nullifier: string): VerifyProofRe
       }
 
       // Convert hex nullifier to bytes for the Map.member() check
-      const { hexToBytes } = await import("@/lib/midnight/ledger-utils");
       const nullifierBytes = hexToBytes(nullifier);
 
       // Query the on-chain contract state
-      const { createIndexerProvider } = await import("@/lib/midnight/indexer");
-      const { ledger: parseLedger } = await import("@/contracts/managed/contract");
-
       const publicDataProvider = await createIndexerProvider(
         providers.indexerConfig.indexerUri,
         providers.indexerConfig.indexerWsUri,
