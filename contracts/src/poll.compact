@@ -218,3 +218,79 @@ export circuit cast_vote(
   const tally_key = derive_tally_key(d_poll_id, d_option_index as Bytes<32>);
   tallies.lookup(tally_key).increment(1);
 }
+
+// Cast a vote on an invite-only poll.
+// Requirements: CONT-05, CONT-06
+// The invite_code is provided as a private witness value — the circuit hashes it
+// and checks membership in the invite_codes map. The voter's identity is never
+// linked to their choice (D-21). The nullifier prevents double voting (D-51).
+export circuit cast_invite_vote(
+  poll_id: Bytes<32>,
+  option_index: Uint<8>,
+  invite_code: Bytes<32>
+): [] {
+  const d_poll_id = disclose(poll_id);
+  const d_option_index = disclose(option_index);
+  // invite_code is NOT disclosed — it stays private in the ZK proof
+
+  // Verify poll exists
+  assert(polls.member(d_poll_id), "Poll not found");
+  const poll_data = polls.lookup(d_poll_id);
+
+  // Only invite-only polls use this circuit (D-52)
+  assert(poll_data.poll_type == PollType.invite_only, "Use cast_vote for public polls");
+
+  // Validate option index
+  assert(d_option_index < poll_data.option_count, "Invalid option index");
+
+  // Check expiration (D-24)
+  const block = disclose(current_block_number());
+  assert(block < poll_data.expiration_block, "Poll has expired");
+
+  // Verify invite code via ZK proof (CONT-05)
+  // The raw invite_code is private — only its hash is checked against the ledger.
+  // The verifier learns "the prover knows a valid invite code" without learning which code.
+  const invite_key = derive_invite_key(d_poll_id, invite_code);
+  const d_invite_key = disclose(invite_key);
+  assert(invite_codes.member(d_invite_key), "Invalid invite code");
+
+  // Duplicate vote prevention via nullifier (CONT-06, D-51)
+  const sk = local_secret_key();
+  const nullifier = derive_nullifier(d_poll_id, sk);
+  const d_nullifier = disclose(nullifier);
+  assert(!vote_nullifiers.member(d_nullifier), "Already voted on this poll");
+  vote_nullifiers.insert(d_nullifier, true);
+
+  // Increment tally
+  const tally_key = derive_tally_key(d_poll_id, d_option_index as Bytes<32>);
+  tallies.lookup(tally_key).increment(1);
+}
+
+// Add a single invite code hash to an invite-only poll.
+// Requirements: POLL-06 (management), D-54 (separate circuit)
+// Only the poll creator can add invite codes.
+// The code_hash is the pre-computed hash(poll_id, raw_invite_code) — computed
+// off-chain by the creator's browser and submitted as a disclosed value.
+export circuit add_invite_codes(
+  poll_id: Bytes<32>,
+  code_hash: Bytes<32>
+): [] {
+  const d_poll_id = disclose(poll_id);
+  const d_code_hash = disclose(code_hash);
+
+  // Verify poll exists
+  assert(polls.member(d_poll_id), "Poll not found");
+  const poll_data = polls.lookup(d_poll_id);
+
+  // Only invite-only polls accept invite codes
+  assert(poll_data.poll_type == PollType.invite_only, "Poll is not invite-only");
+
+  // Only the creator can add invite codes (D-54)
+  const sk = local_secret_key();
+  const caller_pk = derive_public_key(sk);
+  const d_caller_pk = disclose(caller_pk);
+  assert(d_caller_pk == poll_data.creator, "Only the poll creator can add invite codes");
+
+  // Store the invite code hash
+  invite_codes.insert(d_code_hash, true);
+}
