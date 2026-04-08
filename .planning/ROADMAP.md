@@ -12,7 +12,7 @@ Shadow Poll goes from an empty Next.js scaffold to a fully functional anonymous 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Wallet & UI Foundation** - Connect 1am.xyz wallet with provider assembly; establish dark theme and responsive layout
+- [x] **Phase 1: Wallet & UI Foundation** - Connect 1am.xyz wallet with provider assembly; establish dark theme and responsive layout (completed 2026-04-08)
 - [ ] **Phase 2: Smart Contracts** - Write and compile Compact contracts for poll creation and vote casting
 - [ ] **Phase 3: Data Layer** - Wire up GraphQL indexer reads and API routes for on-chain data access
 - [ ] **Phase 4: Core Polling** - End-to-end public poll creation, voting, and browsing with live tallies
@@ -33,9 +33,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Aether design system, shadcn/ui setup, app shell (Header, Footer, MobileDrawer)
-- [ ] 01-02-PLAN.md — Wallet hook, provider factory, context, WalletButton, WalletOnboarding, InstallPrompt
-- [ ] 01-03-PLAN.md — Root layout wiring (WalletProvider), HeroSection, landing page, Next.js WASM config
+- [x] 01-01-PLAN.md — Aether design system, shadcn/ui setup, app shell (Header, Footer, MobileDrawer)
+- [x] 01-02-PLAN.md — Wallet hook, provider factory, context, WalletButton, WalletOnboarding, InstallPrompt
+- [x] 01-03-PLAN.md — Root layout wiring (WalletProvider), HeroSection, landing page, Next.js WASM config
 
 **UI hint**: yes
 
@@ -143,7 +143,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Wallet & UI Foundation | 0/3 | Ready to execute | - |
+| 1. Wallet & UI Foundation | 3/3 | Complete   | 2026-04-08 |
 | 2. Smart Contracts | 0/0 | Not started | - |
 | 3. Data Layer | 0/0 | Not started | - |
 | 4. Core Polling | 0/0 | Not started | - |

@@ -9,13 +9,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Wallet Integration
 
-- [ ] **WALL-01**: User can detect whether 1am.xyz wallet extension is installed
-- [ ] **WALL-02**: User can connect wallet to Midnight Preview network
-- [ ] **WALL-03**: User can disconnect wallet from the application
-- [ ] **WALL-04**: User can see wallet connection status and truncated address in navigation
-- [ ] **WALL-05**: App assembles complete provider set (ZK config, indexer, wallet, proof providers)
-- [ ] **WALL-06**: User sees a prompt to install 1am.xyz when wallet is not detected
-- [ ] **WALL-07**: Wallet reconnects automatically on page refresh if previously connected
+- [x] **WALL-01**: User can detect whether 1am.xyz wallet extension is installed
+- [x] **WALL-02**: User can connect wallet to Midnight Preview network
+- [x] **WALL-03**: User can disconnect wallet from the application
+- [x] **WALL-04**: User can see wallet connection status and truncated address in navigation
+- [x] **WALL-05**: App assembles complete provider set (ZK config, indexer, wallet, proof providers)
+- [x] **WALL-06**: User sees a prompt to install 1am.xyz when wallet is not detected
+- [x] **WALL-07**: Wallet reconnects automatically on page refresh if previously connected
 
 ### Smart Contracts
 
@@ -47,9 +47,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **PAGE-01**: Home / Trending Polls page displays polls from the indexer sorted by activity
 - [ ] **PAGE-02**: Create Poll page has form with public/invite-only toggle and submits on-chain
 - [ ] **PAGE-03**: Poll Detail page at /poll/[id] shows details, tallies, and voting UI
-- [ ] **PAGE-04**: UI uses shadcn/ui components with dark-first theme
+- [x] **PAGE-04**: UI uses shadcn/ui components with dark-first theme
 - [ ] **PAGE-05**: Stats / Analytics page shows global trends, participation rates, aggregate vote counts
-- [ ] **PAGE-06**: All pages are responsive and usable on mobile screens
+- [x] **PAGE-06**: All pages are responsive and usable on mobile screens
 
 ### Data Layer
 
@@ -99,13 +99,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WALL-01 | Phase 1 | Pending |
-| WALL-02 | Phase 1 | Pending |
-| WALL-03 | Phase 1 | Pending |
-| WALL-04 | Phase 1 | Pending |
-| WALL-05 | Phase 1 | Pending |
-| WALL-06 | Phase 1 | Pending |
-| WALL-07 | Phase 1 | Pending |
+| WALL-01 | Phase 1 | Complete |
+| WALL-02 | Phase 1 | Complete |
+| WALL-03 | Phase 1 | Complete |
+| WALL-04 | Phase 1 | Complete |
+| WALL-05 | Phase 1 | Complete |
+| WALL-06 | Phase 1 | Complete |
+| WALL-07 | Phase 1 | Complete |
 | CONT-01 | Phase 2 | Pending |
 | CONT-02 | Phase 2 | Pending |
 | CONT-03 | Phase 2 | Pending |
@@ -125,9 +125,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAGE-01 | Phase 4 | Pending |
 | PAGE-02 | Phase 4 | Pending |
 | PAGE-03 | Phase 4 | Pending |
-| PAGE-04 | Phase 1 | Pending |
+| PAGE-04 | Phase 1 | Complete |
 | PAGE-05 | Phase 6 | Pending |
-| PAGE-06 | Phase 1 | Pending |
+| PAGE-06 | Phase 1 | Complete |
 | DATA-01 | Phase 3 | Pending |
 | DATA-02 | Phase 3 | Pending |
 | DATA-03 | Phase 3 | Pending |

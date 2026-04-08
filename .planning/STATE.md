@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Phase 1 UI-SPEC approved
-last_updated: "2026-04-08T06:45:58.919Z"
-last_activity: 2026-04-08 -- Phase 01 planning complete
+status: verifying
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-04-08T07:40:50.991Z"
+last_activity: 2026-04-08
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 0
-  percent: 0
+  completed_plans: 3
+  percent: 100
 ---
 
 # Project State
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 
 Phase: 1 of 6 (Wallet & UI Foundation)
 Plan: 0 of 0 in current phase
-Status: Ready to execute
-Last activity: 2026-04-08 -- Phase 01 planning complete
+Status: Phase complete — ready for verification
+Last activity: 2026-04-08
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -63,6 +63,9 @@ Recent decisions affecting current work:
 - D-10: Aether Privacy design system (navy-black backgrounds, lavender primary, turquoise tertiary)
 - D-10a: Manrope + Plus Jakarta Sans fonts, 4 sizes (14/16/24/48-60px), 2 weights (400/700)
 - D-10b: Material Symbols Outlined icons
+- [Phase 01-wallet-ui-foundation]: Use CSS custom properties (var(--token)) for Aether design tokens — not Tailwind config values
+- [Phase 01-wallet-ui-foundation]: Provider types are any in Phase 1 — tightened in Phase 3 when full indexer is wired
+- [Phase 01-wallet-ui-foundation]: Turbopack resolveAlias + stub module to prevent Midnight SDK WASM packages bundling client-side
 
 ### Pending Todos
 
@@ -74,6 +77,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-08T05:31:29.682Z
-Stopped at: Phase 1 UI-SPEC approved
-Resume file: .planning/phases/01-wallet-ui-foundation/01-UI-SPEC.md
+Last session: 2026-04-08T07:40:40.667Z
+Stopped at: Completed 01-03-PLAN.md
+Resume file: None
