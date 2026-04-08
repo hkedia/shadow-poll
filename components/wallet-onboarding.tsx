@@ -24,17 +24,26 @@ function StepDots({ current }: { current: number }) {
   );
 }
 
-export function WalletOnboarding() {
+export function WalletOnboarding({ requiresWallet = false }: { requiresWallet?: boolean }) {
   const { status, isAutoConnecting, error, connect } = useWalletContext();
 
-  // Only show overlay when actively onboarding.
+  // Only show the blocking overlay when this component is explicitly mounted
+  // on a wallet-required page (requiresWallet=true) AND the wallet state
+  // warrants intervention (not detected, connection error, or user-initiated
+  // connect flow).
+  //
+  // On pages where requiresWallet is false (the global layout default),
+  // this component renders nothing — so the overlay never blocks the home
+  // page, /stats, /verify, /community, etc.
+  //
   // During autoconnect (page reload), the 1am wallet silently reconnects
   // already-authorized sites without a popup — suppress the overlay so users
   // aren't alarmed by an "approve the connection" message that never requires action.
   const showOverlay =
-    (status === "connecting" && !isAutoConnecting) ||
-    status === "not_detected" ||
-    status === "error";
+    requiresWallet &&
+    ((status === "connecting" && !isAutoConnecting) ||
+      status === "not_detected" ||
+      status === "error");
 
   if (!showOverlay) return null;
 

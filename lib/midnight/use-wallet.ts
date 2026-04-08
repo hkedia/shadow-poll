@@ -110,30 +110,40 @@ export function useWallet() {
     []
   );
 
-  // Detect wallet on mount using the official polling pattern, then handle auto-reconnect
+  // On mount, immediately resolve to "disconnected" so the header WalletButton
+  // renders the Connect CTA without waiting for any polling timeout.
+  // Auto-detection and silent reconnect are intentionally NOT run globally —
+  // only pages that require wallet interaction (/create, /poll/[id]) trigger
+  // those flows by calling triggerAutoConnect() from WalletAutoConnect.
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    const detect = async () => {
-      const walletApi = await detectWallet();
-      if (!walletApi) {
-        setState((s) => ({ ...s, status: "not_detected" }));
-        return;
-      }
-      // Wallet extension is present
-      const shouldAutoConnect =
-        localStorage.getItem(AUTO_CONNECT_KEY) === "true";
-      if (shouldAutoConnect) {
-        await connectInternal(walletApi, true);
-      } else {
-        setState((s) => ({ ...s, status: "disconnected" }));
-      }
-    };
-    detect();
+    setState((s) => ({ ...s, status: "disconnected" }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // connect — triggered by user interaction
+  /**
+   * triggerAutoConnect — called by WalletAutoConnect on wallet-required pages.
+   *
+   * Runs the full 1am.xyz detection polling loop (up to 5 s) and silently
+   * reconnects if the user previously authorized this site. On pages that don't
+   * call this, the wallet stays in "disconnected" and no polling ever starts.
+   */
+  const triggerAutoConnect = useCallback(async () => {
+    if (typeof window === "undefined") return;
+    const walletApi = await detectWallet();
+    if (!walletApi) {
+      setState((s) => ({ ...s, status: "not_detected" }));
+      return;
+    }
+    const shouldAutoConnect = localStorage.getItem(AUTO_CONNECT_KEY) === "true";
+    if (shouldAutoConnect) {
+      await connectInternal(walletApi, true);
+    } else {
+      setState((s) => ({ ...s, status: "disconnected" }));
+    }
+  }, [connectInternal]);
+
+  // connect — triggered by user interaction (works on all pages)
   const connect = useCallback(async () => {
     if (typeof window === "undefined") return;
     const walletApi = await detectWallet();
@@ -162,6 +172,7 @@ export function useWallet() {
     ...state,
     connect,
     disconnect,
+    triggerAutoConnect,
     isDetected: state.status !== "not_detected" && state.status !== "idle",
   };
 }

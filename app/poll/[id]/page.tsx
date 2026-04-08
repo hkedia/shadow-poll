@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { usePoll } from "@/lib/queries/use-poll";
-import { useWalletContext } from "@/lib/midnight/wallet-context";
+import { useWalletContext, WalletAutoConnect } from "@/lib/midnight/wallet-context";
+import { WalletOnboarding } from "@/components/wallet-onboarding";
 import { getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
 import { VotePanel } from "@/components/vote-panel";
 import { ResultsPanel } from "@/components/results-panel";
@@ -22,7 +23,6 @@ export default function PollDetailPage() {
   const isConnected = status === "connected";
 
   const { poll, tallies, metadata, isLoading, isError, error, refetch } = usePoll(pollId);
-
   // Track current block number for expiration check
   const [currentBlock, setCurrentBlock] = useState<bigint>(BigInt(0));
 
@@ -58,71 +58,86 @@ export default function PollDetailPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-        <div className="lg:col-span-7 space-y-6">
-          <Skeleton className="h-6 w-48 bg-surface-container-highest" />
-          <Skeleton className="h-16 w-full bg-surface-container-highest" />
-          <Skeleton className="h-16 w-3/4 bg-surface-container-highest" />
-          <Skeleton className="h-6 w-2/3 bg-surface-container-highest" />
-          <div className="space-y-4 mt-8">
-            <Skeleton className="h-20 w-full bg-surface-container-high rounded-xl" />
-            <Skeleton className="h-20 w-full bg-surface-container-high rounded-xl" />
-            <Skeleton className="h-20 w-full bg-surface-container-high rounded-xl" />
+      <>
+        <WalletAutoConnect />
+        <WalletOnboarding requiresWallet />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          <div className="lg:col-span-7 space-y-6">
+            <Skeleton className="h-6 w-48 bg-surface-container-highest" />
+            <Skeleton className="h-16 w-full bg-surface-container-highest" />
+            <Skeleton className="h-16 w-3/4 bg-surface-container-highest" />
+            <Skeleton className="h-6 w-2/3 bg-surface-container-highest" />
+            <div className="space-y-4 mt-8">
+              <Skeleton className="h-20 w-full bg-surface-container-high rounded-xl" />
+              <Skeleton className="h-20 w-full bg-surface-container-high rounded-xl" />
+              <Skeleton className="h-20 w-full bg-surface-container-high rounded-xl" />
+            </div>
+          </div>
+          <div className="lg:col-span-5 space-y-6">
+            <Skeleton className="h-96 w-full bg-surface-container-high rounded-xl" />
+            <Skeleton className="h-32 w-full bg-surface-container-low rounded-xl" />
           </div>
         </div>
-        <div className="lg:col-span-5 space-y-6">
-          <Skeleton className="h-96 w-full bg-surface-container-high rounded-xl" />
-          <Skeleton className="h-32 w-full bg-surface-container-low rounded-xl" />
-        </div>
-      </div>
+      </>
     );
   }
 
   // Error state
   if (isError) {
     return (
-      <div className="text-center py-20">
-        <span className="material-symbols-outlined text-error text-4xl mb-4 block">error</span>
-        <p className="text-on-surface-variant text-lg mb-4">
-          {error?.message ?? "Failed to load poll"}
-        </p>
-        <button
-          type="button"
-          onClick={() => refetch()}
-          className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-semibold hover:bg-surface-container-highest transition-all"
-        >
-          Try Again
-        </button>
-      </div>
+      <>
+        <WalletAutoConnect />
+        <WalletOnboarding requiresWallet />
+        <div className="text-center py-20">
+          <span className="material-symbols-outlined text-error text-4xl mb-4 block">error</span>
+          <p className="text-on-surface-variant text-lg mb-4">
+            {error?.message ?? "Failed to load poll"}
+          </p>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-semibold hover:bg-surface-container-highest transition-all"
+          >
+            Try Again
+          </button>
+        </div>
+      </>
     );
   }
 
   // Not found state
   if (!poll) {
     return (
-      <div className="text-center py-20">
-        <span className="material-symbols-outlined text-on-surface-variant text-6xl mb-6 block">
-          search_off
-        </span>
-        <h2 className="text-2xl font-headline font-bold text-on-surface mb-3">
-          Poll not found
-        </h2>
-        <p className="text-on-surface-variant text-lg mb-8">
-          This poll may have been removed or the ID is invalid.
-        </p>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-semibold hover:bg-surface-container-highest transition-all"
-        >
-          <span className="material-symbols-outlined">arrow_back</span>
-          Back to Polls
-        </Link>
-      </div>
+      <>
+        <WalletAutoConnect />
+        <WalletOnboarding requiresWallet />
+        <div className="text-center py-20">
+          <span className="material-symbols-outlined text-on-surface-variant text-6xl mb-6 block">
+            search_off
+          </span>
+          <h2 className="text-2xl font-headline font-bold text-on-surface mb-3">
+            Poll not found
+          </h2>
+          <p className="text-on-surface-variant text-lg mb-8">
+            This poll may have been removed or the ID is invalid.
+          </p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-semibold hover:bg-surface-container-highest transition-all"
+          >
+            <span className="material-symbols-outlined">arrow_back</span>
+            Back to Polls
+          </Link>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+    <>
+      <WalletAutoConnect />
+      <WalletOnboarding requiresWallet />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
       {/* Left Column: Poll Identity & Voting */}
       <div className="lg:col-span-7 space-y-10">
         <div className="space-y-4">
@@ -215,5 +230,6 @@ export default function PollDetailPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

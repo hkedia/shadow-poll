@@ -134,5 +134,14 @@ export interface WalletState {
 export interface WalletContextValue extends WalletState {
   connect: () => Promise<void>;
   disconnect: () => void;
+  /**
+   * Triggers the full 1am.xyz wallet detection polling loop and silently
+   * reconnects if the user previously authorized this site.
+   *
+   * Only called by WalletAutoConnect on pages that require wallet interaction
+   * (/create, /poll/[id]). Never called globally so the polling loop doesn't
+   * fire on every page load.
+   */
+  triggerAutoConnect: () => Promise<void>;
   isDetected: boolean;
 }
