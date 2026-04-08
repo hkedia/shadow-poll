@@ -66,6 +66,15 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **PAYM-04**: The Create Poll UI shows the cost (e.g. "Creating this poll costs 5 tNIGHT") before the user submits
 - [ ] **PAYM-05**: Insufficient token balance produces a clear, distinct error message — not a generic transaction failure
 
+### Build & Migration
+
+- [x] **MIGR-01**: Midnight SDK `@midnight-ntwrk/*` WASM modules load at runtime via normal static imports — no stub file, no dynamic import workarounds
+- [ ] **MIGR-02**: All 9 application routes work under React Router including dynamic `/poll/:id` route
+- [ ] **MIGR-03**: Metadata API endpoint (`/api/polls/metadata`) serves GET and POST via Bun.serve()
+- [x] **MIGR-04**: `bun run build` produces a working production bundle with Vite
+- [x] **MIGR-05**: ZK proof generation works end-to-end (create poll, vote, generate/verify participation proof)
+- [x] **MIGR-06**: `lib/midnight-sdk-stub.ts` and all `resolveAlias` Turbopack workarounds are deleted
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -145,10 +154,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAYM-03 | Phase 8 | Pending |
 | PAYM-04 | Phase 8 | Pending |
 | PAYM-05 | Phase 8 | Pending |
+| MIGR-01 | Phase 8 | Complete |
+| MIGR-02 | Phase 8 | Pending |
+| MIGR-03 | Phase 8 | Pending |
+| MIGR-04 | Phase 8 | Complete |
+| MIGR-05 | Phase 8 | Complete |
+| MIGR-06 | Phase 8 | Complete |
 
 **Coverage:**
-- v1 requirements: 38 total
-- Mapped to phases: 38
+- v1 requirements: 44 total
+- Mapped to phases: 44
 - Unmapped: 0
 
 ---

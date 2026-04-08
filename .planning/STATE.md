@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in_progress
-stopped_at: Phase 8 (NIGHT token payment) dropped — NIGHT is unshielded; may revisit when shielded stablecoins land on Midnight. Phase 7 (Persistent Data Layer) is the remaining work.
-last_updated: "2026-04-08T15:30:00.000Z"
+status: executing
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-04-08T20:05:41.793Z"
 last_activity: 2026-04-08
 progress:
-  total_phases: 7
-  completed_phases: 6
-  total_plans: 16
-  completed_plans: 16
-  percent: 86
+  total_phases: 8
+  completed_phases: 7
+  total_plans: 19
+  completed_plans: 17
+  percent: 89
 ---
 
 # Project State
@@ -21,12 +21,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 **Core value:** Users can vote on polls anonymously with cryptographic guarantees
-**Current focus:** Phase 07 — persistent-data-layer (next remaining work)
+**Current focus:** Phase 08 — vite-migration
 
 ## Current Position
 
-Phase: 07 (persistent-data-layer) — PENDING
-Plan: 1 of 1
+Phase: 08 (vite-migration) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
 Last activity: 2026-04-08
 
@@ -61,6 +61,7 @@ Progress: [████████░░] 84%
 | Phase 05 P03 | 7min | 3 tasks | 5 files |
 | Phase 06 P01 | 3 | 4 tasks | 4 files |
 | Phase 06 P02 | 5 | 6 tasks | 6 files |
+| Phase 08 P01 | 763s | 2 tasks | 23 files |
 
 ## Phase 7 Design Decisions (from discussion)
 
@@ -135,6 +136,8 @@ Recent decisions affecting current work:
 - [Phase 06]: D-62: Verify page reads on-chain vote_nullifiers map live via indexer (wallet required)
 - [Phase 06]: D-63: Global-only analytics at /stats — totalPolls, totalVotes, activePolls, public/invite split, avgVotes, mostVotedPoll
 - [Phase 06]: Spinner extended with lg size to support verify and stats page usage
+- [Phase 08]: Used vite-plugin-wasm + vite-plugin-top-level-await for WASM module loading, replacing Turbopack stubbing approach
+- [Phase 08]: Replaced process.env.NEXT_PUBLIC_* with import.meta.env.VITE_* for Vite environment variable convention
 
 ### Blockers/Concerns
 
@@ -142,6 +145,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-08T18:30:00.000Z
-Stopped at: Phase 8 (NIGHT token payment) dropped — NIGHT is unshielded, fee feature deferred to when shielded stablecoins are available on Midnight
-Resume file: .planning/phases/07-persistent-data-layer/07-01-PLAN.md
+Last session: 2026-04-08T20:05:41.786Z
+Stopped at: Completed 08-01-PLAN.md
+Resume file: None

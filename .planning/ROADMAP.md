@@ -153,7 +153,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Vite config, entry points, static SDK imports, delete stub + Turbopack workarounds
+- [x] 08-01-PLAN.md — Vite config, entry points, static SDK imports, delete stub + Turbopack workarounds
 - [ ] 08-02-PLAN.md — React Router app shell, move routes to src/routes/, update all Next.js imports
 - [ ] 08-03-PLAN.md — Bun.serve() production server, metadata API handler migration
 
@@ -226,4 +226,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 5. Invite-Only Polls | 3/3 | Complete | 2026-04-08 |
 | 6. ZK Proofs & Analytics | 2/2 | Complete   | 2026-04-08 |
 | 7. Persistent Data Layer | 0/1 | Pending | — |
-| 8. Vite Migration | 0/TBD | Pending | — |
+| 8. Vite Migration | 0/3 | Ready to execute | — |
