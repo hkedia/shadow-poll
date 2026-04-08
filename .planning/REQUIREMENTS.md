@@ -29,11 +29,11 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Poll Management
 
 - [x] **POLL-01**: User can create a public poll via on-chain transaction
-- [ ] **POLL-02**: User can create an invite-only poll via on-chain transaction
+- [x] **POLL-02**: User can create an invite-only poll via on-chain transaction
 - [x] **POLL-03**: User can vote on a public poll via on-chain transaction
 - [x] **POLL-04**: User can view poll details with live vote tallies
-- [ ] **POLL-05**: User can vote on an invite-only poll with invite code + ZK verification
-- [ ] **POLL-06**: Poll creator can generate and manage invite codes off-chain
+- [x] **POLL-05**: User can vote on an invite-only poll with invite code + ZK verification
+- [x] **POLL-06**: Poll creator can generate and manage invite codes off-chain
 - [x] **POLL-07**: Polls can expire/close after a creator-defined time period
 
 ### ZK Proofs
@@ -113,11 +113,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-05 | Phase 5 | Complete |
 | CONT-06 | Phase 5 | Complete |
 | POLL-01 | Phase 4 | Complete |
-| POLL-02 | Phase 5 | Pending |
+| POLL-02 | Phase 5 | Complete |
 | POLL-03 | Phase 4 | Complete |
 | POLL-04 | Phase 4 | Complete |
-| POLL-05 | Phase 5 | Pending |
-| POLL-06 | Phase 5 | Pending |
+| POLL-05 | Phase 5 | Complete |
+| POLL-06 | Phase 5 | Complete |
 | POLL-07 | Phase 4 | Complete |
 | ZKPR-01 | Phase 6 | Pending |
 | ZKPR-02 | Phase 6 | Pending |

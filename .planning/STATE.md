@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-04-08T10:14:52.375Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-04-08T10:23:23.879Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 13
-  completed_plans: 11
-  percent: 85
+  completed_plans: 12
+  percent: 92
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 ## Current Position
 
 Phase: 5 of 6 (Invite-Only Polls) — PLANNED
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: Ready to execute
 Last activity: 2026-04-08
 
@@ -57,6 +57,7 @@ Progress: [██████░░░░] 66%
 | Phase 04 P02 | 4min | 2 tasks | 7 files |
 | Phase 04 P03 | 13min | 3 tasks | 8 files |
 | Phase 05 P01 | 4min | 3 tasks | 2 files |
+| Phase 05 P02 | 5min | 4 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,9 @@ Recent decisions affecting current work:
 - [Phase 05]: One invite code per add_invite_codes call — Compact v0.19 variable-length array limitation
 - [Phase 05]: Nullifier derived from voter_sk not invite_code — one vote per wallet regardless of codes held
 - [Phase 05]: invite_code NOT disclosed in cast_invite_vote — only hash crosses ZK boundary
+- [Phase 05]: inviteCodeToBytes32 uses SHA-256 to normalize variable-length codes to fixed Bytes<32>
+- [Phase 05]: Case-insensitive invite codes via uppercase normalization before hashing
+- [Phase 05]: Dynamic import for invite-codes.ts to keep public poll path lightweight
 
 ### Blockers/Concerns
 
@@ -113,6 +117,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-08T10:14:52.362Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-04-08T10:23:23.870Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
