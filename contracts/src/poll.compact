@@ -34,6 +34,14 @@ export ledger polls: Map<Bytes<32>, PollData>;
 export ledger tallies: Map<Bytes<32>, Counter>;
 export ledger poll_count: Counter;
 
+// Invite code hash commitments: key = hash(poll_id, invite_code) → Boolean
+// The raw invite code is never stored — only its hash (D-50).
+export ledger invite_codes: Map<Bytes<32>, Boolean>;
+
+// Vote nullifiers: key = hash(poll_id, voter_sk) → Boolean
+// Prevents duplicate votes without revealing voter identity (D-51).
+export ledger vote_nullifiers: Map<Bytes<32>, Boolean>;
+
 // --- Witnesses (declarations only — implemented in TypeScript prover) --------
 
 witness local_secret_key(): Bytes<32>;
@@ -62,6 +70,25 @@ pure circuit derive_tally_key(
   option_index_bytes: Bytes<32>
 ): Bytes<32> {
   return persistentHash<Vector<2, Bytes<32>>>([poll_id, option_index_bytes]);
+}
+
+// Derive a nullifier for duplicate vote prevention.
+// nullifier = persistentHash([poll_id, voter_sk])
+// Same wallet + same poll always produces the same nullifier.
+pure circuit derive_nullifier(
+  poll_id: Bytes<32>,
+  voter_sk: Bytes<32>
+): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([poll_id, voter_sk]);
+}
+
+// Derive an invite code key for the invite_codes ledger Map.
+// key = persistentHash([poll_id, invite_code])
+pure circuit derive_invite_key(
+  poll_id: Bytes<32>,
+  invite_code: Bytes<32>
+): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([poll_id, invite_code]);
 }
 
 // --- Circuits ----------------------------------------------------------------
@@ -146,11 +173,12 @@ export circuit create_poll(
   return poll_id;
 }
 
-// Cast a vote on a poll.
+// Cast a vote on a public poll.
 // Requirements: CONT-02
 // The voter's identity is never stored alongside their choice (D-21).
 // poll_id and option_index are disclosed because the vote target is public —
 // only the voter's identity remains private.
+// Nullifier-based duplicate vote prevention (D-51).
 export circuit cast_vote(
   poll_id: Bytes<32>,
   option_index: Uint<8>
@@ -165,6 +193,9 @@ export circuit cast_vote(
   // Look up poll data
   const poll_data = polls.lookup(d_poll_id);
 
+  // Only public polls use cast_vote (D-52)
+  assert(poll_data.poll_type == PollType.public_poll, "Use cast_invite_vote for invite-only polls");
+
   // Validate option index
   assert(d_option_index < poll_data.option_count, "Invalid option index");
 
@@ -173,6 +204,15 @@ export circuit cast_vote(
   // The ZK proof guarantees the assertion — the prover cannot lie.
   const block = disclose(current_block_number());
   assert(block < poll_data.expiration_block, "Poll has expired");
+
+  // Duplicate vote prevention via nullifier (D-51)
+  // The nullifier is derived from the voter's secret key — it reveals nothing
+  // about the voter's identity or chosen option to observers.
+  const sk = local_secret_key();
+  const nullifier = derive_nullifier(d_poll_id, sk);
+  const d_nullifier = disclose(nullifier);
+  assert(!vote_nullifiers.member(d_nullifier), "Already voted on this poll");
+  vote_nullifiers.insert(d_nullifier, true);
 
   // Increment the tally for the chosen option using the flat key scheme.
   const tally_key = derive_tally_key(d_poll_id, d_option_index as Bytes<32>);
