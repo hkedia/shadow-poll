@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { InstallPrompt } from "@/components/install-prompt";
-import { Spinner } from "@/components/ui/spinner";
 
 /** Feature card for the landing page feature grid */
 function FeatureCard({
@@ -116,9 +115,6 @@ function StepCard({
 
 /** The full landing page shown to visitors/disconnected users */
 function LandingContent() {
-  const { status, connect } = useWalletContext();
-  const isConnecting = status === "connecting";
-
   return (
     <div className="flex flex-col gap-24 py-8 md:py-12">
       {/* ── Hero ── */}
@@ -152,29 +148,10 @@ function LandingContent() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <button
-              type="button"
-              onClick={connect}
-              disabled={isConnecting}
-              className="inline-flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold px-8 py-4 rounded-full active:scale-95 duration-200 shadow-[0px_8px_32px_rgba(176,170,255,0.35)] hover:shadow-[0px_12px_48px_rgba(176,170,255,0.5)] text-base min-w-[220px] justify-center"
-            >
-              {isConnecting ? (
-                <>
-                  <Spinner size="sm" className="border-on-primary/30 border-t-on-primary" />
-                  Connecting...
-                </>
-              ) : (
-                <>
-                  <span className="material-symbols-outlined">wallet</span>
-                  Connect Wallet
-                </>
-              )}
-            </button>
             <Link
-              to="/trending"
-              className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface font-bold px-8 py-4 rounded-full active:scale-95 duration-200 hover:bg-surface-container-highest transition-colors text-base"
+              to="/active"
+              className="inline-flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold px-8 py-4 rounded-full active:scale-95 duration-200 shadow-[0px_8px_32px_rgba(176,170,255,0.35)] hover:shadow-[0px_12px_48px_rgba(176,170,255,0.5)] text-base"
             >
-              <span className="material-symbols-outlined">trending_up</span>
               Browse Polls
             </Link>
           </div>
@@ -327,23 +304,12 @@ function LandingContent() {
             Join the Midnight Preview network and experience truly private polling.
             Your voice, cryptographically protected.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <button
-              type="button"
-              onClick={connect}
-              disabled={isConnecting}
-              className="inline-flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold px-8 py-4 rounded-full active:scale-95 duration-200 shadow-[0px_8px_32px_rgba(176,170,255,0.3)] text-base"
-            >
-              <span className="material-symbols-outlined">wallet</span>
-              Get Started
-            </button>
-            <Link
-              to="/about"
-              className="text-on-surface-variant hover:text-primary font-semibold transition-colors"
-            >
-              Learn more about Shadow Poll →
-            </Link>
-          </div>
+          <Link
+            to="/about"
+            className="text-on-surface-variant hover:text-primary font-semibold transition-colors"
+          >
+            Learn more about Shadow Poll →
+          </Link>
         </div>
       </section>
     </div>

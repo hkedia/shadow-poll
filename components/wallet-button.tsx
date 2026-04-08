@@ -46,7 +46,7 @@ export function WalletButton() {
           <button
             aria-label={`Wallet menu, connected as ${truncatedAddress}`}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-full",
+              "flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer",
               "bg-[var(--surface-container-high)]",
               "hover:bg-[var(--surface-container-highest)] transition-colors duration-150",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
