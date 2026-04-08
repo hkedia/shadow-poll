@@ -11,6 +11,8 @@
  *   - findPollContract — finds an already-deployed contract by address
  *   - callCreatePoll — calls the create_poll circuit
  *   - callCastVote — calls the cast_vote circuit
+ *   - callCastInviteVote — calls the cast_invite_vote circuit
+ *   - callAddInviteCodes — calls the add_invite_codes circuit
  *   - getContractAddress — reads the canonical contract address from env
  *   - fetchAllPolls — queries contract state for all polls
  *   - fetchPollWithTallies — fetches a single poll with its vote tallies
@@ -185,6 +187,63 @@ export async function callCastVote(contract: any, params: CastVoteParams) {
     BigInt(params.optionIndex),
   );
 
+  return result;
+}
+
+/** Parameters for casting an invite-only vote on-chain. */
+export interface CastInviteVoteParams {
+  pollId: Uint8Array;
+  optionIndex: number;
+  inviteCode: Uint8Array; // Bytes<32> derived from inviteCodeToBytes32()
+}
+
+/**
+ * Calls the cast_invite_vote circuit on a deployed/found contract.
+ *
+ * This submits a transaction that casts a vote on an invite-only poll.
+ * The invite code is passed as a private parameter — it is NOT disclosed
+ * in the ZK proof. The circuit verifies the code by hashing it and checking
+ * the hash against the on-chain invite_codes map.
+ *
+ * @param contract - A deployed or found contract with callTx interface
+ * @param params - Invite vote parameters including the private invite code
+ * @returns The finalized transaction data
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function callCastInviteVote(contract: any, params: CastInviteVoteParams) {
+  const result = await contract.callTx.cast_invite_vote(
+    params.pollId,
+    BigInt(params.optionIndex),
+    params.inviteCode,
+  );
+  return result;
+}
+
+/** Parameters for adding an invite code hash on-chain. */
+export interface AddInviteCodeParams {
+  pollId: Uint8Array;
+  codeHash: Uint8Array; // Pre-computed deriveInviteKey(pollId, codeBytes)
+}
+
+/**
+ * Calls the add_invite_codes circuit on a deployed/found contract.
+ *
+ * Submits a single invite code hash to the contract. The hash is the
+ * pre-computed deriveInviteKey(poll_id, invite_code_bytes). Only the poll
+ * creator can call this successfully — the circuit asserts caller == creator.
+ *
+ * For N invite codes, call this function N times.
+ *
+ * @param contract - A deployed or found contract with callTx interface
+ * @param params - Code hash submission parameters
+ * @returns The finalized transaction data
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function callAddInviteCodes(contract: any, params: AddInviteCodeParams) {
+  const result = await contract.callTx.add_invite_codes(
+    params.pollId,
+    params.codeHash,
+  );
   return result;
 }
 

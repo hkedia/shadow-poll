@@ -7,5 +7,5 @@
  * top level — because Turbopack stubs Midnight SDK packages in the browser bundle.
  * Server-side code (API routes, Server Components) can import normally.
  */
-export type { PollData, PollType, Ledger, Witnesses, Circuits } from "@/contracts/managed/contract";
+export type { PollData, PollType, Ledger, Witnesses, Circuits, ImpureCircuits } from "@/contracts/managed/contract";
 export { PollType as PollTypeEnum, ledger as parseLedger } from "@/contracts/managed/contract";
