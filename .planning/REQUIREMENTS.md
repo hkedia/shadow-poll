@@ -38,9 +38,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### ZK Proofs
 
-- [ ] **ZKPR-01**: User can generate a client-side ZK proof of poll participation without revealing chosen option
-- [ ] **ZKPR-02**: Third parties can verify a participation proof is valid
-- [ ] **ZKPR-03**: User can share a proof via link or visual badge
+- [x] **ZKPR-01**: User can generate a client-side ZK proof of poll participation without revealing chosen option
+- [x] **ZKPR-02**: Third parties can verify a participation proof is valid
+- [x] **ZKPR-03**: User can share a proof via link or visual badge
 
 ### Pages & UI
 
@@ -48,7 +48,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **PAGE-02**: Create Poll page has form with public/invite-only toggle and submits on-chain
 - [x] **PAGE-03**: Poll Detail page at /poll/[id] shows details, tallies, and voting UI
 - [x] **PAGE-04**: UI uses shadcn/ui components with dark-first theme
-- [ ] **PAGE-05**: Stats / Analytics page shows global trends, participation rates, aggregate vote counts
+- [x] **PAGE-05**: Stats / Analytics page shows global trends, participation rates, aggregate vote counts
 - [x] **PAGE-06**: All pages are responsive and usable on mobile screens
 
 ### Data Layer
@@ -119,14 +119,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | POLL-05 | Phase 5 | Complete |
 | POLL-06 | Phase 5 | Complete |
 | POLL-07 | Phase 4 | Complete |
-| ZKPR-01 | Phase 6 | Pending |
-| ZKPR-02 | Phase 6 | Pending |
-| ZKPR-03 | Phase 6 | Pending |
+| ZKPR-01 | Phase 6 | Complete |
+| ZKPR-02 | Phase 6 | Complete |
+| ZKPR-03 | Phase 6 | Complete |
 | PAGE-01 | Phase 4 | Complete |
 | PAGE-02 | Phase 4 | Complete |
 | PAGE-03 | Phase 4 | Complete |
 | PAGE-04 | Phase 1 | Complete |
-| PAGE-05 | Phase 6 | Pending |
+| PAGE-05 | Phase 6 | Complete |
 | PAGE-06 | Phase 1 | Complete |
 | DATA-01 | Phase 3 | Complete |
 | DATA-02 | Phase 3 | Complete |
