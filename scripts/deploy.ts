@@ -18,7 +18,7 @@
  *
  * Output:
  *   Prints the deployed contract address to stdout.
- *   Copy it into .env.local as NEXT_PUBLIC_POLL_CONTRACT_ADDRESS=<address>
+ *   Copy it into .env.local as VITE_POLL_CONTRACT_ADDRESS=<address>
  */
 
 import { readFileSync, existsSync } from "fs";
@@ -277,7 +277,7 @@ async function main() {
   console.log("");
   console.log("Next steps:");
   console.log("  1. Add to .env.local:");
-  console.log(`     NEXT_PUBLIC_POLL_CONTRACT_ADDRESS=${contractAddress}`);
+  console.log(`     VITE_POLL_CONTRACT_ADDRESS=${contractAddress}`);
   console.log("  2. Restart the dev server: bun run dev");
   console.log("  3. For production: add to Vercel env vars");
   console.log("");
