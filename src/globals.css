@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+:root {
+  /* Surface hierarchy */
+  --background: #0d0d19;
+  --surface: #0d0d19;
+  --surface-container-low: #121220;
+  --surface-container: #181829;
+  --surface-container-high: #1e1e32;
+  --surface-container-highest: #23243a;
+  --surface-variant: #23243a;
+
+  /* Text */
+  --foreground: #e5e3ff;
+  --on-surface: #e5e3ff;
+  --on-surface-variant: #aaa8c5;
+  --outline: #74738e;
+  --outline-variant: #46465e;
+
+  /* Primary (lavender) */
+  --primary: #b0aaff;
+  --primary-container: #a19afd;
+  --primary-dim: #9992f5;
+  --on-primary: #2c2281;
+  --on-primary-container: #211376;
+
+  /* Tertiary (turquoise) */
+  --tertiary: #80fffa;
+  --tertiary-dim: #3de5df;
+  --tertiary-container: #52f3ee;
+
+  /* Error */
+  --error: #fd6f85;
+  --error-container: #8a1632;
+
+  /* Muted alias (shadcn compatible) */
+  --muted-foreground: #aaa8c5;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@theme inline {
+  /* Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-variant: var(--surface-variant);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-primary-dim: var(--primary-dim);
+  --color-on-primary: var(--on-primary);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-dim: var(--tertiary-dim);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-error: var(--error);
+  --color-error-container: var(--error-container);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Typography */
+  --font-headline: "Manrope", system-ui, sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-label: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "Geist Mono", monospace;
+
+  /* Border radius */
+  --radius: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+  /* Exception: spinner still rotates, slower */
+  .animate-spin {
+    animation-duration: 2000ms !important;
+  }
+}
