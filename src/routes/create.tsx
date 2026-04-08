@@ -1,5 +1,3 @@
-"use client";
-
 import { CreatePollForm } from "@/components/create-poll-form";
 import { WalletAutoConnect } from "@/lib/midnight/wallet-context";
 import { WalletOnboarding } from "@/components/wallet-onboarding";

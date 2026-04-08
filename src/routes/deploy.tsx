@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import {
@@ -126,7 +124,7 @@ export default function DeployPage() {
             "ZK proofs for all 4 circuits are generated via ProofStation (~30-120s each)",
             "Transaction is balanced (ProofStation sponsors dust fees — 0 NIGHT cost to you)",
             "Contract is submitted to Midnight Preview chain",
-            "Contract address is displayed — copy it to NEXT_PUBLIC_POLL_CONTRACT_ADDRESS",
+            "Contract address is displayed — copy it to VITE_POLL_CONTRACT_ADDRESS",
           ].map((step, i) => (
             <li key={i} className="flex gap-3">
               <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">
@@ -222,10 +220,10 @@ export default function DeployPage() {
                 <code className="text-primary bg-primary/10 px-1 rounded">.env.local</code>:
               </p>
               <code className="block font-mono bg-background rounded-lg px-3 py-2 text-on-surface break-all">
-                NEXT_PUBLIC_POLL_CONTRACT_ADDRESS={deployStatus.address}
+                VITE_POLL_CONTRACT_ADDRESS={deployStatus.address}
               </code>
               <p>2. Restart the dev server: <code className="text-primary bg-primary/10 px-1 rounded">bun run dev</code></p>
-              <p>3. For Vercel: add to Environment Variables and redeploy.</p>
+              <p>3. For production: add to Environment Variables and redeploy.</p>
             </div>
           </div>
         )}

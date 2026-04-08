@@ -1,15 +1,12 @@
-"use client";
-
 import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useSearchParams, Link } from "react-router";
 import { useVerifyProof } from "@/lib/queries/use-verify-proof";
 import { useMetadata } from "@/lib/queries/use-metadata";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { Spinner } from "@/components/ui/spinner";
 
 function VerifyContent() {
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const pollId = searchParams.get("pollId") ?? "";
   const nullifier = searchParams.get("nullifier") ?? "";
 
@@ -29,7 +26,7 @@ function VerifyContent() {
           This link is missing a poll ID or proof ID. Make sure you copied the full link.
         </p>
         <Link
-          href="/"
+          to="/"
           className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-semibold hover:bg-surface-container-highest transition-all"
         >
           <span className="material-symbols-outlined">arrow_back</span>
@@ -152,7 +149,7 @@ function VerifyContent() {
         </p>
 
         <div className="text-center">
-          <Link href={`/poll/${pollId}`} className="text-primary text-sm hover:underline">
+          <Link to={`/poll/${pollId}`} className="text-primary text-sm hover:underline">
             View Poll →
           </Link>
         </div>
@@ -177,7 +174,7 @@ function VerifyContent() {
         {" "}· Nullifier: <span className="font-mono text-outline">{nullifier.slice(0, 12)}...</span>
       </p>
       <Link
-        href="/"
+        to="/"
         className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-semibold hover:bg-surface-container-highest transition-all"
       >
         <span className="material-symbols-outlined">arrow_back</span>

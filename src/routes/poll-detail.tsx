@@ -1,8 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useParams, Link } from "react-router";
 import { usePoll } from "@/lib/queries/use-poll";
 import { useWalletContext, WalletAutoConnect } from "@/lib/midnight/wallet-context";
 import { WalletOnboarding } from "@/components/wallet-onboarding";
@@ -17,8 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
  * Reference: .design/view_poll/code.html — asymmetric layout.
  */
 export default function PollDetailPage() {
-  const params = useParams<{ id: string }>();
-  const pollId = params.id;
+  const { id } = useParams<{ id: string }>();
+  const pollId = id!;
   const { status, providers } = useWalletContext();
   const isConnected = status === "connected";
 
@@ -122,7 +119,7 @@ export default function PollDetailPage() {
             This poll may have been removed or the ID is invalid.
           </p>
           <Link
-            href="/"
+            to="/"
             className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface px-6 py-3 rounded-full font-semibold hover:bg-surface-container-highest transition-all"
           >
             <span className="material-symbols-outlined">arrow_back</span>

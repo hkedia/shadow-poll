@@ -1,6 +1,4 @@
-"use client";
-
-import Link from "next/link";
+import { Link } from "react-router";
 import { useStats } from "@/lib/queries/use-stats";
 import { useMetadata } from "@/lib/queries/use-metadata";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
@@ -56,7 +54,7 @@ function MostVotedCard({
   const title = metadataResponse?.metadata?.title ?? "Loading...";
 
   return (
-    <Link href={`/poll/${poll.id}`} className="block group">
+    <Link to={`/poll/${poll.id}`} className="block group">
       <div className="bg-surface-container-low rounded-xl p-6 ring-1 ring-primary/20 hover:ring-primary/40 transition-all space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">

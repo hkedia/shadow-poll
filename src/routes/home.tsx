@@ -1,6 +1,4 @@
-"use client";
-
-import Link from "next/link";
+import { Link } from "react-router";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { HeroSection } from "@/components/hero-section";
 import { InstallPrompt } from "@/components/install-prompt";
@@ -22,7 +20,7 @@ function FeaturedPollCard({ poll }: { poll: PollWithId }) {
   const isMetadataLoading = metadataQuery.isLoading;
 
   return (
-    <Link href={`/poll/${poll.id}`} className="block md:col-span-8">
+    <Link to={`/poll/${poll.id}`} className="block md:col-span-8">
       <div className="group relative overflow-hidden bg-surface-container-low rounded-3xl p-5 sm:p-8 transition-all hover:bg-surface-container-high h-full">
         {/* LIVE badge */}
         <div className="absolute top-0 right-0 p-5 sm:p-8">
@@ -143,7 +141,7 @@ function TrendingPolls() {
             Be the first to create one!
           </p>
           <Link
-            href="/create"
+            to="/create"
             className="inline-flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold px-8 py-4 rounded-full active:scale-95 duration-200 shadow-[0px_8px_32px_rgba(176,170,255,0.3)]"
           >
             <span className="material-symbols-outlined">add</span>
