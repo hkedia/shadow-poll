@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useVoteMutation } from "@/lib/queries/use-vote-mutation";
+import { useInviteVoteMutation } from "@/lib/queries/use-invite-vote-mutation";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -10,35 +11,82 @@ interface VotePanelProps {
   pollId: string;
   isExpired: boolean;
   isConnected: boolean;
+  pollType: "public" | "invite_only";
 }
 
 /**
  * Radio option selection and vote button for poll detail page.
  * Reference: .design/view_poll/code.html — radio options section.
  */
-export function VotePanel({ options, pollId, isExpired, isConnected }: VotePanelProps) {
+export function VotePanel({ options, pollId, isExpired, isConnected, pollType }: VotePanelProps) {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [inviteCode, setInviteCode] = useState("");
   const voteMutation = useVoteMutation();
+  const inviteVoteMutation = useInviteVoteMutation();
   const { connect } = useWalletContext();
+
+  const activeMutation = pollType === "invite_only" ? inviteVoteMutation : voteMutation;
 
   function handleVote() {
     if (selectedOption === null || isExpired || !isConnected) return;
 
     setSuccessMessage(null);
-    voteMutation.mutate(
-      { pollId, optionIndex: selectedOption },
-      {
-        onSuccess: () => {
-          setSuccessMessage("Your anonymous vote has been cast!");
-          setSelectedOption(null);
+
+    if (pollType === "invite_only") {
+      if (!inviteCode.trim()) return;
+      inviteVoteMutation.mutate(
+        { pollId, optionIndex: selectedOption, inviteCode: inviteCode.trim() },
+        {
+          onSuccess: () => {
+            setSuccessMessage("Your anonymous vote has been cast!");
+            setSelectedOption(null);
+            setInviteCode("");
+          },
         },
-      },
-    );
+      );
+    } else {
+      voteMutation.mutate(
+        { pollId, optionIndex: selectedOption },
+        {
+          onSuccess: () => {
+            setSuccessMessage("Your anonymous vote has been cast!");
+            setSelectedOption(null);
+          },
+        },
+      );
+    }
   }
+
+  const isVoteDisabled =
+    selectedOption === null
+    || (pollType === "invite_only" && !inviteCode.trim())
+    || activeMutation.isPending;
 
   return (
     <div className="space-y-4">
+      {/* Invite code input — shown only for invite-only polls */}
+      {pollType === "invite_only" && (
+        <div className="bg-surface-container-low rounded-xl p-6 ring-1 ring-tertiary/20 space-y-3">
+          <div className="flex items-center gap-2 text-tertiary font-semibold text-sm">
+            <span className="material-symbols-outlined text-lg">vpn_key</span>
+            Enter Your Invite Code
+          </div>
+          <input
+            type="text"
+            value={inviteCode}
+            onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+            placeholder="e.g., A3K9F2X7B1"
+            maxLength={20}
+            className="w-full bg-surface-container-highest border-none rounded-xl px-5 py-4 font-mono text-lg text-on-surface tracking-wider placeholder:text-outline focus:ring-1 focus:ring-tertiary/30 transition-all uppercase"
+            disabled={isExpired}
+          />
+          <p className="text-xs text-on-surface-variant">
+            Your code will be verified via zero-knowledge proof. No one can see which code you used.
+          </p>
+        </div>
+      )}
+
       {/* Radio options */}
       {options.map((option, index) => (
         <label
@@ -98,10 +146,10 @@ export function VotePanel({ options, pollId, isExpired, isConnected }: VotePanel
           <button
             type="button"
             onClick={handleVote}
-            disabled={selectedOption === null || voteMutation.isPending}
+            disabled={isVoteDisabled}
             className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-10 py-5 rounded-full font-bold text-lg flex items-center gap-3 active:scale-95 duration-200 shadow-2xl shadow-primary/30 disabled:opacity-50 disabled:pointer-events-none transition-all"
           >
-            {voteMutation.isPending ? (
+            {activeMutation.isPending ? (
               <>
                 <Spinner size="sm" className="border-on-primary/30 border-t-on-primary" />
                 Casting Vote...
@@ -124,9 +172,14 @@ export function VotePanel({ options, pollId, isExpired, isConnected }: VotePanel
         )}
 
         {/* Error message */}
-        {voteMutation.isError && (
-          <p className="mt-4 text-error text-sm">
-            {voteMutation.error?.message ?? "Failed to cast vote"}
+        {activeMutation.isError && (
+          <p className="mt-4 text-error text-sm flex items-center gap-2">
+            <span className="material-symbols-outlined text-base">
+              {activeMutation.error?.message?.includes("Already voted") ? "info" : "error"}
+            </span>
+            {activeMutation.error?.message?.includes("Already voted")
+              ? "You have already voted on this poll."
+              : activeMutation.error?.message ?? "Failed to cast vote"}
           </p>
         )}
 

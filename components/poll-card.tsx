@@ -23,13 +23,19 @@ export function PollCard({ poll, tallies }: PollCardProps) {
 
   const totalVotes = tallies?.total?.toString() ?? "0";
   const optionPreviews = metadata?.options?.slice(0, 2) ?? [];
+  const isInviteOnly = Number(poll.data.poll_type) === 1;
 
   return (
     <Link href={`/poll/${poll.id}`} className="block">
       <div className="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between transition-all hover:bg-surface-container-high h-full min-h-[280px]">
         <div>
-          <span className="text-primary font-bold tracking-widest text-xs uppercase mb-4 block">
-            Public
+          <span className={`font-bold tracking-widest text-xs uppercase mb-4 flex items-center gap-1.5 ${
+            isInviteOnly ? "text-tertiary" : "text-primary"
+          }`}>
+            {isInviteOnly && (
+              <span className="material-symbols-outlined text-sm">lock</span>
+            )}
+            {isInviteOnly ? "Invite Only" : "Public"}
           </span>
 
           {isMetadataLoading ? (

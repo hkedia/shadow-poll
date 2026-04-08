@@ -52,6 +52,7 @@ export default function PollDetailPage() {
     poll.data.expiration_block <= currentBlock;
 
   const options = metadata?.options ?? [];
+  const isInviteOnly = poll !== null && Number(poll.data.poll_type) === 1;
 
   // Loading state
   if (isLoading) {
@@ -130,6 +131,14 @@ export default function PollDetailPage() {
             Secure Anonymous Voting Active
           </div>
 
+          {/* Invite-only indicator */}
+          {isInviteOnly && (
+            <div className="flex items-center gap-2 text-tertiary text-xs font-semibold tracking-wider uppercase">
+              <span className="material-symbols-outlined text-sm">lock</span>
+              Invite-Only Poll
+            </div>
+          )}
+
           {/* Poll title */}
           <h1 className="text-5xl md:text-6xl font-headline font-extrabold tracking-tight leading-tight text-on-surface">
             {metadata?.title ?? "Untitled Poll"}
@@ -156,6 +165,7 @@ export default function PollDetailPage() {
             pollId={pollId}
             isExpired={isExpired}
             isConnected={isConnected}
+            pollType={isInviteOnly ? "invite_only" : "public"}
           />
         ) : (
           <div className="text-on-surface-variant">
