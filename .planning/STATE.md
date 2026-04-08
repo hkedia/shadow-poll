@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed Phase 08 — all 4 plans (08-01 through 08-04) executed
-last_updated: "2026-04-08T21:13:56.205Z"
-last_activity: 2026-04-08
+status: completed
+stopped_at: Phase 9 context gathered
+last_updated: "2026-04-08T23:41:25.573Z"
+last_activity: 2026-04-09
 progress:
-  total_phases: 8
+  total_phases: 9
   completed_phases: 8
   total_plans: 20
   completed_plans: 20
@@ -146,12 +146,16 @@ Recent decisions affecting current work:
 - [Phase 08]: Removed vite-plugin-top-level-await — Vite 8 with build.target: esnext natively supports TLA; plugin required rollup which Vite 8 (Rolldown-based) does not bundle
 - [Phase 08]: object-inspect added to Vite optimizeDeps.include — CJS module requires pre-bundling for ESM import compatibility
 
+### Roadmap Evolution
+
+- Phase 9 added: Research all missing integrations and core feature gaps needed for a working app — poll creation invoking 1am wallet API, vote submission with blockchain confirmation, metadata storage in DB, active/closed poll tracking, invite code handling, and participation proof generation
+
 ### Blockers/Concerns
 
 None.
 
 ## Session Continuity
 
-Last session: 2026-04-08T21:13:07.087Z
-Stopped at: Completed Phase 08 — all 4 plans (08-01 through 08-04) executed
-Resume file: None
+Last session: 2026-04-08T23:41:25.563Z
+Stopped at: Phase 9 context gathered
+Resume file: .planning/phases/09-research-all-missing-integrations-and-core-feature-gaps-need/09-CONTEXT.md
