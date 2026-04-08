@@ -70,7 +70,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **MIGR-01**: Midnight SDK `@midnight-ntwrk/*` WASM modules load at runtime via normal static imports — no stub file, no dynamic import workarounds
 - [x] **MIGR-02**: All 9 application routes work under React Router including dynamic `/poll/:id` route
-- [ ] **MIGR-03**: Metadata API endpoint (`/api/polls/metadata`) serves GET and POST via Bun.serve()
+- [x] **MIGR-03**: Metadata API endpoint (`/api/polls/metadata`) serves GET and POST via Bun.serve()
 - [x] **MIGR-04**: `bun run build` produces a working production bundle with Vite
 - [x] **MIGR-05**: ZK proof generation works end-to-end (create poll, vote, generate/verify participation proof)
 - [x] **MIGR-06**: `lib/midnight-sdk-stub.ts` and all `resolveAlias` Turbopack workarounds are deleted
@@ -156,7 +156,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAYM-05 | Phase 8 | Pending |
 | MIGR-01 | Phase 8 | Complete |
 | MIGR-02 | Phase 8 | Complete |
-| MIGR-03 | Phase 8 | Pending |
+| MIGR-03 | Phase 8 | Complete |
 | MIGR-04 | Phase 8 | Complete |
 | MIGR-05 | Phase 8 | Complete |
 | MIGR-06 | Phase 8 | Complete |

@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention (completed 2026-04-08)
 - [x] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard (in progress) (completed 2026-04-08)
 - [ ] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility
-- [ ] **Phase 8: Vite Migration** - Replace Next.js + Turbopack with Vite + React Router + Bun.serve() to resolve Midnight SDK WASM runtime loading failures and align build tooling with the app's SPA architecture
+- [x] **Phase 8: Vite Migration** - Replace Next.js + Turbopack with Vite + React Router + Bun.serve() to resolve Midnight SDK WASM runtime loading failures and align build tooling with the app's SPA architecture (completed 2026-04-09)
 
 ## Phase Details
 
@@ -156,7 +156,7 @@ Plans:
 - [x] 08-01-PLAN.md — Vite config, entry points, static SDK imports, delete stub + Turbopack workarounds
 - [x] 08-02-PLAN.md — React Router app shell, move routes to src/routes/, update all Next.js imports
 - [x] 08-03-PLAN.md — Bun.serve() production server, metadata API handler migration
-- [ ] 08-04-PLAN.md — Gap closure: remove incompatible vite-plugin-top-level-await to fix build
+- [x] 08-04-PLAN.md — Gap closure: remove incompatible vite-plugin-top-level-await to fix build
 
 **UI hint**: yes
 
@@ -227,4 +227,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 5. Invite-Only Polls | 3/3 | Complete | 2026-04-08 |
 | 6. ZK Proofs & Analytics | 2/2 | Complete   | 2026-04-08 |
 | 7. Persistent Data Layer | 0/1 | Pending | — |
-| 8. Vite Migration | 0/3 | Ready to execute | — |
+| 8. Vite Migration | 4/4 | Complete | 2026-04-09 |
