@@ -3,6 +3,9 @@ import { Geist_Mono, Manrope, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { WalletProvider } from "@/lib/midnight/wallet-context";
+import { WalletButton } from "@/components/wallet-button";
+import { WalletOnboarding } from "@/components/wallet-onboarding";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -23,7 +26,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Shadow Poll",
-  description: "Create secure, anonymous polls that prioritize privacy without sacrificing engagement.",
+  description:
+    "Create secure, anonymous polls that prioritize privacy without sacrificing engagement.",
 };
 
 export default function RootLayout({
@@ -43,13 +47,14 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Header />
-        <main className="flex-1 pt-32 pb-20 px-6 md:px-8">
-          <div className="max-w-7xl mx-auto">
-            {children}
-          </div>
-        </main>
-        <Footer />
+        <WalletProvider>
+          <Header walletSlot={<WalletButton />} />
+          <WalletOnboarding />
+          <main className="flex-1 pt-32 pb-20 px-6 md:px-8">
+            <div className="max-w-7xl mx-auto">{children}</div>
+          </main>
+          <Footer />
+        </WalletProvider>
       </body>
     </html>
   );
