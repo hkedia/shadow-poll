@@ -25,11 +25,14 @@ function StepDots({ current }: { current: number }) {
 }
 
 export function WalletOnboarding() {
-  const { status, error, connect } = useWalletContext();
+  const { status, isAutoConnecting, error, connect } = useWalletContext();
 
-  // Only show overlay when actively onboarding
+  // Only show overlay when actively onboarding.
+  // During autoconnect (page reload), the 1am wallet silently reconnects
+  // already-authorized sites without a popup — suppress the overlay so users
+  // aren't alarmed by an "approve the connection" message that never requires action.
   const showOverlay =
-    status === "connecting" ||
+    (status === "connecting" && !isAutoConnecting) ||
     status === "not_detected" ||
     status === "error";
 

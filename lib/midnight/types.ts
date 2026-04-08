@@ -90,6 +90,11 @@ export interface MidnightProviderSet {
 
 export interface WalletState {
   status: ConnectionStatus;
+  /** True when the current connection attempt is an automatic reconnect on page load
+   *  (not triggered by user interaction). Used to suppress approval-prompt UI during
+   *  silent autoconnect — the 1am wallet silently reconnects already-authorized sites
+   *  without showing a popup, so the "approve the connection" overlay would be misleading. */
+  isAutoConnecting: boolean;
   address: string | null;
   truncatedAddress: string | null;
   providers: MidnightProviderSet | null;

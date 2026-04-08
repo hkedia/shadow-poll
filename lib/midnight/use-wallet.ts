@@ -14,6 +14,7 @@ function truncateAddress(address: string): string {
 export function useWallet() {
   const [state, setState] = useState<WalletState>({
     status: "idle",
+    isAutoConnecting: false,
     address: null,
     truncatedAddress: null,
     providers: null,
@@ -28,8 +29,8 @@ export function useWallet() {
 
   const connectInternal = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async (api: any) => {
-      setState((s) => ({ ...s, status: "connecting", error: null }));
+    async (api: any, isAutoConnect = false) => {
+      setState((s) => ({ ...s, status: "connecting", isAutoConnecting: isAutoConnect, error: null }));
       try {
         // Connect wallet on preview network (triggers user approval in extension)
         const enabledApi = await api.connect("preview");
@@ -55,6 +56,7 @@ export function useWallet() {
 
         setState({
           status: "connected",
+          isAutoConnecting: false,
           address,
           truncatedAddress: truncateAddress(address),
           providers,
@@ -68,6 +70,7 @@ export function useWallet() {
         setState((s) => ({
           ...s,
           status: "error",
+          isAutoConnecting: false,
           error: message,
           providers: null,
         }));
@@ -88,7 +91,7 @@ export function useWallet() {
       const shouldAutoConnect =
         localStorage.getItem(AUTO_CONNECT_KEY) === "true";
       if (shouldAutoConnect) {
-        await connectInternal(api);
+        await connectInternal(api, true);
       } else {
         setState((s) => ({ ...s, status: "disconnected" }));
       }
@@ -112,6 +115,7 @@ export function useWallet() {
     localStorage.removeItem(AUTO_CONNECT_KEY);
     setState({
       status: "disconnected",
+      isAutoConnecting: false,
       address: null,
       truncatedAddress: null,
       providers: null,
