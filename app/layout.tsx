@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { WalletProvider } from "@/lib/midnight/wallet-context";
 import { WalletButton } from "@/components/wallet-button";
 import { WalletOnboarding } from "@/components/wallet-onboarding";
+import { QueryProvider } from "@/lib/queries/query-provider";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -48,12 +49,14 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <WalletProvider>
-          <Header walletSlot={<WalletButton />} />
-          <WalletOnboarding />
-          <main className="flex-1 pt-32 pb-20 px-6 md:px-8">
-            <div className="max-w-7xl mx-auto">{children}</div>
-          </main>
-          <Footer />
+          <QueryProvider>
+            <Header walletSlot={<WalletButton />} />
+            <WalletOnboarding />
+            <main className="flex-1 pt-32 pb-20 px-6 md:px-8">
+              <div className="max-w-7xl mx-auto">{children}</div>
+            </main>
+            <Footer />
+          </QueryProvider>
         </WalletProvider>
       </body>
     </html>

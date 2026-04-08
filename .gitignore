@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# midnight contract compilation output
+/contracts/managed/
+
+# ZK keys are generated, not checked in (regenerate via bun run compile:contracts)
+/public/zk-keys/*.prover
+/public/zk-keys/*.verifier
+/public/zk-keys/*.pk
+/public/zk-keys/*.vk
+/public/zk-keys/*.zkir

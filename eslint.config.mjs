@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated Compact contract artifacts (auto-generated, not hand-written):
+    "contracts/managed/**",
   ]),
 ]);
 

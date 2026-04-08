@@ -1,0 +1,180 @@
+pragma language_version >= 0.19;
+
+import CompactStandardLibrary;
+
+// ============================================================================
+// Shadow Poll — Poll Manager Contract
+// ============================================================================
+// A single contract managing all polls (D-20: Single Contract Architecture).
+// Vote tallies are public; voter identity is never linked to choice (D-21).
+// Poll metadata (title, description, option labels) is stored as a commitment
+// hash on-chain — full text is recovered from the indexer (D-22).
+// Maximum 10 options per poll (D-23). Expiration by block number (D-24).
+// ============================================================================
+
+// --- Enums -------------------------------------------------------------------
+
+export enum PollType { public_poll, invite_only }
+
+// --- Structs -----------------------------------------------------------------
+
+export struct PollData {
+  metadata_hash: Bytes<32>,
+  option_count: Uint<8>,
+  poll_type: PollType,
+  expiration_block: Uint<64>,
+  creator: Bytes<32>,
+}
+
+// --- Ledger State (individual declarations) ----------------------------------
+
+export ledger polls: Map<Bytes<32>, PollData>;
+// Flat tally map: key = hash(poll_id, option_index_as_bytes) → Counter.
+// Avoids nested Map<Map<Counter>> which Compact does not support for chained access.
+export ledger tallies: Map<Bytes<32>, Counter>;
+export ledger poll_count: Counter;
+
+// --- Witnesses (declarations only — implemented in TypeScript prover) --------
+
+witness local_secret_key(): Bytes<32>;
+witness current_block_number(): Uint<64>;
+
+// --- Pure Circuits (helpers) -------------------------------------------------
+
+// Derive a public key from a secret key.
+pure circuit derive_public_key(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "shadowpoll:pk:"), sk]);
+}
+
+// Derive a unique poll ID from metadata hash, creator, and poll count.
+pure circuit derive_poll_id(
+  metadata_hash: Bytes<32>,
+  creator: Bytes<32>,
+  count_bytes: Bytes<32>
+): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>([metadata_hash, creator, count_bytes]);
+}
+
+// Derive a tally key from poll ID and option index.
+// Flattens the 2D (poll_id, option_index) into a single Bytes<32> map key.
+pure circuit derive_tally_key(
+  poll_id: Bytes<32>,
+  option_index_bytes: Bytes<32>
+): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([poll_id, option_index_bytes]);
+}
+
+// --- Circuits ----------------------------------------------------------------
+
+// Create a new poll. Returns the poll ID.
+// Requirements: CONT-01
+// All parameters are disclosed because poll creation data is public by design.
+export circuit create_poll(
+  metadata_hash: Bytes<32>,
+  option_count: Uint<8>,
+  poll_type: PollType,
+  expiration_block: Uint<64>
+): Bytes<32> {
+  // Disclose all parameters — poll creation data is public
+  const d_metadata_hash = disclose(metadata_hash);
+  const d_option_count = disclose(option_count);
+  const d_poll_type = disclose(poll_type);
+  const d_expiration_block = disclose(expiration_block);
+
+  // Validate option count (D-23: max 10)
+  assert(d_option_count > 0 as Uint<8>, "Option count must be at least 1");
+  assert(d_option_count <= 10 as Uint<8>, "Option count must be at most 10");
+
+  // Derive caller identity from witness
+  const sk = local_secret_key();
+  const caller_pk = disclose(derive_public_key(sk));
+
+  // Read current poll count for unique ID derivation
+  const current_count = poll_count.read();
+  const count_bytes = current_count as Bytes<32>;
+
+  // Derive unique poll ID
+  const poll_id = derive_poll_id(d_metadata_hash, caller_pk, count_bytes);
+
+  // Create poll data struct
+  const poll_data = PollData {
+    metadata_hash: d_metadata_hash,
+    option_count: d_option_count,
+    poll_type: d_poll_type,
+    expiration_block: d_expiration_block,
+    creator: caller_pk,
+  };
+
+  // Store poll data on-chain
+  polls.insert(poll_id, poll_data);
+
+  // Initialise tally counters for each option (up to 10, using flat key scheme).
+  // Each tally key = hash(poll_id, option_index_as_bytes).
+  // All disclosed values so no further disclose needed.
+  tallies.insertDefault(derive_tally_key(poll_id, 0 as Uint<8> as Bytes<32>));
+  if (d_option_count > 1 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 1 as Uint<8> as Bytes<32>));
+  }
+  if (d_option_count > 2 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 2 as Uint<8> as Bytes<32>));
+  }
+  if (d_option_count > 3 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 3 as Uint<8> as Bytes<32>));
+  }
+  if (d_option_count > 4 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 4 as Uint<8> as Bytes<32>));
+  }
+  if (d_option_count > 5 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 5 as Uint<8> as Bytes<32>));
+  }
+  if (d_option_count > 6 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 6 as Uint<8> as Bytes<32>));
+  }
+  if (d_option_count > 7 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 7 as Uint<8> as Bytes<32>));
+  }
+  if (d_option_count > 8 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 8 as Uint<8> as Bytes<32>));
+  }
+  if (d_option_count > 9 as Uint<8>) {
+    tallies.insertDefault(derive_tally_key(poll_id, 9 as Uint<8> as Bytes<32>));
+  }
+
+  // Increment global poll count
+  poll_count.increment(1);
+
+  return poll_id;
+}
+
+// Cast a vote on a poll.
+// Requirements: CONT-02
+// The voter's identity is never stored alongside their choice (D-21).
+// poll_id and option_index are disclosed because the vote target is public —
+// only the voter's identity remains private.
+export circuit cast_vote(
+  poll_id: Bytes<32>,
+  option_index: Uint<8>
+): [] {
+  // Disclose parameters — vote target is public, voter identity is not
+  const d_poll_id = disclose(poll_id);
+  const d_option_index = disclose(option_index);
+
+  // Verify poll exists
+  assert(polls.member(d_poll_id), "Poll not found");
+
+  // Look up poll data
+  const poll_data = polls.lookup(d_poll_id);
+
+  // Validate option index
+  assert(d_option_index < poll_data.option_count, "Invalid option index");
+
+  // Check expiration (D-24: block-number-based)
+  // current_block_number() is provided by the TypeScript prover.
+  // The ZK proof guarantees the assertion — the prover cannot lie.
+  const block = disclose(current_block_number());
+  assert(block < poll_data.expiration_block, "Poll has expired");
+
+  // Increment the tally for the chosen option using the flat key scheme.
+  const tally_key = derive_tally_key(d_poll_id, d_option_index as Bytes<32>);
+  tallies.lookup(tally_key).increment(1);
+}

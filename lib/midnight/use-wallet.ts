@@ -31,22 +31,24 @@ export function useWallet() {
     async (api: any) => {
       setState((s) => ({ ...s, status: "connecting", error: null }));
       try {
-        // Enable wallet (triggers user approval in extension)
-        await api.enable();
+        // Connect wallet on preview network (triggers user approval in extension)
+        const enabledApi = await api.connect("preview");
 
-        // Get wallet address
-        const accounts = await api.getAccounts();
+        // Get shielded address to protect user privacy
+        // Returns { shieldedAddress: string, shieldedCoinPublicKey: string, shieldedEncryptionPublicKey: string }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rawAddress: any = await enabledApi.getShieldedAddresses();
         const address: string =
-          accounts?.[0]?.address ??
-          accounts?.[0] ??
-          "";
+          typeof rawAddress === "string"
+            ? rawAddress
+            : rawAddress?.shieldedAddress ?? "";
 
         if (!address) {
           throw new Error("No account address returned from wallet.");
         }
 
-        // Assemble providers (WALL-05)
-        const providers = await assembleProviders(api);
+        // Assemble providers (WALL-05) using the enabled API
+        const providers = await assembleProviders(enabledApi);
 
         // Persist auto-connect flag (WALL-07)
         localStorage.setItem(AUTO_CONNECT_KEY, "true");
