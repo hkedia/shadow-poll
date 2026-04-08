@@ -176,6 +176,7 @@ export async function assembleProviders(enabledApi: any): Promise<MidnightProvid
     walletProvider,
     proofProvider,
     midnightProvider,
+    networkId: config.networkId as string,
   };
 }
 
