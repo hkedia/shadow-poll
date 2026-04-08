@@ -8,6 +8,7 @@ import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
 import { VotePanel } from "@/components/vote-panel";
 import { ResultsPanel } from "@/components/results-panel";
+import { ProofPanel } from "@/components/proof-panel";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /**
@@ -173,6 +174,14 @@ export default function PollDetailPage() {
             <Skeleton className="h-20 w-full bg-surface-container-high rounded-xl" />
             <p className="mt-4 text-sm">Loading poll options...</p>
           </div>
+        )}
+
+        {/* Participation Proof section — shown when wallet is connected */}
+        {isConnected && poll !== null && (
+          <ProofPanel
+            pollId={pollId}
+            pollTitle={metadata?.title ?? ""}
+          />
         )}
       </div>
 
