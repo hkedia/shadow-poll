@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: complete
-stopped_at: Phase 7 complete — Neon Postgres data layer implemented, all 7 phases done
-last_updated: "2026-04-08T18:15:00.000Z"
+status: in_progress
+stopped_at: Phase 8 added — 08-CONTEXT.md and 08-01/02/03-PLAN.md written, ready to execute
+last_updated: "2026-04-08T18:30:00.000Z"
 last_activity: 2026-04-08
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 7
-  total_plans: 16
+  total_plans: 19
   completed_plans: 16
-  percent: 100
+  percent: 84
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 **Core value:** Users can vote on polls anonymously with cryptographic guarantees
-**Current focus:** All phases complete — ready for deployment with DATABASE_URL configured
+**Current focus:** Phase 8 — NIGHT token payment for poll creation
 
 ## Current Position
 
-Phase: 7 of 7 (Persistent Data Layer) — COMPLETE
-Plan: 1 of 1 in current phase
-Status: All phases complete
+Phase: 8 of 8 (NIGHT Token Payment) — IN PROGRESS
+Plan: 1 of 3 in current phase
+Status: Ready to execute (plans written, context documented)
 Last activity: 2026-04-08
 
-Progress: [██████████] 100%
+Progress: [████████░░] 84%
 
 ## Performance Metrics
 
@@ -61,6 +61,18 @@ Progress: [██████████] 100%
 | Phase 05 P03 | 7min | 3 tasks | 5 files |
 | Phase 06 P01 | 3 | 4 tasks | 4 files |
 | Phase 06 P02 | 5 | 6 tasks | 6 files |
+
+## Phase 8 Design Decisions (from discussion)
+
+- D-80: Fee is 5 NIGHT/tNIGHT per poll creation — defined as `POLL_CREATION_FEE` constant in `lib/midnight/fee-config.ts`; changing one constant updates fee everywhere
+- D-81: Token denomination is network-aware via `getFeeTokenId(networkId)` — tNIGHT for preview/preprod, NIGHT for mainnet; network ID comes from 1am wallet config
+- D-82: Fee collected atomically via Compact `receive(tokenId, amount)` in the `create_poll` circuit — atomic with the transaction, no separate approve step
+- D-83: Voters (cast_vote, cast_invite_vote) pay nothing — unchanged, DUST only, sponsored by 1am wallet
+- D-84: Create Poll UI shows fee banner "Creating this poll costs 5 tNIGHT" above submit button — visible when wallet is connected
+- D-85: Insufficient balance produces a typed `PollCreationError` with `code: "INSUFFICIENT_BALANCE"` — distinct from generic transaction failure in the UI
+- D-86: Fees accumulate in the contract's shielded balance — no separate treasury wallet in v1; withdraw_fees circuit is deferred
+- D-87: `fee_token_id: Bytes<32>` added as a parameter to `create_poll` — TypeScript service derives it from `getFeeTokenId(networkId)` and converts to bytes
+- D-88: `networkId` added to `MidnightProviderSet` — populated from `config.networkId` in `assembleProviders()`
 
 ## Phase 7 Design Decisions (from discussion)
 
@@ -142,6 +154,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-08T12:00:00.000Z
-Stopped at: Phase 7 added — 07-CONTEXT.md and 07-01-PLAN.md written, ready to execute
-Resume file: .planning/phases/07-persistent-data-layer/07-01-PLAN.md
+Last session: 2026-04-08T18:30:00.000Z
+Stopped at: Phase 8 added — 08-CONTEXT.md and 08-01/02/03-PLAN.md written, ready to execute
+Resume file: .planning/phases/08-night-token-payment/08-01-PLAN.md

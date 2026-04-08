@@ -58,6 +58,14 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **DATA-03**: Thin API routes proxy indexer queries and serve static contract artifacts
 - [x] **DATA-04**: Vote tallies update optimistically before on-chain confirmation
 
+### NIGHT Token Payment
+
+- [ ] **PAYM-01**: Creating a poll costs 5 NIGHT tokens (tNIGHT on testnet) — fee collected atomically by the smart contract at poll creation time
+- [ ] **PAYM-02**: The fee amount is defined as a single named constant in `lib/midnight/fee-config.ts` — changing it requires no other code edits
+- [ ] **PAYM-03**: The token denomination (tNIGHT on Preview/preprod, NIGHT on mainnet) is derived from the detected network ID — no hardcoded token strings in business logic
+- [ ] **PAYM-04**: The Create Poll UI shows the cost (e.g. "Creating this poll costs 5 tNIGHT") before the user submits
+- [ ] **PAYM-05**: Insufficient token balance produces a clear, distinct error message — not a generic transaction failure
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -90,7 +98,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | Multi-chain support | Midnight Preview only — avoid complexity |
 | WebSocket real-time updates | Polling/refetch sufficient for v1; WebSocket adds infra complexity |
 | Admin dashboard / moderation | Decentralized — no central authority over polls |
-| Token economics / incentives | Pure polling utility; tokenomics is a separate product decision |
+| Token economics / incentives | Pure polling utility; tokenomics beyond poll-creation fee is out of scope |
 | Mainnet deployment | Preview network (testnet) only for v1 |
 
 ## Traceability
@@ -132,10 +140,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-02 | Phase 3 | Complete |
 | DATA-03 | Phase 3 | Complete |
 | DATA-04 | Phase 3 | Complete |
+| PAYM-01 | Phase 8 | Pending |
+| PAYM-02 | Phase 8 | Pending |
+| PAYM-03 | Phase 8 | Pending |
+| PAYM-04 | Phase 8 | Pending |
+| PAYM-05 | Phase 8 | Pending |
 
 **Coverage:**
-- v1 requirements: 33 total
-- Mapped to phases: 33
+- v1 requirements: 38 total
+- Mapped to phases: 38
 - Unmapped: 0
 
 ---
