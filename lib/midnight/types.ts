@@ -113,8 +113,6 @@ export interface MidnightProviderSet {
   proofProvider: ProofProviderApi;
   /** Midnight provider — submits transactions via api.submitTransaction */
   midnightProvider: MidnightProviderApi;
-  /** Network ID string from wallet configuration (e.g. "preview", "preprod", "mainnet"). Used for network-aware fee token selection. */
-  networkId: string;
 }
 
 export interface WalletState {
