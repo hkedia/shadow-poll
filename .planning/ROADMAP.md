@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Smart Contracts** - Write and compile Compact contracts for poll creation and vote casting (completed 2026-04-08)
 - [x] **Phase 3: Data Layer** - Wire up GraphQL indexer reads and API routes for on-chain data access (completed 2026-04-08)
 - [x] **Phase 4: Core Polling** - End-to-end public poll creation, voting, and browsing with live tallies (completed 2026-04-08)
-- [ ] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention
+- [x] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention (completed 2026-04-08)
 - [ ] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard
 
 ## Phase Details
@@ -167,5 +167,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Smart Contracts | 2/2 | Complete   | 2026-04-08 |
 | 3. Data Layer | 2/2 | Complete   | 2026-04-08 |
 | 4. Core Polling | 3/3 | Complete | 2026-04-08 |
-| 5. Invite-Only Polls | 0/3 | Planned | - |
+| 5. Invite-Only Polls | 3/3 | Complete | 2026-04-08 |
 | 6. ZK Proofs & Analytics | 0/0 | Not started | - |
