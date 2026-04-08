@@ -19,6 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention (completed 2026-04-08)
 - [x] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard (in progress) (completed 2026-04-08)
 - [ ] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility
+- [ ] **Phase 8: Vite Migration** - Replace Next.js + Turbopack with Vite + React Router + Bun.serve() to resolve Midnight SDK WASM runtime loading failures and align build tooling with the app's SPA architecture
 
 ## Phase Details
 
@@ -138,10 +139,31 @@ Plans:
 
 **UI hint**: no
 
+### Phase 8: Vite Migration
+**Goal**: All Midnight SDK WASM modules load correctly at runtime by replacing Next.js + Turbopack with Vite (client bundling) + React Router (routing) + Bun.serve() (API + static serving)
+**Depends on**: Phase 6 (all existing features must survive migration)
+**Requirements**: MIGR-01, MIGR-02, MIGR-03, MIGR-04, MIGR-05, MIGR-06
+**Success Criteria** (what must be TRUE):
+  1. `@midnight-ntwrk/*` packages import via normal static imports (no dynamic import workarounds, no stub file)
+  2. WASM modules from the Midnight SDK load successfully at runtime in the browser
+  3. All 9 existing routes render correctly under React Router
+  4. The metadata API endpoint (`/api/polls/metadata`) works via Bun.serve()
+  5. `bun run build` produces a working production bundle
+  6. ZK proof generation works end-to-end (create poll → vote → verify proof)
+**Plans**: 3 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Vite config, entry points, static SDK imports, delete stub + Turbopack workarounds
+- [ ] 08-02-PLAN.md — React Router app shell, move routes to src/routes/, update all Next.js imports
+- [ ] 08-03-PLAN.md — Bun.serve() production server, metadata API handler migration
+
+**UI hint**: yes
+
 ## Requirement Coverage
 
 All 33 v1 requirements mapped to exactly one phase. 100% coverage.
 5 infrastructure requirements (INFRA-01..05) added in Phase 7.
+6 migration requirements (MIGR-01..06) added in Phase 8.
 
 | Requirement | Phase | Description |
 |-------------|-------|-------------|
@@ -183,6 +205,12 @@ All 33 v1 requirements mapped to exactly one phase. 100% coverage.
 | INFRA-03 | 7 | GET /api/polls/metadata (no pollId) returns all polls metadata |
 | INFRA-04 | 7 | POST /api/polls/metadata is idempotent (upsert) |
 | INFRA-05 | 7 | App deploys on Vercel with DATABASE_URL env var |
+| MIGR-01 | 8 | Midnight SDK WASM modules load via static imports without stubs |
+| MIGR-02 | 8 | All 9 routes work under React Router (including dynamic /poll/:id) |
+| MIGR-03 | 8 | Metadata API serves via Bun.serve() |
+| MIGR-04 | 8 | Production build succeeds with Vite |
+| MIGR-05 | 8 | ZK proof generation works end-to-end after migration |
+| MIGR-06 | 8 | SDK stub file and all Turbopack workarounds removed |
 
 ## Progress
 
@@ -198,3 +226,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 5. Invite-Only Polls | 3/3 | Complete | 2026-04-08 |
 | 6. ZK Proofs & Analytics | 2/2 | Complete   | 2026-04-08 |
 | 7. Persistent Data Layer | 0/1 | Pending | — |
+| 8. Vite Migration | 0/TBD | Pending | — |
