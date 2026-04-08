@@ -94,6 +94,42 @@ export async function derivePollId(
 }
 
 /**
+ * Derives a vote nullifier matching the contract's derive_nullifier pure circuit.
+ * nullifier = persistentHash<Vector<2, Bytes<32>>>([poll_id, voter_sk])
+ *
+ * The nullifier is deterministic: same wallet + same poll always produces the same value.
+ * This allows duplicate vote detection without revealing voter identity.
+ */
+export async function deriveNullifier(
+  pollId: Uint8Array,
+  voterSk: Uint8Array,
+): Promise<Uint8Array> {
+  const { persistentHash, CompactTypeVector, CompactTypeBytes } = await import(
+    "@midnight-ntwrk/compact-runtime"
+  );
+  const vectorType = new CompactTypeVector(2, new CompactTypeBytes(32));
+  return persistentHash(vectorType, [pollId, voterSk]);
+}
+
+/**
+ * Derives an invite code key matching the contract's derive_invite_key pure circuit.
+ * key = persistentHash<Vector<2, Bytes<32>>>([poll_id, invite_code])
+ *
+ * Used client-side by the creator to compute code hashes before submitting to add_invite_codes,
+ * and by voters to pre-validate their invite code before submitting cast_invite_vote.
+ */
+export async function deriveInviteKey(
+  pollId: Uint8Array,
+  inviteCode: Uint8Array,
+): Promise<Uint8Array> {
+  const { persistentHash, CompactTypeVector, CompactTypeBytes } = await import(
+    "@midnight-ntwrk/compact-runtime"
+  );
+  const vectorType = new CompactTypeVector(2, new CompactTypeBytes(32));
+  return persistentHash(vectorType, [pollId, inviteCode]);
+}
+
+/**
  * Reads a single poll from the ledger by its ID.
  * Returns null if the poll does not exist.
  *
