@@ -1,7 +1,4 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import type { ReactNode } from "react";
@@ -11,7 +8,7 @@ interface MobileDrawerProps {
 }
 
 export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
 
   const links = [
     { href: "/", label: "Trending Polls", icon: "trending_up" },
@@ -51,7 +48,7 @@ export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  to={link.href}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition-colors ${
                     isActive
                       ? "text-primary bg-primary/10"

@@ -1,5 +1,3 @@
-"use client";
-
 import type { PollTallies } from "@/lib/midnight/ledger-utils";
 import { ExpirationBadge } from "./expiration-badge";
 

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useVoteMutation } from "@/lib/queries/use-vote-mutation";
 import { useInviteVoteMutation } from "@/lib/queries/use-invite-vote-mutation";

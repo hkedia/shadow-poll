@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useCallback } from "react";
 import type { WalletState } from "./types";
 import { assembleProviders } from "./providers";

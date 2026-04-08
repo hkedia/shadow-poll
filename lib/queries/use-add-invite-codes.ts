@@ -1,5 +1,3 @@
-"use client";
-
 import { useMutation } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { findPollContract, callAddInviteCodes, getContractAddress } from "@/lib/midnight/contract-service";

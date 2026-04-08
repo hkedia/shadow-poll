@@ -1,5 +1,4 @@
-import Link from "next/link";
-import Image from "next/image";
+import { Link } from "react-router";
 import { MobileDrawer } from "@/components/mobile-drawer";
 import { HeaderNav } from "@/components/header-nav";
 import type { ReactNode } from "react";
@@ -14,16 +13,15 @@ export function Header({ walletSlot }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
-          href="/"
+          to="/"
           className="flex items-center hover:opacity-80 transition-opacity"
           aria-label="Shadow Poll home"
         >
-          <Image
+          <img
             src="/logo.svg"
             alt="Shadow Poll"
             width={260}
             height={40}
-            priority
             className="h-10 w-auto"
           />
         </Link>

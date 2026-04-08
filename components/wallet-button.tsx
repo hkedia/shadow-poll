@@ -1,5 +1,3 @@
-"use client";
-
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { Button } from "@/components/ui/button";
 import {

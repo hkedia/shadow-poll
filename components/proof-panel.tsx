@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useParticipationProof } from "@/lib/queries/use-participation-proof";
 import { generateProofBadgeSvg } from "@/lib/midnight/proof-badge";

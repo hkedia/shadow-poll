@@ -1,11 +1,7 @@
-"use client";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { pollKeys } from "./use-poll";
 import type { PollTallies } from "@/lib/midnight/ledger-utils";
-import { findPollContract, callCastVote, getContractAddress } from "@/lib/midnight/contract-service";
-import { createWitnesses, getSecretKeyFromWallet, getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
 import { hexToBytes } from "@/lib/midnight/ledger-utils";
 
 /** Parameters for casting a vote. */
@@ -33,29 +29,20 @@ export function useVoteMutation() {
         throw new Error("Wallet not connected");
       }
 
-      const contractAddress = getContractAddress();
-      if (!contractAddress) {
-        throw new Error("No contract deployed");
-      }
-
-      // Get witness inputs from wallet and indexer
-      const secretKey = await getSecretKeyFromWallet(providers.walletProvider);
-      const blockNumber = await getCurrentBlockNumber(providers.indexerConfig.indexerUri);
-      const witnesses = createWitnesses(secretKey, blockNumber);
-
-      // Connect to the deployed contract
-      const contract = await findPollContract(
-        providers,
-        contractAddress,
-        secretKey,
-        blockNumber,
-      );
-
-      // Call the cast_vote circuit on-chain
-      await callCastVote(contract, {
-        pollId: hexToBytes(params.pollId),
-        optionIndex: params.optionIndex,
+      // Call server-side API route to cast vote
+      const response = await fetch("/api/polls/vote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pollId: params.pollId,
+          optionIndex: params.optionIndex,
+        }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to cast vote");
+      }
     },
 
     onMutate: async (params: CastVoteParams) => {

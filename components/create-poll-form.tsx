@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router";
 import { useCreatePoll } from "@/lib/queries/use-create-poll";
 import { validatePollMetadata } from "@/lib/midnight/metadata-store";
 import { Spinner } from "@/components/ui/spinner";
@@ -26,7 +24,7 @@ const DURATION_OPTIONS = [
  * Reference: .design/create_poll/code.html
  */
 export function CreatePollForm() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const createPollMutation = useCreatePoll();
 
   const [title, setTitle] = useState("");
@@ -99,7 +97,7 @@ export function CreatePollForm() {
             // Show the invite code panel instead of navigating
             setCreatedCodes(result.inviteCodes);
           } else {
-            router.push(`/poll/${result.pollId}`);
+            navigate(`/poll/${result.pollId}`);
           }
         },
       },
@@ -116,7 +114,7 @@ export function CreatePollForm() {
         codes={createdCodes}
         pollId={createPollMutation.data!.pollId}
         pollTitle={title}
-        onDone={() => router.push(`/poll/${createPollMutation.data!.pollId}`)}
+        onDone={() => navigate(`/poll/${createPollMutation.data!.pollId}`)}
       />
     );
   }

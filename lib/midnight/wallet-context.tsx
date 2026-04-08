@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { useWallet } from "./use-wallet";
 import type { WalletContextValue } from "./types";

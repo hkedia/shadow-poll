@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { formatCodesForCopy, formatCodesForCSV } from "@/lib/midnight/invite-codes";
 import type { InviteCode } from "@/lib/midnight/invite-codes";

@@ -1,5 +1,3 @@
-"use client";
-
 interface ExpirationBadgeProps {
   expirationBlock: bigint;
   currentBlock?: bigint;

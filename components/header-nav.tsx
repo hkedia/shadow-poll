@@ -1,11 +1,8 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router";
 
 /** Navigation links for the header. Uses pathname for active state highlighting. */
 export function HeaderNav() {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
 
   const links = [
     { href: "/", label: "Trending Polls" },
@@ -23,7 +20,7 @@ export function HeaderNav() {
         return (
           <Link
             key={link.href}
-            href={link.href}
+            to={link.href}
             className={
               isActive
                 ? "font-headline font-bold tracking-tight text-lg text-primary border-b-2 border-primary pb-1"

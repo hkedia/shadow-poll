@@ -1,5 +1,3 @@
-"use client";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { pollKeys } from "./use-poll";

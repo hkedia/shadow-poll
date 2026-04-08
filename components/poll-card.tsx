@@ -1,6 +1,4 @@
-"use client";
-
-import Link from "next/link";
+import { Link } from "react-router";
 import type { PollWithId, PollTallies } from "@/lib/midnight/ledger-utils";
 import type { PollMetadata } from "@/lib/midnight/metadata-store";
 import { useMetadata } from "@/lib/queries/use-metadata";
@@ -26,7 +24,7 @@ export function PollCard({ poll, tallies }: PollCardProps) {
   const isInviteOnly = Number(poll.data.poll_type) === 1;
 
   return (
-    <Link href={`/poll/${poll.id}`} className="block">
+    <Link to={`/poll/${poll.id}`} className="block">
       <div className="bg-surface-container-low rounded-3xl p-5 sm:p-8 flex flex-col justify-between transition-all hover:bg-surface-container-high h-full min-h-[280px]">
         <div>
           <span className={`font-bold tracking-widest text-xs uppercase mb-4 flex items-center gap-1.5 ${

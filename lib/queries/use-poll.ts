@@ -1,5 +1,3 @@
-"use client";
-
 import { useQuery } from "@tanstack/react-query";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
 import type { PollWithId, PollTallies } from "@/lib/midnight/ledger-utils";
