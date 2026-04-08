@@ -100,7 +100,7 @@ Plans:
 Plans:
 - [x] 05-01-PLAN.md — Contract changes: nullifier-based duplicate vote prevention, invite code hash verification, new circuits (cast_invite_vote, add_invite_codes)
 - [x] 05-02-PLAN.md — Service layer: invite code generation utility, contract call functions, mutation hooks (useInviteVoteMutation, useAddInviteCodesMutation), updated useCreatePoll
-- [ ] 05-03-PLAN.md — UI: Create Poll toggle (Public/Invite-Only), InviteCodePanel, invite code entry on Poll Detail, poll type badges
+- [x] 05-03-PLAN.md — UI: Create Poll toggle (Public/Invite-Only), InviteCodePanel, invite code entry on Poll Detail, poll type badges
 
 **UI hint**: yes
 
