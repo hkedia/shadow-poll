@@ -23,8 +23,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **CONT-02**: Compact contract exists for casting votes on a poll
 - [x] **CONT-03**: Contract compilation pipeline with scripts in /contracts produces deployable artifacts
 - [x] **CONT-04**: Compiled ZK proving/verifying keys are served from public folder with proper CORS
-- [ ] **CONT-05**: Invite-only poll votes are verified via ZK proof of valid invite code in contract
-- [ ] **CONT-06**: Contract prevents the same wallet from voting twice on the same poll
+- [x] **CONT-05**: Invite-only poll votes are verified via ZK proof of valid invite code in contract
+- [x] **CONT-06**: Contract prevents the same wallet from voting twice on the same poll
 
 ### Poll Management
 
@@ -110,8 +110,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-02 | Phase 2 | Complete |
 | CONT-03 | Phase 2 | Complete |
 | CONT-04 | Phase 2 | Complete |
-| CONT-05 | Phase 5 | Pending |
-| CONT-06 | Phase 5 | Pending |
+| CONT-05 | Phase 5 | Complete |
+| CONT-06 | Phase 5 | Complete |
 | POLL-01 | Phase 4 | Complete |
 | POLL-02 | Phase 5 | Pending |
 | POLL-03 | Phase 4 | Complete |

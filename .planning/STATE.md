@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-03-PLAN.md — Phase 4 complete (3/3 plans done)
-last_updated: "2026-04-08T09:50:36.124Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-04-08T10:14:52.375Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
-  percent: 100
+  total_plans: 13
+  completed_plans: 11
+  percent: 85
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 **Core value:** Users can vote on polls anonymously with cryptographic guarantees
-**Current focus:** Phase 4 complete — ready for Phase 5 (Invite-Only Polls)
+**Current focus:** Phase 5 (Invite-Only Polls) — 3 plans written, ready for execution
 
 ## Current Position
 
-Phase: 4 of 6 (Core Polling) — COMPLETE
-Plan: 3 of 3 in current phase
-Status: Phase complete — ready for Phase 5
+Phase: 5 of 6 (Invite-Only Polls) — PLANNED
+Plan: 1 of 3 in current phase
+Status: Ready to execute
 Last activity: 2026-04-08
 
-Progress: [██████████] 100%
+Progress: [██████░░░░] 66%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [██████████] 100%
 *Updated after each plan completion*
 | Phase 04 P02 | 4min | 2 tasks | 7 files |
 | Phase 04 P03 | 13min | 3 tasks | 8 files |
+| Phase 05 P01 | 4min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -97,12 +98,21 @@ Recent decisions affecting current work:
 - [Phase 04]: BLOCKS_PER_DAY = BigInt(4320) for duration-to-blocks conversion (~20 sec/block on Preview)
 - [Phase 04]: Block-based expiration polling via getCurrentBlockNumber() with 30s refresh interval
 
+- D-50: Hash-list for invite code verification (Map<Bytes<32>, Boolean> keyed by hash(poll_id, code))
+- D-51: Nullifier-based duplicate vote prevention for ALL polls (hash(poll_id, voter_sk))
+- D-52: Separate cast_invite_vote circuit for invite-only polls (cast_vote stays for public)
+- D-53: Browser-only invite code storage (localStorage + clipboard, no server state)
+- D-54: Separate add_invite_codes circuit (decoupled from poll creation)
+- [Phase 05]: One invite code per add_invite_codes call — Compact v0.19 variable-length array limitation
+- [Phase 05]: Nullifier derived from voter_sk not invite_code — one vote per wallet regardless of codes held
+- [Phase 05]: invite_code NOT disclosed in cast_invite_vote — only hash crosses ZK boundary
+
 ### Blockers/Concerns
 
 None.
 
 ## Session Continuity
 
-Last session: 2026-04-08T09:50:36.113Z
-Stopped at: Completed 04-03-PLAN.md — Phase 4 complete (3/3 plans done)
+Last session: 2026-04-08T10:14:52.362Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None

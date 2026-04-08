@@ -95,7 +95,13 @@ Plans:
   2. User with a valid invite code can vote on an invite-only poll, with the code verified via ZK proof in the contract
   3. The same wallet cannot vote twice on the same poll — the contract rejects duplicate votes
   4. The Create Poll form toggle between Public and Invite-Only correctly gates the invite code workflow
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [x] 05-01-PLAN.md — Contract changes: nullifier-based duplicate vote prevention, invite code hash verification, new circuits (cast_invite_vote, add_invite_codes)
+- [ ] 05-02-PLAN.md — Service layer: invite code generation utility, contract call functions, mutation hooks (useInviteVoteMutation, useAddInviteCodesMutation), updated useCreatePoll
+- [ ] 05-03-PLAN.md — UI: Create Poll toggle (Public/Invite-Only), InviteCodePanel, invite code entry on Poll Detail, poll type badges
+
 **UI hint**: yes
 
 ### Phase 6: ZK Proofs & Analytics
@@ -161,5 +167,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Smart Contracts | 2/2 | Complete   | 2026-04-08 |
 | 3. Data Layer | 2/2 | Complete   | 2026-04-08 |
 | 4. Core Polling | 3/3 | Complete | 2026-04-08 |
-| 5. Invite-Only Polls | 0/0 | Not started | - |
+| 5. Invite-Only Polls | 0/3 | Planned | - |
 | 6. ZK Proofs & Analytics | 0/0 | Not started | - |
