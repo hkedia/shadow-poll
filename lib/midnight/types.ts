@@ -1,6 +1,6 @@
 // Types for Shadow Poll wallet and provider integration.
 // Provider types are structurally typed to match the SDK interfaces without requiring a
-// direct import of @midnight-ntwrk/midnight-js-types (which is Turbopack-stubbed).
+// direct import of @midnight-ntwrk/midnight-js-types.
 // Wallet, proof, and midnight provider types are structural subsets of the real SDK types.
 
 export type ConnectionStatus =
@@ -13,15 +13,9 @@ export type ConnectionStatus =
 
 /**
  * Structural type matching the Midnight SDK's PublicDataProvider interface.
- * The real type is imported from @midnight-ntwrk/midnight-js-types at runtime,
- * but cannot be used at the module level due to Turbopack stubbing.
  *
  * This interface captures only the methods we use in Shadow Poll.
  * The actual SDK provider satisfies this and more.
- *
- * NOTE: Not used directly in MidnightProviderSet yet — the real provider is
- * created lazily in Phase 4 via createIndexerProvider() because Turbopack's
- * resolveAlias stubs dynamic imports of @midnight-ntwrk/* in the client bundle.
  */
 export interface IndexerPublicDataProvider {
   queryContractState(contractAddress: string, config?: unknown): Promise<unknown>;
@@ -32,9 +26,7 @@ export interface IndexerPublicDataProvider {
 /**
  * Indexer connection configuration stored during wallet connection.
  * The real SDK IndexerPublicDataProvider is created lazily from these URIs
- * in Phase 4 when contract interactions need it, because Turbopack's
- * resolveAlias intercepts dynamic imports and stubs @midnight-ntwrk/* packages
- * in the client bundle.
+ * when contract interactions need it.
  */
 export interface IndexerConfig {
   indexerUri: string;

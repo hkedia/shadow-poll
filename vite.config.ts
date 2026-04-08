@@ -1,14 +1,20 @@
-import { defineConfig } from "vite";
+import { defineConfig, createLogger } from "vite";
 import react from "@vitejs/plugin-react";
 import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
+const logger = createLogger();
+const originalWarnOnce = logger.warnOnce.bind(logger);
+logger.warnOnce = (msg, options) => {
+  if (msg.includes("points to missing source files")) return;
+  originalWarnOnce(msg, options);
+};
+
 export default defineConfig({
+  customLogger: logger,
   plugins: [
     wasm(),
-    topLevelAwait(),
     react(),
     tailwindcss(),
   ],
@@ -27,6 +33,11 @@ export default defineConfig({
       "@midnight-ntwrk/ledger-v8",
       "@midnight-ntwrk/compact-runtime",
       "@midnight-ntwrk/onchain-runtime-v3",
+    ],
+    include: [
+      // CJS packages used by excluded Midnight SDK modules — must be
+      // pre-bundled so Vite wraps them with proper ESM default exports.
+      "object-inspect",
     ],
   },
   server: {

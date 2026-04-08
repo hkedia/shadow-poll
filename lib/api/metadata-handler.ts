@@ -1,8 +1,7 @@
 /**
  * Metadata API handler for Shadow Poll.
  *
- * Migrated from app/api/polls/metadata/route.ts (Next.js route handler)
- * to use Web standard Request/Response for Bun.serve() compatibility.
+ * Uses Web standard Request/Response for Bun.serve() compatibility.
  *
  * Handles GET and POST for /api/polls/metadata:
  *   GET ?pollId=<hex>  → single poll metadata

@@ -7,7 +7,7 @@
  *
  * Both return [context.privateState, value] — the private state is always passed through unchanged.
  *
- * ALL @midnight-ntwrk imports MUST be dynamic (Turbopack stubs them statically).
+ * @midnight-ntwrk imports should be dynamic when used in browser context.
  */
 
 /**

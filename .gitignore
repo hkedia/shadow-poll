@@ -13,8 +13,8 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# build output
+/dist/
 /out/
 
 # production
@@ -39,7 +39,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # midnight contract compilation output
 /contracts/managed/
@@ -50,3 +49,9 @@ next-env.d.ts
 
 # Design reference assets (not source code)
 /.design/
+
+# Contract deployment output — address changes every deploy; never commit seed phrases
+deployment.json
+
+# LevelDB private state store created by deploy script
+shadow-poll-deploy-state/
