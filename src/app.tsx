@@ -7,12 +7,11 @@ import { QueryProvider } from "@/lib/queries/query-provider";
 import { lazy, Suspense } from "react";
 
 const Home = lazy(() => import("@/src/routes/home"));
-const Trending = lazy(() => import("@/src/routes/trending"));
+const ActivePolls = lazy(() => import("@/src/routes/active-polls"));
+const ClosedPolls = lazy(() => import("@/src/routes/closed-polls"));
 const Create = lazy(() => import("@/src/routes/create"));
 const PollDetail = lazy(() => import("@/src/routes/poll-detail"));
-const Stats = lazy(() => import("@/src/routes/stats"));
 const Verify = lazy(() => import("@/src/routes/verify"));
-const Deploy = lazy(() => import("@/src/routes/deploy"));
 const About = lazy(() => import("@/src/routes/about"));
 const Privacy = lazy(() => import("@/src/routes/privacy"));
 const Community = lazy(() => import("@/src/routes/community"));
@@ -28,12 +27,11 @@ export function App() {
               <Suspense fallback={<div className="flex-1" />}>
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/trending" element={<Trending />} />
+                  <Route path="/active" element={<ActivePolls />} />
+                  <Route path="/closed" element={<ClosedPolls />} />
                   <Route path="/create" element={<Create />} />
                   <Route path="/poll/:id" element={<PollDetail />} />
-                  <Route path="/stats" element={<Stats />} />
                   <Route path="/verify" element={<Verify />} />
-                  <Route path="/deploy" element={<Deploy />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/community" element={<Community />} />

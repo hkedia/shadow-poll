@@ -29,7 +29,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-.debug/
 
 # env files (can opt-in for committing if needed)
 .env*
@@ -43,12 +42,6 @@ yarn-error.log*
 # ZK keys are large generated binaries — regenerate via bun run compile:contracts
 /public/zk-keys/keys/
 /public/zk-keys/zkir/
-
-# Design reference assets (not source code)
-/.design/
-
-# Contract deployment output — address changes every deploy; never commit seed phrases
-deployment.json
 
 # LevelDB private state store created by deploy script
 shadow-poll-deploy-state/
