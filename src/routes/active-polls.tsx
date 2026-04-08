@@ -1,6 +1,4 @@
 import { Link } from "react-router";
-import { useWalletContext } from "@/lib/midnight/wallet-context";
-import { InstallPrompt } from "@/components/install-prompt";
 import { PollCard } from "@/components/poll-card";
 import { ExpirationBadge } from "@/components/expiration-badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -75,12 +73,11 @@ function FeaturedPollCard({ poll }: { poll: PollWithId }) {
 
 /** /active page — currently open polls accepting votes. */
 export default function ActivePollsPage() {
-  const { status } = useWalletContext();
-  const { data: polls, isLoading, isError } = usePolls();
+  const { data, isLoading, isError } = usePolls();
 
-  if (status === "not_detected") {
-    return <InstallPrompt />;
-  }
+  const polls = data
+    ? data.polls.filter((p) => p.data.expiration_block > BigInt(data.currentBlockHeight))
+    : undefined;
 
   return (
     <div className="flex-1 flex flex-col">

@@ -1,6 +1,4 @@
 import { Link } from "react-router";
-import { useWalletContext } from "@/lib/midnight/wallet-context";
-import { InstallPrompt } from "@/components/install-prompt";
 import { PollCard } from "@/components/poll-card";
 import { ExpirationBadge } from "@/components/expiration-badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -75,13 +73,9 @@ function FeaturedPollCard({ poll }: { poll: PollWithId }) {
 
 /** /trending page — live polls from the blockchain. */
 export default function TrendingPage() {
-  const { status } = useWalletContext();
-  const { data: polls, isLoading, isError } = usePolls();
+  const { data, isLoading, isError } = usePolls();
 
-  // When 1am.xyz is not installed, show the full-page install prompt
-  if (status === "not_detected") {
-    return <InstallPrompt />;
-  }
+  const polls = data?.polls;
 
   return (
     <div className="flex-1 flex flex-col">

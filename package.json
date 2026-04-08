@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "dev:api": "PORT=3001 bun run server.ts",
+    "dev:all": "PORT=3001 bun run server.ts & vite; kill %1",
     "build": "vite build",
     "preview": "vite preview",
     "serve": "bun run server.ts",

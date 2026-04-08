@@ -1,18 +1,15 @@
 import { Link } from "react-router";
-import { useWalletContext } from "@/lib/midnight/wallet-context";
-import { InstallPrompt } from "@/components/install-prompt";
 import { PollCard } from "@/components/poll-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePolls } from "@/lib/queries/use-polls";
 
 /** /closed page — polls that have passed their expiration block. */
 export default function ClosedPollsPage() {
-  const { status } = useWalletContext();
-  const { data: polls, isLoading, isError } = usePolls();
+  const { data, isLoading, isError } = usePolls();
 
-  if (status === "not_detected") {
-    return <InstallPrompt />;
-  }
+  const polls = data
+    ? data.polls.filter((p) => p.data.expiration_block <= BigInt(data.currentBlockHeight))
+    : undefined;
 
   return (
     <div className="flex-1 flex flex-col">

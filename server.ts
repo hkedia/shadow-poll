@@ -33,6 +33,11 @@ Bun.serve({
       return handleMetadataRequest(req);
     }
 
+    if (url.pathname === "/api/polls" || url.pathname === "/api/polls/") {
+      const { handlePollsRequest } = await import("./lib/api/polls-handler");
+      return handlePollsRequest(req);
+    }
+
     // --- Indexer API routes (direct GraphQL queries to Midnight indexer) ---
     if (url.pathname.startsWith("/api/indexer/")) {
       const { handleIndexerRequest } = await import("./lib/api/indexer-handler");
