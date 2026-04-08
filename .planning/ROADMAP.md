@@ -30,7 +30,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can connect their wallet and sees their truncated address in the navigation bar
   3. User can disconnect their wallet, and reconnection persists automatically across page refreshes
   4. All pages render in a dark theme using shadcn/ui components and are usable on mobile screens
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Aether design system, shadcn/ui setup, app shell (Header, Footer, MobileDrawer)
+- [ ] 01-02-PLAN.md — Wallet hook, provider factory, context, WalletButton, WalletOnboarding, InstallPrompt
+- [ ] 01-03-PLAN.md — Root layout wiring (WalletProvider), HeroSection, landing page, Next.js WASM config
+
 **UI hint**: yes
 
 ### Phase 2: Smart Contracts
@@ -137,7 +143,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Wallet & UI Foundation | 0/0 | Not started | - |
+| 1. Wallet & UI Foundation | 0/3 | Ready to execute | - |
 | 2. Smart Contracts | 0/0 | Not started | - |
 | 3. Data Layer | 0/0 | Not started | - |
 | 4. Core Polling | 0/0 | Not started | - |
