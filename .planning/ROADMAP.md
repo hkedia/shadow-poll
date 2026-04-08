@@ -80,8 +80,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Contract interaction service layer (witnesses, providers, deploy/call)
-- [ ] 04-02-PLAN.md — Data hooks wiring + header navigation links
+- [x] 04-01-PLAN.md — Contract interaction service layer (witnesses, providers, deploy/call)
+- [x] 04-02-PLAN.md — Data hooks wiring + header navigation links
 - [ ] 04-03-PLAN.md — UI pages (Trending Polls, Create Poll, Poll Detail with voting)
 
 **UI hint**: yes
