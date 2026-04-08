@@ -1,7 +1,7 @@
 // Types for Shadow Poll wallet and provider integration.
-// Provider types for indexer and ZK config are structurally typed to match the SDK interfaces
-// without requiring a direct import of @midnight-ntwrk/midnight-js-types (which is Turbopack-stubbed).
-// Wallet and proof provider types remain loose until Phase 4 when circuits are called.
+// Provider types are structurally typed to match the SDK interfaces without requiring a
+// direct import of @midnight-ntwrk/midnight-js-types (which is Turbopack-stubbed).
+// Wallet, proof, and midnight provider types are structural subsets of the real SDK types.
 
 export type ConnectionStatus =
   | "idle"           // initial state before detection
@@ -50,16 +50,42 @@ export interface ZkConfigProvider {
   getVerifyingKeyURI(circuitName: string): string;
 }
 
+/**
+ * Structural type matching the Midnight SDK's WalletProvider interface.
+ * The 1am wallet's enabled API exposes these methods for transaction balancing
+ * and coin key retrieval.
+ */
+export interface WalletProviderApi {
+  balanceTx(tx: unknown): Promise<unknown>;
+  getCoinPublicKey(): unknown;
+  getEncryptionPublicKey(): unknown;
+}
+
+/**
+ * Structural type matching the Midnight SDK's ProofProvider interface.
+ * The 1am wallet's proving provider creates ZK proofs for unproven transactions.
+ */
+export interface ProofProviderApi {
+  proveTx(unprovenTx: unknown, config?: unknown): Promise<unknown>;
+}
+
+/**
+ * Structural type matching the Midnight SDK's MidnightProvider interface.
+ * Handles submitting finalized transactions to the Midnight network.
+ * In practice, the wallet's enabled API also satisfies this interface.
+ */
+export interface MidnightProviderApi {
+  submitTx(tx: unknown): Promise<unknown>;
+}
+
 export interface MidnightProviderSet {
   zkConfigProvider: ZkConfigProvider;
-  /** Indexer connection config — real SDK provider created lazily in Phase 4 via createIndexerProvider() */
+  /** Indexer connection config — real SDK provider created lazily via createIndexerProvider() */
   indexerConfig: IndexerConfig;
-  /** Wallet enabled API — type tightened in Phase 4 */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  walletProvider: any;
-  /** Proof provider from wallet — type tightened in Phase 4 */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  proofProvider: any;
+  /** Wallet enabled API for transaction balancing and key retrieval */
+  walletProvider: WalletProviderApi;
+  /** Proof provider from wallet for ZK proof generation */
+  proofProvider: ProofProviderApi;
 }
 
 export interface WalletState {
