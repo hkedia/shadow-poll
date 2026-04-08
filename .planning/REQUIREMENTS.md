@@ -99,45 +99,45 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WALL-01 | — | Pending |
-| WALL-02 | — | Pending |
-| WALL-03 | — | Pending |
-| WALL-04 | — | Pending |
-| WALL-05 | — | Pending |
-| WALL-06 | — | Pending |
-| WALL-07 | — | Pending |
-| CONT-01 | — | Pending |
-| CONT-02 | — | Pending |
-| CONT-03 | — | Pending |
-| CONT-04 | — | Pending |
-| CONT-05 | — | Pending |
-| CONT-06 | — | Pending |
-| POLL-01 | — | Pending |
-| POLL-02 | — | Pending |
-| POLL-03 | — | Pending |
-| POLL-04 | — | Pending |
-| POLL-05 | — | Pending |
-| POLL-06 | — | Pending |
-| POLL-07 | — | Pending |
-| ZKPR-01 | — | Pending |
-| ZKPR-02 | — | Pending |
-| ZKPR-03 | — | Pending |
-| PAGE-01 | — | Pending |
-| PAGE-02 | — | Pending |
-| PAGE-03 | — | Pending |
-| PAGE-04 | — | Pending |
-| PAGE-05 | — | Pending |
-| PAGE-06 | — | Pending |
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| DATA-03 | — | Pending |
-| DATA-04 | — | Pending |
+| WALL-01 | Phase 1 | Pending |
+| WALL-02 | Phase 1 | Pending |
+| WALL-03 | Phase 1 | Pending |
+| WALL-04 | Phase 1 | Pending |
+| WALL-05 | Phase 1 | Pending |
+| WALL-06 | Phase 1 | Pending |
+| WALL-07 | Phase 1 | Pending |
+| CONT-01 | Phase 2 | Pending |
+| CONT-02 | Phase 2 | Pending |
+| CONT-03 | Phase 2 | Pending |
+| CONT-04 | Phase 2 | Pending |
+| CONT-05 | Phase 5 | Pending |
+| CONT-06 | Phase 5 | Pending |
+| POLL-01 | Phase 4 | Pending |
+| POLL-02 | Phase 5 | Pending |
+| POLL-03 | Phase 4 | Pending |
+| POLL-04 | Phase 4 | Pending |
+| POLL-05 | Phase 5 | Pending |
+| POLL-06 | Phase 5 | Pending |
+| POLL-07 | Phase 4 | Pending |
+| ZKPR-01 | Phase 6 | Pending |
+| ZKPR-02 | Phase 6 | Pending |
+| ZKPR-03 | Phase 6 | Pending |
+| PAGE-01 | Phase 4 | Pending |
+| PAGE-02 | Phase 4 | Pending |
+| PAGE-03 | Phase 4 | Pending |
+| PAGE-04 | Phase 1 | Pending |
+| PAGE-05 | Phase 6 | Pending |
+| PAGE-06 | Phase 1 | Pending |
+| DATA-01 | Phase 3 | Pending |
+| DATA-02 | Phase 3 | Pending |
+| DATA-03 | Phase 3 | Pending |
+| DATA-04 | Phase 3 | Pending |
 
 **Coverage:**
-- v1 requirements: 30 total
-- Mapped to phases: 0
-- Unmapped: 30
+- v1 requirements: 33 total
+- Mapped to phases: 33
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-08 after initial definition*
+*Last updated: 2026-04-08 after roadmap creation*
