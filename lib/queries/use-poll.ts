@@ -5,6 +5,7 @@ import { useWalletContext } from "@/lib/midnight/wallet-context";
 import type { PollWithId, PollTallies } from "@/lib/midnight/ledger-utils";
 import { useMetadata } from "./use-metadata";
 import type { PollMetadata } from "@/lib/midnight/metadata-store";
+import { fetchPollWithTallies, getContractAddress } from "@/lib/midnight/contract-service";
 
 /** Query key factory for poll queries. */
 export const pollKeys = {
@@ -24,12 +25,8 @@ export interface PollDetail {
 /**
  * Hook to fetch a single poll's on-chain data and tallies.
  *
- * NOTE: In Phase 3, this hook defines the query structure but the actual
- * indexer query implementation depends on how the SDK's PublicDataProvider
- * exposes contract state. The queryFn will be completed in Phase 4 when
- * findDeployedContract() is wired. For now, the hook is structured with
- * the correct keys, types, and options so Phase 4 only needs to fill in
- * the data fetching logic.
+ * Queries the indexer via fetchPollWithTallies() from the contract service.
+ * Returns poll data, vote tallies, and off-chain metadata (via useMetadata).
  *
  * @param pollId - Hex-encoded poll ID. Pass null/undefined to disable.
  */
@@ -38,18 +35,17 @@ export function usePoll(pollId: string | null | undefined) {
   const isConnected = status === "connected" && providers !== null;
 
   // Fetch on-chain poll data from the indexer
+  // TODO: Deduplicate provider assembly across poll/tallies queries
   const pollQuery = useQuery({
     queryKey: pollKeys.detail(pollId ?? ""),
     queryFn: async (): Promise<PollWithId | null> => {
       if (!providers || !pollId) return null;
 
-      // Phase 4 will implement the actual indexer query here:
-      // 1. Create real SDK provider via createIndexerProvider(providers.indexerConfig)
-      // 2. Query contract state and parse with parseLedger(state)
-      // 3. Call readPoll(ledger, hexToBytes(pollId))
-      //
-      // Placeholder: returns null until indexer query is wired in Phase 4
-      return null;
+      const contractAddress = getContractAddress();
+      if (!contractAddress) return null;
+
+      const result = await fetchPollWithTallies(providers, contractAddress, pollId);
+      return result?.poll ?? null;
     },
     enabled: isConnected && !!pollId,
     refetchInterval: 15_000, // Refresh every 15 seconds for live tallies
@@ -61,9 +57,11 @@ export function usePoll(pollId: string | null | undefined) {
     queryFn: async (): Promise<PollTallies | null> => {
       if (!providers || !pollId) return null;
 
-      // Phase 4 will implement: readTallies(ledger, hexToBytes(pollId), optionCount)
-      // Placeholder: returns null until indexer query is wired in Phase 4
-      return null;
+      const contractAddress = getContractAddress();
+      if (!contractAddress) return null;
+
+      const result = await fetchPollWithTallies(providers, contractAddress, pollId);
+      return result?.tallies ?? null;
     },
     enabled: isConnected && !!pollId && pollQuery.data !== null,
     refetchInterval: 15_000,
