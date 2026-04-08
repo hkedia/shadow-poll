@@ -29,7 +29,9 @@ Requirements: WALL-01, WALL-02, WALL-03, WALL-04, WALL-05, WALL-06, WALL-07, PAG
 
 ### Dark Theme & Color System
 - **D-09:** Dark-only theme — no light mode, no toggle. App is always dark. Matches the crypto/privacy app aesthetic and simplifies implementation.
-- **D-10:** Zinc/neutral gray palette with violet/purple accent — neutral grays for backgrounds and text, violet/purple for interactive elements (buttons, links, focus rings, active states). Clean, professional, crypto-native feel.
+- **D-10:** Aether Privacy design system — deep navy-black background (`#0d0d19`), Material Design 3 surface hierarchy (`#121220` → `#1e1e32` → `#23243a`), lavender primary accent (`#b0aaff`), turquoise tertiary accent (`#80fffa`). Gradient CTA buttons, glass/blur header effects. Full token set defined in `.design/aether_privacy/DESIGN.md` and HTML mockups.
+- **D-10a:** Typography — Manrope for headlines (extrabold, tight tracking), Plus Jakarta Sans for body/labels. Replaces Geist Sans (keep Geist Mono for wallet addresses only).
+- **D-10b:** Icons — Material Symbols Outlined (Google Fonts, variable weight/fill). Replaces Lucide React.
 
 ### shadcn/ui Setup
 - **D-11:** Install components as needed — only components required for Phase 1 (Button, DropdownMenu, Card, Sheet/Drawer, Badge, etc.). Additional components added in future phases as needed.
