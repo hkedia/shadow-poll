@@ -150,12 +150,13 @@ Plans:
   4. The metadata API endpoint (`/api/polls/metadata`) works via Bun.serve()
   5. `bun run build` produces a working production bundle
   6. ZK proof generation works end-to-end (create poll → vote → verify proof)
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [x] 08-01-PLAN.md — Vite config, entry points, static SDK imports, delete stub + Turbopack workarounds
 - [x] 08-02-PLAN.md — React Router app shell, move routes to src/routes/, update all Next.js imports
-- [ ] 08-03-PLAN.md — Bun.serve() production server, metadata API handler migration
+- [x] 08-03-PLAN.md — Bun.serve() production server, metadata API handler migration
+- [ ] 08-04-PLAN.md — Gap closure: remove incompatible vite-plugin-top-level-await to fix build
 
 **UI hint**: yes
 
