@@ -12,3 +12,11 @@ Resolved debug sessions. Used by `gsd-debugger` to surface known-pattern hypothe
 - **Files changed:** lib/midnight/types.ts, lib/midnight/use-wallet.ts, components/wallet-onboarding.tsx
 ---
 
+## nav-highlight-and-stats-error — Nav active state wrong on home page; stats page throws "expected instance of ChargedState"
+- **Date:** 2026-04-09
+- **Error patterns:** active, nav, highlight, home, trending, ChargedState, expected instance of ChargedState, parseLedger, queryContractState, stats, ledger
+- **Root cause:** (1) Nav: Home (`/`) was not in the links array; the `isActive` logic incorrectly special-cased `pathname === "/"` as active for `/trending`. (2) Stats/ledger: `queryContractState()` returns a `ContractState` object, but `parseLedger()` expects `StateValue | ChargedState`. The code passed the raw `ContractState` directly — `ContractState.data` is the `ChargedState`, not `ContractState` itself. `QueryContext` constructor throws "expected instance of ChargedState" when given `ContractState`.
+- **Fix:** (1) Added Home `{ href: "/", label: "Home" }` entry to both `header-nav.tsx` and `mobile-drawer.tsx`; changed `isActive` for `"/"` to `pathname === "/"` only. (2) Changed all `parseLedger(state as any)` → `parseLedger(state.data)` across 4 call sites. Updated `IndexerPublicDataProvider.queryContractState` return type to `Promise<ContractState | null>`.
+- **Files changed:** components/header-nav.tsx, components/mobile-drawer.tsx, lib/midnight/contract-service.ts, lib/midnight/types.ts, lib/queries/use-stats.ts, lib/queries/use-participation-proof.ts, lib/queries/use-verify-proof.ts
+---
+
