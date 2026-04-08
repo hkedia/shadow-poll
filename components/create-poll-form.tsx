@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useCreatePoll } from "@/lib/queries/use-create-poll";
 import { validatePollMetadata } from "@/lib/midnight/metadata-store";
 import { Spinner } from "@/components/ui/spinner";
+import { InviteCodePanel } from "@/components/invite-code-panel";
+import type { InviteCode } from "@/lib/midnight/invite-codes";
 
 /** Approximate blocks per day on Midnight Preview (~20 sec/block). */
 const BLOCKS_PER_DAY = BigInt(4320);
@@ -31,6 +33,9 @@ export function CreatePollForm() {
   const [options, setOptions] = useState(["", ""]);
   const [selectedDuration, setSelectedDuration] = useState(7);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [pollType, setPollType] = useState<"public" | "invite_only">("public");
+  const [inviteCodeCount, setInviteCodeCount] = useState(10);
+  const [createdCodes, setCreatedCodes] = useState<InviteCode[] | null>(null);
 
   const isSubmitting = createPollMutation.isPending;
 
@@ -85,11 +90,17 @@ export function CreatePollForm() {
         description: "",
         options: trimmedOptions,
         expirationBlocks: BigInt(selectedDuration) * BLOCKS_PER_DAY,
-        pollType: "public",
+        pollType,
+        inviteCodeCount: pollType === "invite_only" ? inviteCodeCount : undefined,
       },
       {
         onSuccess: (result) => {
-          router.push(`/poll/${result.pollId}`);
+          if (result.inviteCodes && result.inviteCodes.length > 0) {
+            // Show the invite code panel instead of navigating
+            setCreatedCodes(result.inviteCodes);
+          } else {
+            router.push(`/poll/${result.pollId}`);
+          }
         },
       },
     );
@@ -97,6 +108,18 @@ export function CreatePollForm() {
 
   const isPublishDisabled =
     isSubmitting || title.trim().length === 0 || options.filter((o) => o.trim()).length < 2;
+
+  // After successful invite-only creation, show the invite code panel
+  if (createdCodes && createPollMutation.isSuccess) {
+    return (
+      <InviteCodePanel
+        codes={createdCodes}
+        pollId={createPollMutation.data!.pollId}
+        pollTitle={title}
+        onDone={() => router.push(`/poll/${createPollMutation.data!.pollId}`)}
+      />
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -179,6 +202,64 @@ export function CreatePollForm() {
 
       {/* Right Column: Settings and Publish */}
       <div className="md:col-span-4 space-y-6">
+        {/* Poll Type Toggle */}
+        <div className="bg-surface-container-low rounded-xl p-8">
+          <h3 className="font-headline font-bold text-primary mb-6 tracking-wide uppercase text-xs">
+            Poll Type
+          </h3>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setPollType("public")}
+              className={`flex-1 px-4 py-3 rounded-lg font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
+                pollType === "public"
+                  ? "bg-surface-container-high text-primary shadow-sm"
+                  : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50"
+              }`}
+            >
+              <span className="material-symbols-outlined text-base">public</span>
+              Public
+            </button>
+            <button
+              type="button"
+              onClick={() => setPollType("invite_only")}
+              className={`flex-1 px-4 py-3 rounded-lg font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
+                pollType === "invite_only"
+                  ? "bg-surface-container-high text-tertiary shadow-sm"
+                  : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50"
+              }`}
+            >
+              <span className="material-symbols-outlined text-base">lock</span>
+              Invite Only
+            </button>
+          </div>
+
+          {/* Invite code count — shown only when invite_only */}
+          {pollType === "invite_only" && (
+            <div className="mt-6 space-y-3">
+              <label className="text-xs text-on-surface-variant font-medium block">
+                Number of invite codes
+              </label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min={1}
+                  max={100}
+                  value={inviteCodeCount}
+                  onChange={(e) => setInviteCodeCount(Number(e.target.value))}
+                  className="flex-1 accent-tertiary"
+                />
+                <span className="text-tertiary font-bold text-lg w-12 text-right">
+                  {inviteCodeCount}
+                </span>
+              </div>
+              <p className="text-[10px] text-on-surface-variant">
+                Invite codes will be generated after poll creation. Only code holders can vote.
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Duration Settings Card */}
         <div className="bg-surface-container-low rounded-xl p-8">
           <h3 className="font-headline font-bold text-primary mb-6 tracking-wide uppercase text-xs">
@@ -208,8 +289,9 @@ export function CreatePollForm() {
               shield
             </span>
             <p className="text-[10px] leading-relaxed text-tertiary/90 font-medium">
-              Your poll is secured by Zero-Knowledge proofs. Your identity is never
-              stored or shared.
+              {pollType === "invite_only"
+                ? "Your poll is secured by Zero-Knowledge proofs. Only holders of valid invite codes can participate. No one can see which code was used."
+                : "Your poll is secured by Zero-Knowledge proofs. Your identity is never stored or shared."}
             </p>
           </div>
         </div>
