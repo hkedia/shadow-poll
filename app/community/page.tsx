@@ -84,7 +84,7 @@ export default function CommunityPage() {
             label="Discord"
             title="Midnight Discord"
             description="The primary real-time community hub. Ask questions, share projects, and connect with the Midnight core team and other builders."
-            href="https://discord.gg/midnight-network"
+            href="https://discord.com/invite/midnightnetwork"
           />
           <LinkCard
             icon="forum"
@@ -149,11 +149,11 @@ export default function CommunityPage() {
             accent="tertiary"
           />
           <LinkCard
-            icon="chat"
-            label="Discord"
-            title="Cardano Community Discord"
-            description="Thousands of community members discussing development, DeFi, NFTs, and the future of Cardano."
-            href="https://discord.gg/cardano"
+            icon="help"
+            label="Q&A"
+            title="Cardano Stack Exchange"
+            description="The official Q&A platform for Cardano developers — ask questions, find answers, and help others build on Cardano."
+            href="https://cardano.stackexchange.com"
             accent="tertiary"
           />
           <LinkCard
@@ -213,7 +213,7 @@ export default function CommunityPage() {
           Midnight, we would love to hear from you. Jump into the Midnight Discord and say hello.
         </p>
         <a
-          href="https://discord.gg/midnight-network"
+          href="https://discord.com/invite/midnightnetwork"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold px-6 py-3 rounded-full active:scale-95 transition-all shadow-lg mt-2"
