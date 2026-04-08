@@ -12,6 +12,7 @@ import {
 import { createWitnesses, getSecretKeyFromWallet, getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
 import { computeMetadataHash, validatePollMetadata } from "@/lib/midnight/metadata-store";
 import { bytesToHex } from "@/lib/midnight/ledger-utils";
+import type { InviteCode } from "@/lib/midnight/invite-codes";
 
 /** Input for creating a new poll. */
 export interface CreatePollInput {
@@ -19,11 +20,14 @@ export interface CreatePollInput {
   description: string;
   options: string[];
   expirationBlocks: bigint; // number of blocks until expiration
+  pollType: "public" | "invite_only"; // defaults to "public"
+  inviteCodeCount?: number;           // number of invite codes to generate (for invite_only)
 }
 
 /** Result returned from a successful poll creation. */
 export interface CreatePollResult {
   pollId: string; // hex-encoded poll ID
+  inviteCodes?: InviteCode[]; // populated only for invite_only polls
 }
 
 /**
@@ -36,6 +40,7 @@ export interface CreatePollResult {
  * 4. Calls create_poll circuit with hash, option count, type, expiration
  * 5. Stores metadata off-chain via /api/polls/metadata
  * 6. Returns the hex-encoded poll ID
+ * 7. For invite-only polls: generates codes, submits hashes, stores codes
  */
 export function useCreatePoll() {
   const queryClient = useQueryClient();
@@ -94,11 +99,11 @@ export function useCreatePoll() {
       // inside deploy/find, but TypeScript can't see that
       void witnesses;
 
-      // 6. Call create_poll circuit (PollType.public_poll = 0)
+      // 6. Call create_poll circuit with appropriate poll type
       const result = await callCreatePoll(contract, {
         metadataHash,
         optionCount: input.options.length,
-        pollType: 0, // public_poll
+        pollType: input.pollType === "invite_only" ? 1 : 0,
         expirationBlock,
       });
 
@@ -126,7 +131,30 @@ export function useCreatePoll() {
         }),
       });
 
-      return { pollId };
+      // 9. For invite-only polls: generate codes, submit hashes, store in localStorage
+      let inviteCodes: InviteCode[] | undefined;
+
+      if (input.pollType === "invite_only" && input.inviteCodeCount && input.inviteCodeCount > 0) {
+        // Generate invite codes off-chain
+        const { generateInviteCodes, storeInviteCodes } = await import("@/lib/midnight/invite-codes");
+        const codeSet = await generateInviteCodes(input.inviteCodeCount, pollIdBytes);
+        inviteCodes = codeSet.codes;
+
+        // Submit each code hash to the contract via add_invite_codes
+        // Sequential submission — each tx must confirm. Consider batching in v2.
+        const { callAddInviteCodes } = await import("@/lib/midnight/contract-service");
+        for (const code of codeSet.codes) {
+          await callAddInviteCodes(contract, {
+            pollId: pollIdBytes,
+            codeHash: code.hash,
+          });
+        }
+
+        // Store codes in localStorage for the creator to share
+        storeInviteCodes(pollId, inviteCodes);
+      }
+
+      return { pollId, inviteCodes };
     },
 
     onSuccess: () => {

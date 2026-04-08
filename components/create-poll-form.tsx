@@ -85,6 +85,7 @@ export function CreatePollForm() {
         description: "",
         options: trimmedOptions,
         expirationBlocks: BigInt(selectedDuration) * BLOCKS_PER_DAY,
+        pollType: "public",
       },
       {
         onSuccess: (result) => {
