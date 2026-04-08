@@ -92,6 +92,7 @@ export default function StatsPage() {
   // Needs wallet
   if (!isConnected) {
     return (
+      <div className="flex-1 flex items-center justify-center">
       <div className="text-center py-20 max-w-md mx-auto">
         <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
           <span className="material-symbols-outlined text-primary text-4xl">analytics</span>
@@ -110,6 +111,7 @@ export default function StatsPage() {
           <span className="material-symbols-outlined">wallet</span>
           Connect Wallet
         </button>
+      </div>
       </div>
     );
   }

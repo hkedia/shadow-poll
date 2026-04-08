@@ -46,24 +46,39 @@ echo ""
 echo "✅ Compilation successful!"
 echo ""
 
-# Copy ZK key files to public directory (if any were generated)
+# Copy ZK key files to public directory in the structure FetchZkConfigProvider expects:
+#   public/zk-keys/keys/{circuitId}.prover
+#   public/zk-keys/keys/{circuitId}.verifier
+#   public/zk-keys/zkir/{circuitId}.bzkir
 KEY_COUNT=0
 if [[ -z "$SKIP_ZK_FLAG" ]]; then
-  # Look for common ZK key file patterns
-  while IFS= read -r -d '' file; do
-    cp "$file" "$REPO_ROOT/$ZK_KEYS_DIR/"
-    echo "   Copied: $(basename "$file") → $ZK_KEYS_DIR/"
-    KEY_COUNT=$((KEY_COUNT + 1))
-  done < <(find "$REPO_ROOT/$MANAGED_DIR" \( -name "*.prover" -o -name "*.verifier" -o -name "*.pk" -o -name "*.vk" \) -print0 2>/dev/null || true)
+  mkdir -p "$REPO_ROOT/$ZK_KEYS_DIR/keys"
+  mkdir -p "$REPO_ROOT/$ZK_KEYS_DIR/zkir"
+
+  # Copy prover/verifier keys from managed/keys/ → public/zk-keys/keys/
+  if [[ -d "$REPO_ROOT/$MANAGED_DIR/keys" ]]; then
+    while IFS= read -r -d '' file; do
+      cp "$file" "$REPO_ROOT/$ZK_KEYS_DIR/keys/"
+      echo "   Copied: $(basename "$file") → $ZK_KEYS_DIR/keys/"
+      KEY_COUNT=$((KEY_COUNT + 1))
+    done < <(find "$REPO_ROOT/$MANAGED_DIR/keys" \( -name "*.prover" -o -name "*.verifier" \) -print0 2>/dev/null || true)
+  fi
+
+  # Copy .bzkir files from managed/zkir/ → public/zk-keys/zkir/
+  if [[ -d "$REPO_ROOT/$MANAGED_DIR/zkir" ]]; then
+    while IFS= read -r -d '' file; do
+      cp "$file" "$REPO_ROOT/$ZK_KEYS_DIR/zkir/"
+      echo "   Copied: $(basename "$file") → $ZK_KEYS_DIR/zkir/"
+      KEY_COUNT=$((KEY_COUNT + 1))
+    done < <(find "$REPO_ROOT/$MANAGED_DIR/zkir" -name "*.bzkir" -print0 2>/dev/null || true)
+  fi
 
   if [[ $KEY_COUNT -eq 0 ]]; then
-    echo "ℹ️  No ZK key files found in $MANAGED_DIR."
-    echo "   This is expected when using --skip-zk or if the compiler version"
-    echo "   does not generate standalone key files."
-    echo "   ZK keys may be embedded in the ZKIR files or generated at deploy time."
+    echo "ℹ️  No ZK key files found in $MANAGED_DIR/keys/ or $MANAGED_DIR/zkir/."
+    echo "   This is expected when using --skip-zk."
   else
     echo ""
-    echo "📦 Copied $KEY_COUNT ZK key file(s) to $ZK_KEYS_DIR/"
+    echo "📦 Copied $KEY_COUNT ZK artifact(s) to $ZK_KEYS_DIR/{keys,zkir}/"
   fi
 else
   echo "ℹ️  ZK key generation was skipped. Run without --skip-zk for full compilation."

@@ -44,9 +44,9 @@ next-env.d.ts
 # midnight contract compilation output
 /contracts/managed/
 
-# ZK keys are generated, not checked in (regenerate via bun run compile:contracts)
-/public/zk-keys/*.prover
-/public/zk-keys/*.verifier
-/public/zk-keys/*.pk
-/public/zk-keys/*.vk
-/public/zk-keys/*.zkir
+# ZK keys are large generated binaries — regenerate via bun run compile:contracts
+/public/zk-keys/keys/
+/public/zk-keys/zkir/
+
+# Design reference assets (not source code)
+/.design/

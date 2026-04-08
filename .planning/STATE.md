@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 06-02-PLAN.md — Phase 6 complete
-last_updated: "2026-04-08T11:35:59.514Z"
+status: complete
+stopped_at: Phase 7 complete — Neon Postgres data layer implemented, all 7 phases done
+last_updated: "2026-04-08T18:15:00.000Z"
 last_activity: 2026-04-08
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 15
-  completed_plans: 15
+  total_phases: 7
+  completed_phases: 7
+  total_plans: 16
+  completed_plans: 16
   percent: 100
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 **Core value:** Users can vote on polls anonymously with cryptographic guarantees
-**Current focus:** Phase 6 (ZK Proofs & Analytics) — context written, planning in progress
+**Current focus:** All phases complete — ready for deployment with DATABASE_URL configured
 
 ## Current Position
 
-Phase: 6 of 6 (ZK Proofs & Analytics) — IN PROGRESS
-Plan: 2 of 2 in current phase (plans written, execution pending)
-Status: Ready to execute
+Phase: 7 of 7 (Persistent Data Layer) — COMPLETE
+Plan: 1 of 1 in current phase
+Status: All phases complete
 Last activity: 2026-04-08
 
-Progress: [████████░░] 83%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -61,6 +61,14 @@ Progress: [████████░░] 83%
 | Phase 05 P03 | 7min | 3 tasks | 5 files |
 | Phase 06 P01 | 3 | 4 tasks | 4 files |
 | Phase 06 P02 | 5 | 6 tasks | 6 files |
+
+## Phase 7 Design Decisions (from discussion)
+
+- D-70: Neon serverless Postgres via `@neondatabase/serverless` — HTTP-based driver, no persistent connections, ideal for Vercel serverless
+- D-71: Single `polls_metadata` table, no ORM — raw SQL via tagged template, schema is too simple to justify Prisma/Drizzle
+- D-72: Lazy migration via `runMigrations()` with module-level flag — `CREATE TABLE IF NOT EXISTS` is idempotent, no CLI migration runner needed for v1
+- D-73: `DATABASE_URL` as the single env var — standard Postgres connection string, works with Neon, Supabase, local Postgres equally
+- D-74: List-all GET endpoint (no `pollId` param) returns all rows ordered by `created_at DESC` — enables batch metadata fetch for the home page
 
 ## Phase 6 Design Decisions (from discussion)
 
@@ -134,6 +142,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-08T11:35:59.497Z
-Stopped at: Completed 06-02-PLAN.md — Phase 6 complete
-Resume file: None
+Last session: 2026-04-08T12:00:00.000Z
+Stopped at: Phase 7 added — 07-CONTEXT.md and 07-01-PLAN.md written, ready to execute
+Resume file: .planning/phases/07-persistent-data-layer/07-01-PLAN.md

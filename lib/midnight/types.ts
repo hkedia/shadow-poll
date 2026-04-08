@@ -42,8 +42,30 @@ export interface IndexerConfig {
 }
 
 /**
+ * Network configuration returned by api.getConfiguration().
+ * Used to set the network ID and configure all SDK providers.
+ */
+export interface NetworkConfig {
+  networkId: string;
+  indexerUri: string;
+  indexerWsUri: string;
+  proverServerUri: string;
+  substrateNodeUri: string;
+}
+
+/**
+ * Shielded address info returned by api.getShieldedAddresses().
+ */
+export interface ShieldedAddresses {
+  shieldedAddress: string;
+  shieldedCoinPublicKey: string;
+  shieldedEncryptionPublicKey: string;
+}
+
+/**
  * Configuration for the ZK proving/verifying key fetch provider.
  * Used to download circuit keys at proving time.
+ * Matches the interface of FetchZkConfigProvider from the SDK.
  */
 export interface ZkConfigProvider {
   getProvingKeyURI(circuitName: string): string;
@@ -52,18 +74,21 @@ export interface ZkConfigProvider {
 
 /**
  * Structural type matching the Midnight SDK's WalletProvider interface.
- * The 1am wallet's enabled API exposes these methods for transaction balancing
- * and coin key retrieval.
+ * Built from the connected 1am API:
+ *   - getCoinPublicKey: returns shieldedCoinPublicKey from getShieldedAddresses()
+ *   - getEncryptionPublicKey: returns shieldedEncryptionPublicKey
+ *   - balanceTx: hex-serializes the tx, calls api.balanceUnsealedTransaction(hex),
+ *                then deserializes the result via Transaction.deserialize
  */
 export interface WalletProviderApi {
   balanceTx(tx: unknown): Promise<unknown>;
-  getCoinPublicKey(): unknown;
-  getEncryptionPublicKey(): unknown;
+  getCoinPublicKey(): string;
+  getEncryptionPublicKey(): string;
 }
 
 /**
  * Structural type matching the Midnight SDK's ProofProvider interface.
- * The 1am wallet's proving provider creates ZK proofs for unproven transactions.
+ * Wraps unprovenTx.prove(provingProvider, CostModel.initialCostModel()).
  */
 export interface ProofProviderApi {
   proveTx(unprovenTx: unknown, config?: unknown): Promise<unknown>;
@@ -71,21 +96,23 @@ export interface ProofProviderApi {
 
 /**
  * Structural type matching the Midnight SDK's MidnightProvider interface.
- * Handles submitting finalized transactions to the Midnight network.
- * In practice, the wallet's enabled API also satisfies this interface.
+ * Handles submitting finalized transactions to the Midnight network via
+ * api.submitTransaction(hex). Returns the first transaction identifier.
  */
 export interface MidnightProviderApi {
-  submitTx(tx: unknown): Promise<unknown>;
+  submitTx(tx: unknown): Promise<string>;
 }
 
 export interface MidnightProviderSet {
   zkConfigProvider: ZkConfigProvider;
   /** Indexer connection config — real SDK provider created lazily via createIndexerProvider() */
   indexerConfig: IndexerConfig;
-  /** Wallet enabled API for transaction balancing and key retrieval */
+  /** Wallet provider — properly structured per 1am API spec */
   walletProvider: WalletProviderApi;
-  /** Proof provider from wallet for ZK proof generation */
+  /** Proof provider — wraps provingProvider.prove with CostModel */
   proofProvider: ProofProviderApi;
+  /** Midnight provider — submits transactions via api.submitTransaction */
+  midnightProvider: MidnightProviderApi;
 }
 
 export interface WalletState {
@@ -95,8 +122,11 @@ export interface WalletState {
    *  silent autoconnect — the 1am wallet silently reconnects already-authorized sites
    *  without showing a popup, so the "approve the connection" overlay would be misleading. */
   isAutoConnecting: boolean;
+  /** Full shielded address string — used as the display address */
   address: string | null;
   truncatedAddress: string | null;
+  /** Full shielded address details from api.getShieldedAddresses() */
+  shieldedAddresses: ShieldedAddresses | null;
   providers: MidnightProviderSet | null;
   error: string | null;
 }

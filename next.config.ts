@@ -1,33 +1,35 @@
 import type { NextConfig } from "next";
 
-// All Midnight SDK packages + transitive deps that cannot be bundled by Turbopack.
-// This includes WASM packages, Node.js-only packages (ws, isomorphic-ws),
-// and packages that transitively depend on them (wallet-sdk-address-format → ledger-v8).
-const MIDNIGHT_EXTERNAL_PACKAGES = [
-  // WASM runtimes
+// Packages that are WASM-based or have deep Node.js dependencies and cannot
+// be bundled by Turbopack for the client. These are stubbed in the client bundle
+// and loaded via dynamic import() at runtime through the stub bypass.
+const TURBOPACK_STUBBED_PACKAGES = [
+  // WASM runtimes — never run in client bundle
   "@midnight-ntwrk/compact-js",
   "@midnight-ntwrk/ledger-v8",
   "@midnight-ntwrk/compact-runtime",
   "@midnight-ntwrk/onchain-runtime-v3",
   "@midnight-ntwrk/platform-js",
-  // SDK JS packages (use Node.js APIs or transitively depend on WASM)
+  // SDK JS packages that depend on WASM runtimes
   "@midnight-ntwrk/midnight-js-contracts",
-  "@midnight-ntwrk/midnight-js-fetch-zk-config-provider",
-  "@midnight-ntwrk/midnight-js-indexer-public-data-provider",
   "@midnight-ntwrk/midnight-js-network-id",
   "@midnight-ntwrk/midnight-js-types",
   "@midnight-ntwrk/midnight-js-utils",
   "@midnight-ntwrk/wallet-sdk-address-format",
+  // Browser-compatible packages whose transitive deps (ledger-v8, compact-runtime)
+  // are still stubbed — so the packages themselves must also be stubbed
+  "@midnight-ntwrk/midnight-js-fetch-zk-config-provider",
+  "@midnight-ntwrk/midnight-js-indexer-public-data-provider",
   // Node.js-only transitive deps
   "isomorphic-ws",
   "ws",
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: MIDNIGHT_EXTERNAL_PACKAGES,
+  serverExternalPackages: TURBOPACK_STUBBED_PACKAGES,
   turbopack: {
     resolveAlias: Object.fromEntries(
-      MIDNIGHT_EXTERNAL_PACKAGES.map((pkg) => [pkg, "./lib/midnight-sdk-stub.ts"])
+      TURBOPACK_STUBBED_PACKAGES.map((pkg) => [pkg, "./lib/midnight-sdk-stub.ts"])
     ),
   },
   async headers() {

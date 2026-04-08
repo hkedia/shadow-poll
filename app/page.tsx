@@ -84,7 +84,7 @@ function TrendingPolls() {
   const { data: polls, isLoading, isError } = usePolls();
 
   return (
-    <>
+    <div className="flex-1 flex flex-col">
       {/* Hero & heading */}
       <section className="mb-12 md:mb-16 relative">
         <div className="max-w-3xl">
@@ -171,7 +171,7 @@ function TrendingPolls() {
           })}
         </div>
       )}
-    </>
+    </div>
   );
 }
 

@@ -11,47 +11,72 @@ function truncateAddress(address: string): string {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
+/**
+ * Detects the 1am.xyz wallet using the official polling pattern from 1am.xyz/ai.txt.
+ * Polls window.midnight['1am'] with up to 50 attempts × 100ms = 5 seconds total.
+ * This handles the race condition where the extension injects after the page loads.
+ *
+ * @returns The wallet's InitialAPI, or null if not found within the timeout
+ */
+function detectWallet(): Promise<unknown | null> {
+  return new Promise((resolve) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const wallet = (window as any)?.midnight?.["1am"];
+    if (wallet) {
+      resolve(wallet);
+      return;
+    }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const w = (window as any)?.midnight?.["1am"];
+      if (w) {
+        clearInterval(interval);
+        resolve(w);
+      } else if (++attempts > 50) {
+        clearInterval(interval);
+        resolve(null);
+      }
+    }, 100);
+  });
+}
+
 export function useWallet() {
   const [state, setState] = useState<WalletState>({
     status: "idle",
     isAutoConnecting: false,
     address: null,
     truncatedAddress: null,
+    shieldedAddresses: null,
     providers: null,
     error: null,
   });
 
-  const getWalletApi = useCallback(() => {
-    if (typeof window === "undefined") return null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (window as any)?.midnight?.["1am"] ?? null;
-  }, []);
-
   const connectInternal = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async (api: any, isAutoConnect = false) => {
+    async (walletApi: any, isAutoConnect = false) => {
       setState((s) => ({ ...s, status: "connecting", isAutoConnecting: isAutoConnect, error: null }));
       try {
-        // Connect wallet on preview network (triggers user approval in extension)
-        const enabledApi = await api.connect("preview");
+        // Connect wallet on preview network — returns ConnectedAPI
+        const enabledApi = await walletApi.connect("preview");
 
-        // Get shielded address to protect user privacy
-        // Returns { shieldedAddress: string, shieldedCoinPublicKey: string, shieldedEncryptionPublicKey: string }
+        // Get shielded addresses via the official 1am API
+        // Returns { shieldedAddress, shieldedCoinPublicKey, shieldedEncryptionPublicKey }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const rawAddress: any = await enabledApi.getShieldedAddresses();
+        const shieldedAddresses: any = await enabledApi.getShieldedAddresses();
         const address: string =
-          typeof rawAddress === "string"
-            ? rawAddress
-            : rawAddress?.shieldedAddress ?? "";
+          typeof shieldedAddresses === "string"
+            ? shieldedAddresses
+            : shieldedAddresses?.shieldedAddress ?? "";
 
         if (!address) {
           throw new Error("No account address returned from wallet.");
         }
 
-        // Assemble providers (WALL-05) using the enabled API
+        // Assemble providers using the connected API
         const providers = await assembleProviders(enabledApi);
 
-        // Persist auto-connect flag (WALL-07)
+        // Persist auto-connect flag
         localStorage.setItem(AUTO_CONNECT_KEY, "true");
 
         setState({
@@ -59,6 +84,11 @@ export function useWallet() {
           isAutoConnecting: false,
           address,
           truncatedAddress: truncateAddress(address),
+          shieldedAddresses: {
+            shieldedAddress: shieldedAddresses?.shieldedAddress ?? address,
+            shieldedCoinPublicKey: shieldedAddresses?.shieldedCoinPublicKey ?? "",
+            shieldedEncryptionPublicKey: shieldedAddresses?.shieldedEncryptionPublicKey ?? "",
+          },
           providers,
           error: null,
         });
@@ -72,6 +102,7 @@ export function useWallet() {
           status: "error",
           isAutoConnecting: false,
           error: message,
+          shieldedAddresses: null,
           providers: null,
         }));
       }
@@ -79,11 +110,13 @@ export function useWallet() {
     []
   );
 
-  // Detect wallet on mount and handle auto-reconnect (WALL-01, WALL-07)
+  // Detect wallet on mount using the official polling pattern, then handle auto-reconnect
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const detect = async () => {
-      const api = getWalletApi();
-      if (!api) {
+      const walletApi = await detectWallet();
+      if (!walletApi) {
         setState((s) => ({ ...s, status: "not_detected" }));
         return;
       }
@@ -91,7 +124,7 @@ export function useWallet() {
       const shouldAutoConnect =
         localStorage.getItem(AUTO_CONNECT_KEY) === "true";
       if (shouldAutoConnect) {
-        await connectInternal(api, true);
+        await connectInternal(walletApi, true);
       } else {
         setState((s) => ({ ...s, status: "disconnected" }));
       }
@@ -100,17 +133,18 @@ export function useWallet() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // WALL-02: connect
+  // connect — triggered by user interaction
   const connect = useCallback(async () => {
-    const api = getWalletApi();
-    if (!api) {
+    if (typeof window === "undefined") return;
+    const walletApi = await detectWallet();
+    if (!walletApi) {
       setState((s) => ({ ...s, status: "not_detected" }));
       return;
     }
-    await connectInternal(api);
-  }, [getWalletApi, connectInternal]);
+    await connectInternal(walletApi);
+  }, [connectInternal]);
 
-  // WALL-03: disconnect
+  // disconnect
   const disconnect = useCallback(() => {
     localStorage.removeItem(AUTO_CONNECT_KEY);
     setState({
@@ -118,6 +152,7 @@ export function useWallet() {
       isAutoConnecting: false,
       address: null,
       truncatedAddress: null,
+      shieldedAddresses: null,
       providers: null,
       error: null,
     });

@@ -29,6 +29,13 @@ export const metadata: Metadata = {
   title: "Shadow Poll",
   description:
     "Create secure, anonymous polls that prioritize privacy without sacrificing engagement.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -47,13 +54,13 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden">
+      <body className="flex flex-col bg-background text-foreground overflow-x-hidden" style={{minHeight: '100dvh'}}>
         <WalletProvider>
           <QueryProvider>
             <Header walletSlot={<WalletButton />} />
             <WalletOnboarding />
             <main className="flex-1 flex flex-col w-full pt-20 pb-8 md:pb-12 px-4 sm:px-6 md:px-8">
-              <div className="max-w-7xl mx-auto w-full flex-1">{children}</div>
+              <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col">{children}</div>
             </main>
             <Footer />
           </QueryProvider>

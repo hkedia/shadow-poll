@@ -43,8 +43,20 @@ export function useStats() {
   const query = useQuery<StatsData>({
     queryKey: ["stats"],
     queryFn: async () => {
-      if (!providers || !contractAddress) {
-        throw new Error("Wallet not connected or contract address not configured");
+      if (!providers) {
+        throw new Error("Wallet not connected");
+      }
+      if (!contractAddress) {
+        // No contract address configured — return empty stats rather than erroring
+        return {
+          totalPolls: 0,
+          totalVotes: BigInt(0),
+          activePolls: 0,
+          publicPolls: 0,
+          inviteOnlyPolls: 0,
+          avgVotesPerPoll: 0,
+          mostVotedPoll: null,
+        };
       }
 
       // Fetch all polls (single contract state fetch)
@@ -131,7 +143,7 @@ export function useStats() {
         mostVotedPoll,
       };
     },
-    enabled: isConnected && Boolean(contractAddress),
+    enabled: isConnected,
     staleTime: 60_000,  // stats update at most every 60 seconds
     refetchInterval: 60_000,
     retry: 1,

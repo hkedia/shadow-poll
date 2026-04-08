@@ -18,6 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Core Polling** - End-to-end public poll creation, voting, and browsing with live tallies (completed 2026-04-08)
 - [x] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention (completed 2026-04-08)
 - [x] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard (in progress) (completed 2026-04-08)
+- [ ] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility
 
 ## Phase Details
 
@@ -121,9 +122,26 @@ Plans:
 
 **UI hint**: yes
 
+### Phase 7: Persistent Data Layer
+**Goal**: Poll metadata (title, description, option labels) persists across Vercel serverless cold starts by storing it in Neon serverless Postgres instead of a module-level in-memory Map
+**Depends on**: Phase 3 (metadata API route created there)
+**Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04, INFRA-05
+**Success Criteria** (what must be TRUE):
+  1. Creating a poll and reloading the page (or opening it in another browser/instance) shows the correct title and options
+  2. GET `/api/polls/metadata` (no pollId) returns all polls metadata in a single call
+  3. POST `/api/polls/metadata` is idempotent — submitting the same pollId twice updates in place
+  4. TypeScript compiles without errors and `bun run build` succeeds with `DATABASE_URL` set
+**Plans**: 1 plan
+
+Plans:
+- [ ] 07-01-PLAN.md — Install @neondatabase/serverless, create DB client + migrations, rewrite route handler
+
+**UI hint**: no
+
 ## Requirement Coverage
 
 All 33 v1 requirements mapped to exactly one phase. 100% coverage.
+5 infrastructure requirements (INFRA-01..05) added in Phase 7.
 
 | Requirement | Phase | Description |
 |-------------|-------|-------------|
@@ -160,11 +178,16 @@ All 33 v1 requirements mapped to exactly one phase. 100% coverage.
 | ZKPR-02 | 6 | Third-party proof verification |
 | ZKPR-03 | 6 | Share proof via link or badge |
 | PAGE-05 | 6 | Stats / Analytics page |
+| INFRA-01 | 7 | Poll metadata persists across Vercel serverless cold starts |
+| INFRA-02 | 7 | GET /api/polls/metadata?pollId returns correct data from any instance |
+| INFRA-03 | 7 | GET /api/polls/metadata (no pollId) returns all polls metadata |
+| INFRA-04 | 7 | POST /api/polls/metadata is idempotent (upsert) |
+| INFRA-05 | 7 | App deploys on Vercel with DATABASE_URL env var |
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -174,3 +197,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 4. Core Polling | 3/3 | Complete | 2026-04-08 |
 | 5. Invite-Only Polls | 3/3 | Complete | 2026-04-08 |
 | 6. ZK Proofs & Analytics | 2/2 | Complete   | 2026-04-08 |
+| 7. Persistent Data Layer | 0/1 | Pending | — |

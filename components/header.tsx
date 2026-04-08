@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MobileDrawer } from "@/components/mobile-drawer";
 import { HeaderNav } from "@/components/header-nav";
 import type { ReactNode } from "react";
@@ -14,9 +15,17 @@ export function Header({ walletSlot }: HeaderProps) {
         {/* Logo */}
         <Link
           href="/"
-          className="font-headline text-2xl font-bold tracking-tighter text-primary hover:opacity-80 transition-opacity"
+          className="flex items-center hover:opacity-80 transition-opacity"
+          aria-label="Shadow Poll home"
         >
-          Shadow Poll
+          <Image
+            src="/logo.svg"
+            alt="Shadow Poll"
+            width={260}
+            height={40}
+            priority
+            className="h-10 w-auto"
+          />
         </Link>
 
         {/* Nav links — client component for active state highlighting */}

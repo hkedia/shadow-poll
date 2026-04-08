@@ -33,47 +33,35 @@ export function createWitnesses<PS>(secretKey: Uint8Array, blockNumber: bigint) 
 /**
  * Derives a deterministic secret key from the connected wallet.
  *
+ * Uses the official 1am.xyz API:
+ *   api.getShieldedAddresses() → { shieldedAddress, shieldedCoinPublicKey, shieldedEncryptionPublicKey }
+ *
  * Strategy:
- *   1. Calls `enabledApi.state()` to get wallet state with shielded addresses
- *   2. Takes the first shielded address string
- *   3. Hashes it with SHA-256 to produce a deterministic 32-byte key
+ *   1. Calls `walletProvider.getCoinPublicKey()` which returns shieldedCoinPublicKey
+ *   2. Falls back to the full shielded address via getShieldedAddresses() if available
+ *   3. Hashes the key with SHA-256 to produce a deterministic 32-byte secret
  *
- * This is NOT a private key — it's a deterministic identifier derived from
- * the wallet's shielded address. The same wallet always produces the same key,
- * which satisfies the contract's `local_secret_key` witness requirement for
- * consistent voter identification (T-04-02 mitigation).
+ * This is NOT a cryptographic private key — it's a deterministic identifier
+ * derived from the wallet's shielded address. The same wallet always produces
+ * the same key, which satisfies the contract's `local_secret_key` witness
+ * requirement for consistent voter identification.
  *
- * @param enabledApi - The enabled API from window.midnight['1am'].connect()
+ * @param walletProvider - The structured WalletProvider from assembleProviders()
+ *                         (has getCoinPublicKey returning shieldedCoinPublicKey)
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getSecretKeyFromWallet(enabledApi: any): Promise<Uint8Array> {
+export async function getSecretKeyFromWallet(
+  walletProvider: { getCoinPublicKey(): string }
+): Promise<Uint8Array> {
+  // Primary: use shieldedCoinPublicKey from walletProvider (per 1am API spec)
   try {
-    // The 1am wallet exposes shielded addresses via state()
-    const state = await enabledApi.state();
-    const addresses: string[] = state?.addresses ?? [];
-
-    if (addresses.length > 0) {
-      // Hash the first shielded address to get a deterministic 32-byte key
-      const encoded = new TextEncoder().encode(addresses[0]);
+    const coinPk = walletProvider.getCoinPublicKey();
+    if (coinPk && typeof coinPk === "string" && coinPk.length > 0) {
+      const encoded = new TextEncoder().encode(coinPk);
       const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
       return new Uint8Array(hashBuffer);
     }
   } catch (err) {
-    console.warn("Failed to get shielded address from wallet, using fallback key derivation:", err);
-  }
-
-  // Fallback: hash a known string with the wallet's coin public key
-  try {
-    const coinPk = enabledApi.getCoinPublicKey();
-    if (coinPk) {
-      const encoded = new TextEncoder().encode(
-        typeof coinPk === "string" ? coinPk : String(coinPk),
-      );
-      const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
-      return new Uint8Array(hashBuffer);
-    }
-  } catch {
-    // Fall through to default
+    console.warn("Failed to derive secret key from coin public key:", err);
   }
 
   // Last resort: return a zero key (contract will still work, just less unique)

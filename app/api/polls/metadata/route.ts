@@ -6,31 +6,80 @@ import {
   type StoreMetadataRequest,
   type MetadataResponse,
 } from "@/lib/midnight/metadata-store";
+import { sql } from "@/lib/db/client";
+import { runMigrations } from "@/lib/db/migrations";
 
 /**
- * In-memory metadata store. Keyed by poll ID (hex string).
- *
- * For v1/testnet this is sufficient. Data is lost on server restart.
- * A production version would use a database or persistent KV store.
+ * Row shape returned by Postgres queries on polls_metadata.
+ * options is stored as JSONB and arrives as a parsed JS value (string[]).
  */
-const metadataStore = new Map<string, { metadata: PollMetadata; metadataHash: string }>();
+interface PollMetadataRow {
+  poll_id: string;
+  title: string;
+  description: string;
+  options: string[];
+  metadata_hash: string;
+  created_at: string; // ISO string from TIMESTAMPTZ
+}
+
+/** Maps a DB row to the MetadataResponse API shape. */
+function rowToResponse(row: PollMetadataRow): MetadataResponse {
+  const metadata: PollMetadata = {
+    title: row.title,
+    description: row.description,
+    options: row.options,
+    createdAt: row.created_at,
+  };
+  return {
+    pollId: row.poll_id,
+    metadata,
+    metadataHash: row.metadata_hash,
+  };
+}
 
 /**
  * GET /api/polls/metadata?pollId=<hex>
+ *   Returns metadata for a single poll.
  *
- * Retrieves off-chain metadata for a poll by its ID.
+ * GET /api/polls/metadata
+ *   Returns all polls metadata ordered by created_at DESC.
+ *   Used by the home page to batch-fetch titles without N+1 calls.
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  const pollId = request.nextUrl.searchParams.get("pollId");
-
-  if (!pollId) {
+  try {
+    await runMigrations();
+  } catch (err) {
+    console.error("[metadata] Migration failed:", err);
     return NextResponse.json(
-      { error: "Missing pollId query parameter" },
-      { status: 400 },
+      { error: "Database unavailable — please try again later" },
+      { status: 503 },
     );
   }
 
-  // Validate poll ID format (should be 64 hex chars = 32 bytes)
+  const pollId = request.nextUrl.searchParams.get("pollId");
+
+  // --- List-all branch (no pollId param) ---
+  if (!pollId) {
+    try {
+      const rows = (await sql`
+        SELECT poll_id, title, description, options, metadata_hash, created_at
+        FROM polls_metadata
+        ORDER BY created_at DESC
+      `) as PollMetadataRow[];
+
+      return NextResponse.json(rows.map(rowToResponse));
+    } catch (err) {
+      console.error("[metadata] List query failed:", err);
+      return NextResponse.json(
+        { error: "Failed to fetch poll metadata list" },
+        { status: 503 },
+      );
+    }
+  }
+
+  // --- Single-poll branch ---
+
+  // Validate poll ID format (64 hex chars = 32 bytes)
   if (!/^[0-9a-f]{64}$/i.test(pollId)) {
     return NextResponse.json(
       { error: "Invalid pollId format — expected 64 hex characters" },
@@ -39,28 +88,37 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   const normalizedId = pollId.toLowerCase();
-  const entry = metadataStore.get(normalizedId);
 
-  if (!entry) {
+  try {
+    const rows = (await sql`
+      SELECT poll_id, title, description, options, metadata_hash, created_at
+      FROM polls_metadata
+      WHERE poll_id = ${normalizedId}
+      LIMIT 1
+    `) as PollMetadataRow[];
+
+    if (rows.length === 0) {
+      return NextResponse.json(
+        { error: "Metadata not found for this poll" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(rowToResponse(rows[0]));
+  } catch (err) {
+    console.error("[metadata] Single-poll query failed:", err);
     return NextResponse.json(
-      { error: "Metadata not found for this poll" },
-      { status: 404 },
+      { error: "Failed to fetch poll metadata" },
+      { status: 503 },
     );
   }
-
-  const response: MetadataResponse = {
-    pollId: normalizedId,
-    metadata: entry.metadata,
-    metadataHash: entry.metadataHash,
-  };
-
-  return NextResponse.json(response);
 }
 
 /**
  * POST /api/polls/metadata
  *
- * Stores off-chain metadata for a poll. The client must provide:
+ * Stores off-chain metadata for a poll. Upserts on conflict (idempotent).
+ * The client must provide:
  * - pollId: hex-encoded poll ID (from create_poll transaction result)
  * - metadata: { title, description, options, createdAt }
  * - metadataHash: hex-encoded hash for integrity verification
@@ -69,6 +127,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
  * No authentication required — the metadata hash provides tamper-proofing.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    await runMigrations();
+  } catch (err) {
+    console.error("[metadata] Migration failed:", err);
+    return NextResponse.json(
+      { error: "Database unavailable — please try again later" },
+      { status: 503 },
+    );
+  }
+
   let body: StoreMetadataRequest;
   try {
     body = await request.json();
@@ -106,7 +174,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   // Validate metadata hash integrity
   const hashValid = await validateMetadataHash(
-    { title: body.metadata.title, description: body.metadata.description, options: body.metadata.options },
+    {
+      title: body.metadata.title,
+      description: body.metadata.description,
+      options: body.metadata.options,
+    },
     body.metadataHash,
   );
   if (!hashValid) {
@@ -116,12 +188,32 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Store metadata (overwrites if same pollId submitted again — idempotent)
   const normalizedId = body.pollId.toLowerCase();
-  metadataStore.set(normalizedId, {
-    metadata: body.metadata,
-    metadataHash: body.metadataHash,
-  });
+  const optionsJson = JSON.stringify(body.metadata.options);
+
+  try {
+    await sql`
+      INSERT INTO polls_metadata (poll_id, title, description, options, metadata_hash)
+      VALUES (
+        ${normalizedId},
+        ${body.metadata.title},
+        ${body.metadata.description},
+        ${optionsJson}::jsonb,
+        ${body.metadataHash}
+      )
+      ON CONFLICT (poll_id) DO UPDATE SET
+        title         = EXCLUDED.title,
+        description   = EXCLUDED.description,
+        options       = EXCLUDED.options,
+        metadata_hash = EXCLUDED.metadata_hash
+    `;
+  } catch (err) {
+    console.error("[metadata] Upsert failed:", err);
+    return NextResponse.json(
+      { error: "Failed to store poll metadata" },
+      { status: 503 },
+    );
+  }
 
   return NextResponse.json(
     { success: true, pollId: normalizedId },
