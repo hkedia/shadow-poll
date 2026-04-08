@@ -13,8 +13,8 @@ Shadow Poll goes from an empty Next.js scaffold to a fully functional anonymous 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Wallet & UI Foundation** - Connect 1am.xyz wallet with provider assembly; establish dark theme and responsive layout (completed 2026-04-08)
-- [ ] **Phase 2: Smart Contracts** - Write and compile Compact contracts for poll creation and vote casting
-- [ ] **Phase 3: Data Layer** - Wire up GraphQL indexer reads and API routes for on-chain data access
+- [x] **Phase 2: Smart Contracts** - Write and compile Compact contracts for poll creation and vote casting (completed 2026-04-08)
+- [x] **Phase 3: Data Layer** - Wire up GraphQL indexer reads and API routes for on-chain data access (completed 2026-04-08)
 - [ ] **Phase 4: Core Polling** - End-to-end public poll creation, voting, and browsing with live tallies
 - [ ] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention
 - [ ] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard
@@ -51,8 +51,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Write Poll Manager Compact contract with create_poll and cast_vote circuits
-- [ ] 02-02-PLAN.md — Build compilation pipeline script and serve ZK keys from public/
+- [x] 02-01-PLAN.md — Write Poll Manager Compact contract with create_poll and cast_vote circuits
+- [x] 02-02-PLAN.md — Build compilation pipeline script and serve ZK keys from public/
 
 ### Phase 3: Data Layer
 **Goal**: The app can read on-chain poll data from the Midnight Preview indexer through configured GraphQL and API routes
@@ -62,7 +62,11 @@ Plans:
   1. GraphQL client is configured and can query the Midnight Preview public indexer for poll data
   2. API routes exist that proxy indexer queries and serve static contract artifacts
   3. Vote tallies update optimistically in the UI before on-chain confirmation arrives
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [x] 03-01-PLAN.md — SDK indexer provider wiring, tighten provider types, ledger read utilities, metadata API route
+- [x] 03-02-PLAN.md — TanStack Query integration, data hooks for polls/tallies/metadata, optimistic vote updates
 
 ### Phase 4: Core Polling
 **Goal**: Users can create public polls, vote on them, and browse trending polls with live vote tallies
@@ -73,7 +77,13 @@ Plans:
   2. User can browse the Home / Trending Polls page and see polls sorted by activity from the indexer
   3. User can open a poll detail page at /poll/[id], see current vote tallies, and cast a vote via on-chain transaction
   4. Poll creator can set an expiration time, and expired polls no longer accept votes
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Contract interaction service layer (witnesses, providers, deploy/call)
+- [ ] 04-02-PLAN.md — Data hooks wiring + header navigation links
+- [ ] 04-03-PLAN.md — UI pages (Trending Polls, Create Poll, Poll Detail with voting)
+
 **UI hint**: yes
 
 ### Phase 5: Invite-Only Polls
@@ -148,8 +158,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Wallet & UI Foundation | 3/3 | Complete   | 2026-04-08 |
-| 2. Smart Contracts | 0/2 | Not started | - |
-| 3. Data Layer | 0/0 | Not started | - |
-| 4. Core Polling | 0/0 | Not started | - |
+| 2. Smart Contracts | 2/2 | Complete   | 2026-04-08 |
+| 3. Data Layer | 2/2 | Complete   | 2026-04-08 |
+| 4. Core Polling | 0/3 | Not started | - |
 | 5. Invite-Only Polls | 0/0 | Not started | - |
 | 6. ZK Proofs & Analytics | 0/0 | Not started | - |
