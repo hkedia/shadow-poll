@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer";
 import { WalletProvider } from "@/lib/midnight/wallet-context";
 import { WalletButton } from "@/components/wallet-button";
 import { QueryProvider } from "@/lib/queries/query-provider";
+import { ScrollToTop } from "@/src/components/scroll-to-top";
 import { lazy, Suspense } from "react";
 
 const Home = lazy(() => import("@/src/routes/home"));
@@ -20,6 +21,7 @@ export function App() {
   return (
     <WalletProvider>
       <QueryProvider>
+        <ScrollToTop />
         <div className="flex flex-col min-h-screen">
           <Header walletSlot={<WalletButton />} />
           <main className="flex-1 flex flex-col w-full pt-20 pb-8 md:pb-12 px-4 sm:px-6 md:px-8">
