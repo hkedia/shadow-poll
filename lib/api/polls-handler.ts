@@ -92,6 +92,17 @@ export async function handlePollsRequest(req: Request): Promise<Response> {
       });
     }
 
+    // Single-poll filter: GET /api/polls?id={pollId} (per D-09-07)
+    const url = new URL(req.url);
+    const idFilter = url.searchParams.get("id");
+    if (idFilter) {
+      const poll = polls.find((p) => p.id === idFilter);
+      if (!poll) {
+        return json({ error: "Poll not found" }, 404);
+      }
+      return json({ currentBlockHeight: latestBlock.height, poll });
+    }
+
     return json({ currentBlockHeight: latestBlock.height, polls });
   } catch (err) {
     if (err instanceof IndexerQueryError) {

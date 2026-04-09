@@ -20,11 +20,24 @@ export interface PollDetail {
   metadata: PollMetadata | null;
 }
 
+/** Server response shape for a single poll from GET /api/polls?id= */
+interface PollOnChain {
+  id: string;
+  metadataHash: string;
+  optionCount: number;
+  pollType: number;
+  expirationBlock: string;
+  creator: string;
+}
+
 /**
  * Hook to fetch a single poll's on-chain data and tallies.
  *
- * Queries the indexer via fetchPollWithTallies() from the contract service.
- * Returns poll data, vote tallies, and off-chain metadata (via useMetadata).
+ * Two-path fetching (per D-09-06/07):
+ * - Unauthenticated: fetches via GET /api/polls?id= (no wallet required)
+ * - Authenticated: uses live indexer via fetchPollWithTallies() (wallet connected)
+ *
+ * Tallies remain wallet-gated (require live indexer reads).
  *
  * @param pollId - Hex-encoded poll ID. Pass null/undefined to disable.
  */
@@ -32,24 +45,50 @@ export function usePoll(pollId: string | null | undefined) {
   const { providers, status } = useWalletContext();
   const isConnected = status === "connected" && providers !== null;
 
-  // Fetch on-chain poll data from the indexer
-  // TODO: Deduplicate provider assembly across poll/tallies queries
+  // Fetch on-chain poll data — enabled for all visitors (no wallet required)
   const pollQuery = useQuery({
     queryKey: pollKeys.detail(pollId ?? ""),
     queryFn: async (): Promise<PollWithId | null> => {
-      if (!providers || !pollId) return null;
+      if (!pollId) return null;
 
+      // Unauthenticated path: fetch via server API (no wallet required)
+      // Per D-09-06/07: remove isConnected gate for read queries
       const contractAddress = getContractAddress();
-      if (!contractAddress) return null;
 
+      if (!providers || !contractAddress) {
+        // No wallet — use server API (returns data from indexer without wallet)
+        const res = await fetch(`/api/polls?id=${encodeURIComponent(pollId)}`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        const p = data.poll as PollOnChain | undefined;
+        if (!p) return null;
+
+        // Map server response to PollWithId shape
+        const { hexToBytes } = await import("@/lib/midnight/ledger-utils");
+        const { PollType } = await import("@/contracts/managed/contract");
+        const pollIdBytes = hexToBytes(p.id);
+        return {
+          id: p.id,
+          idBytes: pollIdBytes,
+          data: {
+            metadata_hash: hexToBytes(p.metadataHash),
+            option_count: BigInt(p.optionCount),
+            poll_type: p.pollType === 1 ? PollType.invite_only : PollType.public_poll,
+            expiration_block: BigInt(p.expirationBlock),
+            creator: hexToBytes(p.creator),
+          },
+        };
+      }
+
+      // Authenticated path: use live indexer via fetchPollWithTallies (wallet connected)
       const result = await fetchPollWithTallies(providers, contractAddress, pollId);
       return result?.poll ?? null;
     },
-    enabled: isConnected && !!pollId,
-    refetchInterval: 15_000, // Refresh every 15 seconds for live tallies
+    enabled: !!pollId, // Removed isConnected gate (per D-09-06)
+    refetchInterval: 15_000,
   });
 
-  // Fetch on-chain vote tallies
+  // Fetch on-chain vote tallies — wallet-gated (require live indexer reads)
   const talliesQuery = useQuery({
     queryKey: pollKeys.tallies(pollId ?? ""),
     queryFn: async (): Promise<PollTallies | null> => {
@@ -61,7 +100,7 @@ export function usePoll(pollId: string | null | undefined) {
       const result = await fetchPollWithTallies(providers, contractAddress, pollId);
       return result?.tallies ?? null;
     },
-    enabled: isConnected && !!pollId && pollQuery.data !== null,
+    enabled: isConnected && !!pollId,
     refetchInterval: 15_000,
   });
 

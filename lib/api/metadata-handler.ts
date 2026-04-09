@@ -1,3 +1,5 @@
+// Phase 7 audit (2026-04-09): COMPLETE — Neon Postgres GET/POST/upsert verified functional.
+
 /**
  * Metadata API handler for Shadow Poll.
  *
