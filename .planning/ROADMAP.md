@@ -228,6 +228,16 @@ All 33 v1 requirements mapped to exactly one phase. 100% coverage.
 | MIGR-04 | 8 | Production build succeeds with Vite |
 | MIGR-05 | 8 | ZK proof generation works end-to-end after migration |
 | MIGR-06 | 8 | SDK stub file and all Turbopack workarounds removed |
+| HONO-01 | 11 | All existing API endpoints respond with identical request/response shapes |
+| HONO-02 | 11 | server.ts uses hono/bun adapter with Bun.serve({ fetch: app.fetch }) |
+| HONO-03 | 11 | API routes defined in separate route files under lib/api/ with Hono router |
+| HONO-04 | 11 | CORS middleware applied to /api/* and /zk-keys/* routes |
+| HONO-05 | 11 | Static file serving from public/ and dist/ preserved |
+| HONO-06 | 11 | SPA fallback to dist/index.html preserved |
+| HONO-07 | 11 | bun run build succeeds with no TypeScript errors |
+| HONO-08 | 11 | Vite dev proxy continues routing /api to localhost:3001 |
+| HONO-09 | 11 | Centralized error handler for API routes |
+| HONO-10 | 11 | dev:api and serve npm scripts unchanged |
 
 ## Progress
 
@@ -245,6 +255,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 7. Persistent Data Layer | 0/1 | Pending | — |
 | 8. Vite Migration | 4/4 | Complete | 2026-04-09 |
 | 10. Invite Code Improvements | 1/1 | Complete   | 2026-04-09 |
+| 11. Hono API Migration | 1/1 | Complete   | 2026-04-09 |
 
 ### Phase 9: Fix Core Integration Gaps
 **Goal**: All state-changing operations (poll creation, vote casting, invite code submission) execute as real on-chain transactions via the browser's Midnight wallet, and poll detail pages are readable by unauthenticated visitors
@@ -255,3 +266,22 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 Plans:
 - [x] 09-01-PLAN.md — Restore direct contract service calls in use-create-poll.ts and use-vote-mutation.ts (remove phantom fetch routes)
 - [x] 09-02-PLAN.md — Fix usePoll() unauthenticated access + add ?id= filter to polls-handler + verify Phase 7 Neon Postgres layer
+
+### Phase 11: Hono API Migration
+**Goal**: Replace the raw Bun.serve() API layer with the Hono web framework for structured routing, built-in middleware, and type-safe request handling — while preserving all existing API functionality
+**Depends on**: Phase 8 (Vite migration, provides current server.ts), Phase 9 (integration fixes, provides current handler implementations)
+**Requirements**: HONO-01, HONO-02, HONO-03, HONO-04, HONO-05, HONO-06, HONO-07, HONO-08, HONO-09, HONO-10
+**Success Criteria** (what must be TRUE):
+  1. `bun run serve` starts the Hono server on the configured port
+  2. All 6 API endpoints (metadata GET/POST, polls GET, indexer status/block/contract) respond with identical response shapes
+  3. CORS headers are set via Hono middleware on /api/* and /zk-keys/* routes
+  4. Static file serving from public/ and dist/ works unchanged
+  5. SPA fallback to dist/index.html works for client-side routing
+  6. `bun run build` succeeds with no TypeScript errors
+  7. Vite dev proxy continues routing /api to localhost:3001 during development
+**Plans**: 1 plan
+
+Plans:
+- [x] 11-01-PLAN.md — Install Hono, create typed route files for each API domain, rewrite server.ts with Hono/Bun adapter, add CORS and error middleware
+
+**UI hint**: no

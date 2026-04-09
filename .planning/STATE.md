@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 09-02-PLAN.md
-last_updated: "2026-04-09T04:06:10.070Z"
-last_activity: 2026-04-09 -- Phase 10 execution started
+status: verifying
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-04-09T13:05:40.215Z"
+last_activity: 2026-04-09
 progress:
-  total_phases: 10
-  completed_phases: 9
-  total_plans: 23
-  completed_plans: 22
-  percent: 96
+  total_phases: 11
+  completed_phases: 11
+  total_plans: 24
+  completed_plans: 24
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-08)
 
 **Core value:** Users can vote on polls anonymously with cryptographic guarantees
-**Current focus:** Phase 10 — invite-code-improvements
+**Current focus:** Phase 11 — hono-api-migration
 
 ## Current Position
 
-Phase: 10 (invite-code-improvements) — EXECUTING
+Phase: 11 (hono-api-migration) — EXECUTING
 Plan: 1 of 1
-Status: Executing Phase 10
-Last activity: 2026-04-09 -- Phase 10 execution started
+Status: Phase complete — ready for verification
+Last activity: 2026-04-09
 
-Progress: [██████████] 100%
+Progress: [█████████2] 92%
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Progress: [██████████] 100%
 | Phase 08 P04 | 2min | 1 tasks | 3 files |
 | Phase 09 P01 | 325s | 2 tasks | 2 files |
 | Phase 09 P02 | 144s | 2 tasks | 3 files |
+| Phase 11-hono-api-migration P01 | 7min | 3 tasks | 6 files |
 
 ## Phase 7 Design Decisions (from discussion)
 
@@ -149,6 +150,10 @@ Recent decisions affecting current work:
 - [Phase 08]: object-inspect added to Vite optimizeDeps.include — CJS module requires pre-bundling for ESM import compatibility
 - [Phase 09]: D-09-03: Browser calls contract service directly — no server intermediary for state-changing ops
 - [Phase 09]: D-09-06/07: usePoll() enabled with !!pollId; unauthenticated path fetches from GET /api/polls?id=
+- [Phase 11]: D-11-01: Sub-routers use full paths mounted at / on apiRoutes
+- [Phase 11]: D-11-02: Kept manual CORS headers alongside Hono cors() middleware
+- [Phase 11]: D-11-03: Kept runMigrations() inside handlers not middleware
+- [Phase 11]: D-11-04: Used Bun.file() for static serving instead of Hono serveStatic()
 
 ### Roadmap Evolution
 
@@ -160,6 +165,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-09T00:08:27.534Z
-Stopped at: Completed 09-02-PLAN.md
+Last session: 2026-04-09T13:05:40.199Z
+Stopped at: Completed 11-01-PLAN.md
 Resume file: None
