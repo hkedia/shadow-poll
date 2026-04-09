@@ -20,6 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard (in progress) (completed 2026-04-08)
 - [ ] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility
 - [x] **Phase 8: Vite Migration** - Replace Next.js + Turbopack with Vite + React Router + Bun.serve() to resolve Midnight SDK WASM runtime loading failures and align build tooling with the app's SPA architecture (completed 2026-04-09)
+- [ ] **Phase 12: Docker Deployment** - Package app as Docker container, add health check, deploy to fly.io
 
 ## Phase Details
 
@@ -176,6 +177,25 @@ Plans:
 
 **UI hint**: no
 
+### Phase 12: Docker Deployment
+**Goal**: Package the Shadow Poll app as a Docker container, add a health check endpoint, and prepare it for deployment to fly.io or similar cloud platforms — test locally as a container first, then deploy to cloud
+**Depends on**: Phase 8 (Vite migration), Phase 11 (Hono API migration)
+**Requirements**: DEPLOY-01, DEPLOY-02, DEPLOY-03, DEPLOY-04, DEPLOY-05, DEPLOY-06, DEPLOY-07, DEPLOY-08
+**Success Criteria** (what must be TRUE):
+  1. `docker build -t shadow-poll .` succeeds without errors
+  2. Container starts and responds on the configured port (default 3000)
+  3. `GET /api/health` returns 200 with `{"status":"healthy"}` when DB is reachable, 503 with `{"status":"degraded"}` when unreachable
+  4. Container runs as non-root `bun` user
+  5. Docker image contains runtime essentials (dist/, public/, contracts/managed/, lib/, server.ts) but not dev files (.git, .planning, node_modules)
+  6. `docker compose up` successfully builds and starts the app locally
+  7. `fly.toml` is valid for fly.io deployment with health check on `/api/health`
+**Plans**: 1 plan
+
+Plans:
+- [ ] 12-01-PLAN.md — Add /api/health endpoint, create Dockerfile + .dockerignore, create docker-compose.yml + fly.toml, verify Docker build and local container test
+
+**UI hint**: no
+
 ## Requirement Coverage
 
 All 33 v1 requirements mapped to exactly one phase. 100% coverage.
@@ -238,6 +258,14 @@ All 33 v1 requirements mapped to exactly one phase. 100% coverage.
 | HONO-08 | 11 | Vite dev proxy continues routing /api to localhost:3001 |
 | HONO-09 | 11 | Centralized error handler for API routes |
 | HONO-10 | 11 | dev:api and serve npm scripts unchanged |
+| DEPLOY-01 | 12 | Add /api/health endpoint with DB connectivity check |
+| DEPLOY-02 | 12 | Create .dockerignore (exclude dev files, include runtime essentials) |
+| DEPLOY-03 | 12 | Create multi-stage Dockerfile (oven/bun:1.3.11 build, oven/bun:1.3.11-slim production) |
+| DEPLOY-04 | 12 | Create docker-compose.yml for local container testing |
+| DEPLOY-05 | 12 | Create fly.toml for fly.io deployment |
+| DEPLOY-06 | 12 | Verify Docker build succeeds and container passes health check |
+| DEPLOY-07 | 12 | VITE_POLL_CONTRACT_ADDRESS as Docker build arg AND runtime env var |
+| DEPLOY-08 | 12 | Container runs as non-root USER bun |
 
 ## Progress
 
@@ -255,7 +283,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 7. Persistent Data Layer | 0/1 | Pending | — |
 | 8. Vite Migration | 4/4 | Complete | 2026-04-09 |
 | 10. Invite Code Improvements | 1/1 | Complete   | 2026-04-09 |
-| 11. Hono API Migration | 1/1 | Complete   | 2026-04-09 |
+| 11. Hono API Migration | 1/1 | Complete | 2026-04-09 |
+| 12. Docker Deployment | 0/1 | Pending | — |
 
 ### Phase 9: Fix Core Integration Gaps
 **Goal**: All state-changing operations (poll creation, vote casting, invite code submission) execute as real on-chain transactions via the browser's Midnight wallet, and poll detail pages are readable by unauthenticated visitors
