@@ -172,18 +172,26 @@ export function VotePanel({ options, pollId, isExpired, isConnected, pollType }:
         )}
 
         {/* Error message */}
-        {activeMutation.isError && (
-          <p className="mt-4 text-error text-sm flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">
-              {activeMutation.error?.message?.includes("Already voted") || activeMutation.error?.message?.includes("Invite code already used") ? "info" : "error"}
-            </span>
-            {activeMutation.error?.message?.includes("Already voted")
-              ? "You have already voted on this poll."
-              : activeMutation.error?.message?.includes("Invite code already used")
-                ? "This invite code has already been used. Each code can only be used once."
-                : activeMutation.error?.message ?? "Failed to cast vote"}
-          </p>
-        )}
+        {activeMutation.isError && (() => {
+          const msg = activeMutation.error?.message ?? "";
+          let friendly: string;
+          if (msg.includes("Already voted")) {
+            friendly = "You have already voted on this poll.";
+          } else if (msg.includes("Invite code already used")) {
+            friendly = "This invite code has already been used. Each code can only be used once.";
+          } else if (msg.includes("Transaction submission error") || msg.includes("Operation failed")) {
+            friendly = "Transaction failed to submit. Please try again — your wallet may need to be reconnected.";
+          } else {
+            friendly = "Failed to cast vote. Please try again.";
+          }
+          const isInfo = msg.includes("Already voted") || msg.includes("Invite code already used");
+          return (
+            <p className="mt-4 text-error text-sm flex items-center gap-2">
+              <span className="material-symbols-outlined text-base">{isInfo ? "info" : "error"}</span>
+              {friendly}
+            </p>
+          );
+        })()}
 
         {!isExpired && isConnected && (
           <p className="mt-4 text-sm text-on-surface-variant italic">
