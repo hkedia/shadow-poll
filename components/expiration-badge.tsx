@@ -22,9 +22,9 @@ export function ExpirationBadge({ expirationBlock, currentBlock }: ExpirationBad
 
   if (isExpired) {
     return (
-      <div className="flex items-center gap-2 text-error font-bold text-sm">
-        <span className="material-symbols-outlined text-lg">error</span>
-        <span>Expired</span>
+      <div className="flex items-center gap-2 text-on-surface-variant text-sm">
+        <span className="material-symbols-outlined text-lg">lock</span>
+        <span>Closed</span>
       </div>
     );
   }

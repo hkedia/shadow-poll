@@ -126,9 +126,9 @@ export function VotePanel({ options, pollId, isExpired, isConnected, pollType }:
       {/* Vote action area */}
       <div className="pt-4">
         {isExpired ? (
-          <div className="flex items-center gap-3 text-error font-bold">
-            <span className="material-symbols-outlined">timer_off</span>
-            <span>This poll has expired</span>
+          <div className="flex items-center gap-3 text-on-surface-variant font-bold">
+            <span className="material-symbols-outlined">lock</span>
+            <span>Voting has ended for this poll</span>
           </div>
         ) : !isConnected ? (
           <div className="space-y-3">
