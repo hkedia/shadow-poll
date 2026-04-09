@@ -220,30 +220,40 @@ export interface AddInviteCodesParams {
 /**
  * Calls the add_invite_codes circuit on a deployed/found contract.
  *
- * Submits all invite code hashes in a single transaction. The hashes are
- * pre-computed deriveInviteKey(poll_id, invite_code_bytes) values. The
- * caller passes up to 10 hashes; unused slots are padded with zero bytes.
- * Only the poll creator can call this successfully — the circuit asserts
- * caller == creator.
+ * Submits invite code hashes in batches of 10 (the contract's Vector<10, Bytes<32>>
+ * hard limit). For N codes: ceil(N/10) transactions are submitted. Each batch is
+ * padded to exactly 10 with zero bytes; zero entries are skipped by the circuit.
+ *
+ * The hashes are pre-computed deriveInviteKey(poll_id, invite_code_bytes) values.
+ * Only the poll creator can call this successfully — the circuit asserts caller == creator.
  *
  * @param contract - A deployed or found contract with callTx interface
  * @param params - Code hash batch submission parameters
- * @returns The finalized transaction data
+ * @returns The result of the last submitted transaction
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function callAddInviteCodes(contract: any, params: AddInviteCodesParams) {
-  // Pad the code hashes array to exactly 10 elements (Vector<10, Bytes<32>>)
-  // with zero-filled 32-byte arrays. The Compact circuit skips zero entries.
-  const MAX_CODES = 10;
-  const padded = [...params.codeHashes];
-  while (padded.length < MAX_CODES) {
-    padded.push(new Uint8Array(32));
+  // The contract's Vector<10, Bytes<32>> accepts exactly 10 elements per call.
+  // Chunk the input into batches of 10, padding the last batch with zero bytes.
+  // Zero entries are skipped by the circuit, so they have no on-chain effect.
+  const BATCH_SIZE = 10;
+  const hashes = params.codeHashes;
+
+  if (hashes.length === 0) return;
+
+  let lastResult;
+  for (let i = 0; i < hashes.length; i += BATCH_SIZE) {
+    const chunk = hashes.slice(i, i + BATCH_SIZE);
+    // Pad to exactly BATCH_SIZE
+    while (chunk.length < BATCH_SIZE) {
+      chunk.push(new Uint8Array(32));
+    }
+    lastResult = await contract.callTx.add_invite_codes(
+      params.pollId,
+      chunk,
+    );
   }
-  const result = await contract.callTx.add_invite_codes(
-    params.pollId,
-    padded,
-  );
-  return result;
+  return lastResult;
 }
 
 /**
