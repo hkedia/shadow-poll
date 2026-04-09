@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
 interface MobileDrawerProps {
@@ -9,6 +10,12 @@ interface MobileDrawerProps {
 
 export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
   const { pathname } = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Close drawer automatically when the route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   const links = [
     { href: "/", label: "Home", icon: "home" },
@@ -18,7 +25,7 @@ export function MobileDrawer({ walletSlot }: MobileDrawerProps) {
   ];
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <button
           aria-label="Open menu"
