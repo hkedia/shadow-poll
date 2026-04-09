@@ -11,7 +11,7 @@
  *   - callCreatePoll — calls the create_poll circuit
  *   - callCastVote — calls the cast_vote circuit
  *   - callCastInviteVote — calls the cast_invite_vote circuit
- *   - callAddInviteCodes — calls the add_invite_codes circuit
+ *   - callAddInviteCodes — calls the add_invite_codes circuit (batch, single tx)
  *   - getContractAddress — reads the canonical contract address from env
  *   - fetchAllPolls — queries contract state for all polls
  *   - fetchPollWithTallies — fetches a single poll with its vote tallies
@@ -211,30 +211,37 @@ export async function callCastInviteVote(contract: any, params: CastInviteVotePa
   return result;
 }
 
-/** Parameters for adding an invite code hash on-chain. */
-export interface AddInviteCodeParams {
+/** Parameters for adding invite code hashes on-chain (batch submission). */
+export interface AddInviteCodesParams {
   pollId: Uint8Array;
-  codeHash: Uint8Array; // Pre-computed deriveInviteKey(pollId, codeBytes)
+  codeHashes: Uint8Array[]; // All hashes submitted in one tx (padded to 10 with zeros if needed)
 }
 
 /**
  * Calls the add_invite_codes circuit on a deployed/found contract.
  *
- * Submits a single invite code hash to the contract. The hash is the
- * pre-computed deriveInviteKey(poll_id, invite_code_bytes). Only the poll
- * creator can call this successfully — the circuit asserts caller == creator.
- *
- * For N invite codes, call this function N times.
+ * Submits all invite code hashes in a single transaction. The hashes are
+ * pre-computed deriveInviteKey(poll_id, invite_code_bytes) values. The
+ * caller passes up to 10 hashes; unused slots are padded with zero bytes.
+ * Only the poll creator can call this successfully — the circuit asserts
+ * caller == creator.
  *
  * @param contract - A deployed or found contract with callTx interface
- * @param params - Code hash submission parameters
+ * @param params - Code hash batch submission parameters
  * @returns The finalized transaction data
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function callAddInviteCodes(contract: any, params: AddInviteCodeParams) {
+export async function callAddInviteCodes(contract: any, params: AddInviteCodesParams) {
+  // Pad the code hashes array to exactly 10 elements (Vector<10, Bytes<32>>)
+  // with zero-filled 32-byte arrays. The Compact circuit skips zero entries.
+  const MAX_CODES = 10;
+  const padded = [...params.codeHashes];
+  while (padded.length < MAX_CODES) {
+    padded.push(new Uint8Array(32));
+  }
   const result = await contract.callTx.add_invite_codes(
     params.pollId,
-    params.codeHash,
+    padded,
   );
   return result;
 }
