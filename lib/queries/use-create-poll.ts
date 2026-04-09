@@ -135,13 +135,11 @@ export function useCreatePoll() {
       if (input.pollType === "invite_only" && input.inviteCodeCount && input.inviteCodeCount > 0) {
         const codeSet = await generateInviteCodes(input.inviteCodeCount, pollIdBytes);
         inviteCodes = codeSet.codes;
-        // Submit each code hash on-chain (callAddInviteCodes = one tx per code)
-        for (const code of inviteCodes) {
-          await callAddInviteCodes(contract, {
-            pollId: pollIdBytes,
-            codeHash: code.hash,
-          });
-        }
+        // Submit all invite code hashes in a single on-chain transaction (batch)
+        await callAddInviteCodes(contract, {
+          pollId: pollIdBytes,
+          codeHashes: inviteCodes.map(c => c.hash),
+        });
         storeInviteCodes(pollId, inviteCodes);
       }
 
