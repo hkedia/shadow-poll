@@ -103,7 +103,7 @@ console.log('');
 console.log('  Unshielded address (use this for the faucet):');
 console.log(`  ${unshieldedAddress}`);
 console.log('');
-console.log('  Shielded address (shown in 1am wallet):');
+console.log('  Shielded address:');
 console.log(`  ${shieldedAddress}`);
 console.log('');
 console.log('  Faucet: https://faucet.preview.midnight.network');

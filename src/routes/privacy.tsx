@@ -7,7 +7,7 @@ export default function PrivacyPage() {
         <h1 className="text-4xl sm:text-5xl font-headline font-extrabold tracking-tight text-on-surface">
           Privacy Policy
         </h1>
-        <p className="text-on-surface-variant text-sm">Effective date: April 2025</p>
+        <p className="text-on-surface-variant text-sm">Effective date: April 2026</p>
       </div>
 
       <p className="text-on-surface-variant leading-relaxed">

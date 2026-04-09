@@ -208,7 +208,7 @@ ports:
 
 ## Re-deploying
 
-Each run of `bun run deploy` deploys a **new contract instance**. Update `NEXT_PUBLIC_POLL_CONTRACT_ADDRESS` with the new address after each deploy. Old contracts remain on-chain but the app will ignore them.
+Each run of `bun run deploy` deploys a **new contract instance**. Update `VITE_POLL_CONTRACT_ADDRESS` with the new address after each deploy. Old contracts remain on-chain but the app will ignore them.
 
 ---
 
