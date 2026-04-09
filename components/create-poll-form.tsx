@@ -9,13 +9,17 @@ import type { InviteCode } from "@/lib/midnight/invite-codes";
 /** Approximate blocks per day on Midnight Preview (~10 sec/block). */
 const BLOCKS_PER_DAY = BigInt(8640);
 
+/** Approximate blocks per minute on Midnight Preview (~6 blocks/min). */
+const BLOCKS_PER_MINUTE = BigInt(6);
+
 /** Duration options for poll expiration. */
 const DURATION_OPTIONS = [
-  { label: "1 day", days: 1 },
-  { label: "3 days", days: 3 },
-  { label: "7 days", days: 7 },
-  { label: "14 days", days: 14 },
-  { label: "30 days", days: 30 },
+  { label: "30 min", blocks: BLOCKS_PER_MINUTE * BigInt(30) },
+  { label: "1 day", blocks: BLOCKS_PER_DAY * BigInt(1) },
+  { label: "3 days", blocks: BLOCKS_PER_DAY * BigInt(3) },
+  { label: "7 days", blocks: BLOCKS_PER_DAY * BigInt(7) },
+  { label: "14 days", blocks: BLOCKS_PER_DAY * BigInt(14) },
+  { label: "30 days", blocks: BLOCKS_PER_DAY * BigInt(30) },
 ] as const;
 
 /**
@@ -29,7 +33,7 @@ export function CreatePollForm() {
 
   const [title, setTitle] = useState("");
   const [options, setOptions] = useState(["", ""]);
-  const [selectedDuration, setSelectedDuration] = useState(7);
+  const [selectedDuration, setSelectedDuration] = useState(DURATION_OPTIONS[2].blocks);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [pollType, setPollType] = useState<"public" | "invite_only">("public");
   const [inviteCodeCount, setInviteCodeCount] = useState(10);
@@ -87,7 +91,7 @@ export function CreatePollForm() {
         title: trimmedTitle,
         description: "",
         options: trimmedOptions,
-        expirationBlocks: BigInt(selectedDuration) * BLOCKS_PER_DAY,
+        expirationBlocks: selectedDuration,
         pollType,
         inviteCodeCount: pollType === "invite_only" ? inviteCodeCount : undefined,
       },
@@ -276,11 +280,11 @@ export function CreatePollForm() {
           <div className="space-y-3">
             {DURATION_OPTIONS.map((opt) => (
               <button
-                key={opt.days}
+                key={opt.label}
                 type="button"
-                onClick={() => setSelectedDuration(opt.days)}
+                onClick={() => setSelectedDuration(opt.blocks)}
                 className={`w-full px-5 py-3 rounded-lg font-semibold text-sm transition-all ${
-                  selectedDuration === opt.days
+                  selectedDuration === opt.blocks
                     ? "bg-surface-container-high text-primary shadow-sm"
                     : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50"
                 }`}
