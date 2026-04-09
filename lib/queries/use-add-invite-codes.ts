@@ -14,8 +14,8 @@ export interface AddInviteCodesParams {
  * Mutation hook for submitting invite code hashes to the contract.
  *
  * Used when the poll creator needs to add more invite codes after initial
- * poll creation. Each code hash is submitted as a separate on-chain transaction
- * via the add_invite_codes circuit.
+ * poll creation. All code hashes are submitted in a single on-chain transaction
+ * via the add_invite_codes circuit (batch mode, up to 10 codes per call).
  *
  * Only the poll creator can call this successfully — the circuit asserts
  * that the caller's derived public key matches the poll's creator field.
