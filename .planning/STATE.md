@@ -163,6 +163,12 @@ Recent decisions affecting current work:
 
 None.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260409-rnc | Fix scroll-to-top on page navigation and auto-dismiss hamburger menu on mobile | 2026-04-09 | 35ed7f8 | [260409-rnc-fix-scroll-to-top-on-page-navigation-and](./quick/260409-rnc-fix-scroll-to-top-on-page-navigation-and/) |
+
 ## Session Continuity
 
 Last session: 2026-04-09T13:05:40.199Z
