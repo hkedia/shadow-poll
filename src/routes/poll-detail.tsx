@@ -134,7 +134,7 @@ export default function PollDetailPage() {
     <>
       <WalletAutoConnect />
       <WalletOnboarding requiresWallet />
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-8 md:pt-12">
       {/* Left Column: Poll Identity & Voting */}
       <div className="lg:col-span-7 space-y-10">
         <div className="space-y-4">

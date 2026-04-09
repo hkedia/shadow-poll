@@ -1,75 +1,7 @@
 import { Link } from "react-router";
 import { PollCard } from "@/components/poll-card";
-import { ExpirationBadge } from "@/components/expiration-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePolls } from "@/lib/queries/use-polls";
-import { useMetadata } from "@/lib/queries/use-metadata";
-import type { PollWithId } from "@/lib/midnight/ledger-utils";
-import type { PollMetadata } from "@/lib/midnight/metadata-store";
-
-/**
- * Featured poll card — the large md:col-span-8 card in the bento grid.
- */
-function FeaturedPollCard({ poll, currentBlock }: { poll: PollWithId; currentBlock: bigint }) {
-  const metadataQuery = useMetadata(poll.id);
-  const metadata: PollMetadata | null = metadataQuery.data?.metadata ?? null;
-  const isMetadataLoading = metadataQuery.isLoading;
-
-  return (
-    <Link to={`/poll/${poll.id}`} className="block md:col-span-8">
-      <div className="group relative overflow-hidden bg-surface-container-low rounded-3xl p-5 sm:p-8 transition-all hover:bg-surface-container-high h-full">
-        {/* LIVE badge */}
-        <div className="absolute top-0 right-0 p-5 sm:p-8">
-          <span className="flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-bold border border-primary/20">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            LIVE
-          </span>
-        </div>
-
-        <div className="max-w-lg">
-          <span className="text-tertiary font-bold tracking-widest text-xs uppercase mb-4 block">
-            Active
-          </span>
-
-          {isMetadataLoading ? (
-            <div className="space-y-3 mb-6">
-              <Skeleton className="h-8 w-full bg-surface-container-highest" />
-              <Skeleton className="h-8 w-3/4 bg-surface-container-highest" />
-            </div>
-          ) : (
-            <h2 className="text-2xl sm:text-3xl font-headline font-bold mb-6 text-on-surface leading-snug pr-20 sm:pr-0">
-              {metadata?.title ?? "Untitled Poll"}
-            </h2>
-          )}
-
-          {/* Option previews */}
-          {metadata?.options && metadata.options.length > 0 && (
-            <div className="space-y-4 mb-8">
-              {metadata.options.slice(0, 2).map((option, i) => (
-                <div
-                  key={i}
-                  className="w-full bg-surface-container-highest rounded-xl p-4 flex justify-between items-center cursor-pointer hover:bg-primary/5 transition-colors"
-                >
-                  <span className="font-medium break-words">{option}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-on-surface-variant text-sm">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg">how_to_vote</span>
-              <span className="font-bold text-on-surface">
-                {Number(poll.data.option_count).toString()} options
-              </span>
-            </div>
-            <ExpirationBadge expirationBlock={poll.data.expiration_block} currentBlock={currentBlock} />
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
-}
 
 /** /active page — currently open polls accepting votes. */
 export default function ActivePollsPage() {
@@ -82,7 +14,7 @@ export default function ActivePollsPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Hero & heading */}
-      <section className="mb-12 md:mb-16 relative">
+      <section className="pt-8 md:pt-12 mb-12 md:mb-16 relative">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 text-tertiary text-sm font-semibold tracking-wider uppercase mb-4">
             <span className="material-symbols-outlined text-lg">radio_button_checked</span>
@@ -110,19 +42,10 @@ export default function ActivePollsPage() {
 
       {/* Loading state */}
       {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <div className="md:col-span-8">
-            <Skeleton className="h-80 rounded-3xl bg-surface-container-low" />
-          </div>
-          <div className="md:col-span-4">
-            <Skeleton className="h-80 rounded-3xl bg-surface-container-low" />
-          </div>
-          <div className="md:col-span-4">
-            <Skeleton className="h-64 rounded-3xl bg-surface-container-low" />
-          </div>
-          <div className="md:col-span-8">
-            <Skeleton className="h-64 rounded-3xl bg-surface-container-low" />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-64 rounded-3xl bg-surface-container-low" />
+          ))}
         </div>
       )}
 
@@ -151,20 +74,14 @@ export default function ActivePollsPage() {
         </div>
       )}
 
-      {/* Bento grid of polls */}
+      {/* Polls grid */}
       {!isLoading && !isError && polls && polls.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          {polls.map((poll, index) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {polls.map((poll) => {
             const currentBlock = BigInt(data!.currentBlockHeight);
             const tallies = data!.tallies.get(poll.id) ?? null;
-            if (index === 0) {
-              return <FeaturedPollCard key={poll.id} poll={poll} currentBlock={currentBlock} />;
-            }
-            const colSpan = index % 3 === 0 ? "md:col-span-8" : "md:col-span-4";
             return (
-              <div key={poll.id} className={colSpan}>
-                <PollCard poll={poll} tallies={tallies} currentBlock={currentBlock} />
-              </div>
+              <PollCard key={poll.id} poll={poll} tallies={tallies} currentBlock={currentBlock} />
             );
           })}
         </div>

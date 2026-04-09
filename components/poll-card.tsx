@@ -12,10 +12,9 @@ interface PollCardProps {
 }
 
 /**
- * Card for the trending polls list. Self-fetches metadata.
- * Tallies are passed as a prop from the parent listing page (from the server-side
- * /api/polls response) — no wallet required.
- * Reference: .design/trending_polls/code.html — md:col-span-4 poll cards.
+ * Card for a poll on the active/closed/trending pages. Self-fetches metadata.
+ * Shows: visibility (public/invite-only), option count, expiration, vote count.
+ * Tallies are passed as a prop from the parent listing page.
  */
 export function PollCard({ poll, tallies, currentBlock }: PollCardProps) {
   const metadataQuery = useMetadata(poll.id);
@@ -23,7 +22,7 @@ export function PollCard({ poll, tallies, currentBlock }: PollCardProps) {
   const isMetadataLoading = metadataQuery.isLoading;
 
   const totalVotes = tallies?.total?.toString() ?? "0";
-  const optionPreviews = metadata?.options?.slice(0, 2) ?? [];
+  const optionCount = Number(poll.data.option_count);
   const isInviteOnly = Number(poll.data.poll_type) === 1;
 
   return (
@@ -49,29 +48,18 @@ export function PollCard({ poll, tallies, currentBlock }: PollCardProps) {
               {metadata?.title ?? "Untitled Poll"}
             </h3>
           )}
-
-          {optionPreviews.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-6">
-              {optionPreviews.map((option, i) => (
-                <span
-                  key={i}
-                  className="bg-surface-container-highest text-xs px-3 py-1 rounded-full text-on-surface-variant"
-                >
-                  {option}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
-        <div className="flex justify-between items-end gap-4">
-          <div className="text-sm">
-            <div className="font-bold text-on-surface">{totalVotes} votes</div>
-            <ExpirationBadge expirationBlock={poll.data.expiration_block} currentBlock={currentBlock} />
+        <div className="flex flex-wrap items-center gap-4 text-on-surface-variant text-sm">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-lg">list</span>
+            <span className="font-bold text-on-surface">{optionCount} {optionCount === 1 ? "option" : "options"}</span>
           </div>
-          <div className="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all">
-            <span className="material-symbols-outlined">arrow_forward</span>
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-lg">how_to_vote</span>
+            <span className="font-bold text-on-surface">{totalVotes} {Number(totalVotes) === 1 ? "vote" : "votes"}</span>
           </div>
+          <ExpirationBadge expirationBlock={poll.data.expiration_block} currentBlock={currentBlock} />
         </div>
       </div>
     </Link>

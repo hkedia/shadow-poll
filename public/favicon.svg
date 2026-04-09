@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Icon mark: two overlapping circles of equal size -->
   <!-- Dark blue circle (bottom-left) -->
   <circle cx="11" cy="19" r="9" fill="#1a237e"/>
   <!-- Light purple circle (top-right) overlapping -->
-  <circle cx="21" cy="13" r="8" fill="#b39ddb" opacity="0.85"/>
+  <circle cx="21" cy="13" r="9" fill="#b39ddb" opacity="0.85"/>
 </svg>

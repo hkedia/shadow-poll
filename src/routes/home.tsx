@@ -131,7 +131,7 @@ function LandingContent() {
         <div className="relative z-10 flex flex-col items-center gap-6 max-w-4xl mx-auto">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold">
             <span className="material-symbols-outlined text-base">lock</span>
-            Powered by Midnight Zero-Knowledge Proofs
+            Simple enough for everyone, secure enough for anyone
           </div>
 
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-headline font-extrabold tracking-tight text-on-surface text-balance leading-tight">

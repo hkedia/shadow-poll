@@ -14,7 +14,7 @@ export default function ClosedPollsPage() {
   return (
     <div className="flex-1 flex flex-col">
       {/* Hero & heading */}
-      <section className="mb-12 md:mb-16">
+      <section className="pt-8 md:pt-12 mb-12 md:mb-16">
         <div className="max-w-3xl">
           <div className="flex items-center gap-2 text-on-surface-variant text-sm font-semibold tracking-wider uppercase mb-4">
             <span className="material-symbols-outlined text-lg">lock_clock</span>

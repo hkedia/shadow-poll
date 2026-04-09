@@ -14,16 +14,20 @@ export function Header({ walletSlot }: HeaderProps) {
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center hover:opacity-80 transition-opacity"
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           aria-label="Shadow Poll home"
         >
           <img
             src="/logo.svg"
-            alt="Shadow Poll"
-            width={260}
+            alt=""
+            width={40}
             height={40}
-            className="h-10 w-auto"
+            className="h-10 w-10"
           />
+          <span className="font-bold text-lg tracking-wide">
+            <span className="text-[#e8e6ff]">SHADOW</span>
+            <span className="text-[#b39ddb] ml-1">POLL</span>
+          </span>
         </Link>
 
         {/* Nav links — client component for active state highlighting */}

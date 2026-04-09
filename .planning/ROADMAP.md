@@ -160,6 +160,22 @@ Plans:
 
 **UI hint**: yes
 
+### Phase 10: Invite Code Improvements
+**Goal**: Fix two bugs in the invite-only poll system — batch invite code submission (1 tx for N codes instead of N txs) and single-use enforcement so the same code cannot be reused across different wallets
+**Depends on**: Phase 5 (invite-only polls), Phase 8 (Vite migration)
+**Requirements**: CONT-05, CONT-06 (hardening existing requirements)
+**Success Criteria** (what must be TRUE):
+  1. Creating an invite-only poll with 10 codes submits exactly 1 on-chain transaction (not 10)
+  2. Adding more invite codes post-creation submits exactly 1 transaction regardless of how many codes are added
+  3. Voting with an invite code succeeds the first time and is rejected the second time (with a different wallet)
+  4. The contract compiles without errors and TypeScript build passes
+**Plans**: 1 plan
+
+Plans:
+- [x] 10-01-PLAN.md — Contract batch `add_invite_codes<#N>` + single-use enforcement in `cast_invite_vote` + TypeScript service/hook updates
+
+**UI hint**: no
+
 ## Requirement Coverage
 
 All 33 v1 requirements mapped to exactly one phase. 100% coverage.
@@ -228,12 +244,13 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 6. ZK Proofs & Analytics | 2/2 | Complete   | 2026-04-08 |
 | 7. Persistent Data Layer | 0/1 | Pending | — |
 | 8. Vite Migration | 4/4 | Complete | 2026-04-09 |
+| 10. Invite Code Improvements | 1/1 | Complete   | 2026-04-09 |
 
 ### Phase 9: Fix Core Integration Gaps
 **Goal**: All state-changing operations (poll creation, vote casting, invite code submission) execute as real on-chain transactions via the browser's Midnight wallet, and poll detail pages are readable by unauthenticated visitors
 **Depends on**: Phase 8
 **Requirements**: POLL-01, POLL-02, POLL-03, POLL-04, POLL-06, INFRA-01, INFRA-02, INFRA-03, INFRA-04
-**Plans:** 2/2 plans complete
+**Plans:** 1/1 plans complete
 
 Plans:
 - [x] 09-01-PLAN.md — Restore direct contract service calls in use-create-poll.ts and use-vote-mutation.ts (remove phantom fetch routes)
