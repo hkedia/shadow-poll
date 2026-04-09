@@ -8,10 +8,14 @@
  *   GET /api/indexer/status                    → block height, contract existence, state preview
  *   GET /api/indexer/block                     → latest confirmed block info
  *   GET /api/indexer/contract?address=<hex>    → contract deploy/update action
+ *   GET /api/indexer/verify-nullifier?nullifier=<hex> → check if nullifier exists on-chain
  */
 
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-public-data-provider";
+import { ledger as parseLedger } from "@/contracts/managed/contract";
+import { hexToBytes } from "@/lib/midnight/ledger-utils";
 import {
   fetchLatestBlock,
   fetchContractAction,
@@ -25,6 +29,12 @@ indexerRoutes.use("/api/indexer*", cors());
 /** Default contract address from Vite env (also available server-side via process.env). */
 const DEFAULT_CONTRACT_ADDRESS =
   process.env.VITE_POLL_CONTRACT_ADDRESS ?? "";
+
+/** Indexer URIs for Midnight Preview network. */
+const INDEXER_URI =
+  process.env.INDEXER_URI ?? "https://indexer.preview.midnight.network/api/v3/graphql";
+const INDEXER_WS_URI =
+  process.env.INDEXER_WS_URI ?? "wss://indexer.preview.midnight.network/api/v3/graphql/ws";
 
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
@@ -46,6 +56,10 @@ indexerRoutes.get("/api/indexer/block", async (c) => {
 
 indexerRoutes.get("/api/indexer/contract", async (c) => {
   return handleContract(new URL(c.req.url));
+});
+
+indexerRoutes.get("/api/indexer/verify-nullifier", async (c) => {
+  return handleVerifyNullifier(new URL(c.req.url));
 });
 
 // ---------------------------------------------------------------------------
@@ -137,6 +151,52 @@ async function handleContract(url: URL): Promise<Response> {
     return json(action);
   } catch (err) {
     return handleIndexerError(err, "contract action query");
+  }
+}
+
+/**
+ * GET /api/indexer/verify-nullifier?nullifier=<hex>
+ *
+ * Checks if a vote nullifier exists in the on-chain vote_nullifiers map.
+ * Does NOT require wallet connection — server queries the indexer directly.
+ *
+ * Returns:
+ *   { nullifier: string, found: boolean } — found=true means vote exists on-chain
+ *   400 if nullifier is missing or not a valid 64-char hex string
+ *   503 if indexer is unavailable
+ */
+async function handleVerifyNullifier(url: URL): Promise<Response> {
+  const nullifier = url.searchParams.get("nullifier");
+
+  if (!nullifier) {
+    return json({ error: "nullifier query param is required" }, 400);
+  }
+
+  if (!/^[0-9a-f]{64}$/i.test(nullifier)) {
+    return json({ error: "nullifier must be 64 hex characters" }, 400);
+  }
+
+  const contractAddress = DEFAULT_CONTRACT_ADDRESS;
+  if (!contractAddress) {
+    return json({ error: "Contract address not configured" }, 503);
+  }
+
+  try {
+    const provider = indexerPublicDataProvider(INDEXER_URI, INDEXER_WS_URI);
+    const contractState = await provider.queryContractState(contractAddress);
+
+    if (!contractState) {
+      // Contract not deployed yet — no votes exist, but not an error
+      return json({ nullifier, found: false });
+    }
+
+    const ledgerState = parseLedger(contractState.data);
+    const nullifierBytes = hexToBytes(nullifier.toLowerCase());
+    const found = ledgerState.vote_nullifiers.member(nullifierBytes);
+
+    return json({ nullifier, found });
+  } catch (err) {
+    return handleIndexerError(err, "verify nullifier query");
   }
 }
 
