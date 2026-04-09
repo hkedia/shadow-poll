@@ -9,6 +9,7 @@ const logger = createLogger();
 const originalWarnOnce = logger.warnOnce.bind(logger);
 logger.warnOnce = (msg, options) => {
   if (msg.includes("points to missing source files")) return;
+  if (msg.includes("esbuild") && msg.includes("vite-plugin-node-polyfills")) return;
   originalWarnOnce(msg, options);
 };
 
