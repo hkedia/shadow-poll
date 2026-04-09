@@ -46,15 +46,12 @@ export function useAddInviteCodesMutation() {
         blockNumber,
       );
 
-      // Sequential submission — each tx must confirm before the next.
-      // Consider batching in v2.
+      // Submit all invite code hashes in a single on-chain transaction.
       const pollIdBytes = hexToBytes(params.pollId);
-      for (const codeHash of params.codeHashes) {
-        await callAddInviteCodes(contract, {
-          pollId: pollIdBytes,
-          codeHash,
-        });
-      }
+      await callAddInviteCodes(contract, {
+        pollId: pollIdBytes,
+        codeHashes: params.codeHashes,
+      });
     },
   });
 }
