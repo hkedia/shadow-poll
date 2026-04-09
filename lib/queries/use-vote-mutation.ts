@@ -110,6 +110,8 @@ export function useVoteMutation() {
       // Always invalidate to fetch the real on-chain state
       queryClient.invalidateQueries({ queryKey: pollKeys.tallies(params.pollId) });
       queryClient.invalidateQueries({ queryKey: pollKeys.detail(params.pollId) });
+      // Refetch participation proof so the verified card appears immediately
+      queryClient.invalidateQueries({ queryKey: ["participation-proof", params.pollId] });
     },
   });
 }
