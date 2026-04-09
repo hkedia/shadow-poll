@@ -1,21 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 40" fill="none">
-  <!-- Icon mark: two overlapping circles — brighter for dark bg visibility -->
-  <circle cx="16" cy="20" r="14" fill="#3D3580" opacity="0.95"/>
-  <circle cx="28" cy="20" r="14" fill="#A29BFE" opacity="0.80"/>
-  <ellipse cx="22" cy="20" rx="5.5" ry="11" fill="#7B74F0" opacity="0.65"/>
-  <circle cx="22" cy="20" r="6" fill="none" stroke="#C4BEFE" stroke-width="1.5" opacity="0.85"/>
-  <circle cx="22" cy="20" r="3" fill="#E8E6FF" opacity="0.75"/>
-  <circle cx="22" cy="20" r="1.8" fill="#FFFFFF"/>
-
-  <!-- Wordmark: SHADOW in lavender, POLL in white -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" fill="none">
+  <!-- Icon mark: two overlapping circles matching reference design -->
+  <!-- Dark blue circle (bottom-left) -->
+  <circle cx="16" cy="20" r="14" fill="#1a237e"/>
+  <!-- Light purple circle (top-right) overlapping -->
+  <circle cx="26" cy="16" r="12" fill="#b39ddb" opacity="0.85"/>
+  
+  <!-- Wordmark: SHADOW POLL -->
   <text
-    x="50"
-    y="27"
+    x="48"
+    y="26"
     font-family="'Manrope', 'Inter', system-ui, sans-serif"
-    font-size="19"
-    font-weight="800"
-    letter-spacing="0.07em"
+    font-size="18"
+    font-weight="700"
+    letter-spacing="0.02em"
   >
-    <tspan fill="#C4BEFE">SHADOW</tspan><tspan fill="#C4BEFE" letter-spacing="0.08em"> </tspan><tspan fill="#FFFFFF">POLL</tspan>
+    <tspan fill="#e8e6ff">SHADOW</tspan><tspan dx="6" fill="#b39ddb">POLL</tspan>
   </text>
 </svg>
