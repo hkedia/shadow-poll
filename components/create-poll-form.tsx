@@ -251,11 +251,15 @@ export function CreatePollForm() {
                   {inviteCodeCount}
                 </span>
               </div>
-              <p className="text-[10px] text-on-surface-variant">
-                {inviteCodeCount <= 10
-                  ? "1 on-chain transaction for invite codes + 1 to create the poll."
-                  : `${Math.ceil(inviteCodeCount / 10) + 1} on-chain transactions (${Math.ceil(inviteCodeCount / 10)} for invite codes + 1 to create the poll).`}
-              </p>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-2xl font-bold text-on-surface">{Math.ceil(inviteCodeCount / 10) + 1}</span>
+                <span className="text-sm text-on-surface-variant">
+                  on-chain transaction{Math.ceil(inviteCodeCount / 10) + 1 !== 1 ? "s" : ""}
+                </span>
+                <span className="text-sm text-on-surface-variant ml-1">
+                  (1 for poll + {Math.ceil(inviteCodeCount / 10)} for code{Math.ceil(inviteCodeCount / 10) !== 1 ? "s" : ""})
+                </span>
+              </div>
               <p className="text-[10px] text-on-surface-variant">
                 Invite codes will be generated after poll creation. Only code holders can vote. Each code can only be used once.
               </p>
