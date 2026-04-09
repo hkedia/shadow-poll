@@ -46,27 +46,18 @@ export function ResultsPanel({ options, tallies, expirationBlock, currentBlock }
       {options.map((option, index) => {
         const percentage = getPercentage(index);
         const voteCount = getVoteCount(index);
-        const isFirst = index === 0;
 
         return (
           <div key={index} className="space-y-3">
             <div className="flex justify-between items-center gap-4 font-semibold">
               <span className="text-on-surface break-words">{option}</span>
-              <span
-                className={`text-xl tracking-tight ${
-                  isFirst ? "text-primary" : "text-on-surface-variant"
-                }`}
-              >
+              <span className="text-xl tracking-tight text-primary">
                 {percentage.toFixed(1)}%
               </span>
             </div>
             <div className="h-3 w-full bg-surface-container-lowest rounded-full overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  isFirst
-                    ? "bg-gradient-to-r from-primary to-primary-container"
-                    : "bg-on-surface-variant/40"
-                }`}
+                className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-primary to-primary-container"
                 style={{ width: `${percentage}%` }}
               />
             </div>
