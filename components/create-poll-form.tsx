@@ -252,7 +252,12 @@ export function CreatePollForm() {
                 </span>
               </div>
               <p className="text-[10px] text-on-surface-variant">
-                Invite codes will be generated after poll creation. Only code holders can vote.
+                {inviteCodeCount <= 10
+                  ? "1 on-chain transaction for invite codes + 1 to create the poll."
+                  : `${Math.ceil(inviteCodeCount / 10) + 1} on-chain transactions (${Math.ceil(inviteCodeCount / 10)} for invite codes + 1 to create the poll).`}
+              </p>
+              <p className="text-[10px] text-on-surface-variant">
+                Invite codes will be generated after poll creation. Only code holders can vote. Each code can only be used once.
               </p>
             </div>
           )}

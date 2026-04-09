@@ -103,6 +103,10 @@ export function useInviteVoteMutation() {
           context.previousTallies,
         );
       }
+
+      // "Invite code already used" is an expected contract assertion, not a bug.
+      // The error propagates via inviteVoteMutation.error.message for the UI to display
+      // a user-friendly message.
     },
 
     onSettled: (_data, _error, params) => {

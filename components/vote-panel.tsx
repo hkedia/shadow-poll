@@ -175,11 +175,13 @@ export function VotePanel({ options, pollId, isExpired, isConnected, pollType }:
         {activeMutation.isError && (
           <p className="mt-4 text-error text-sm flex items-center gap-2">
             <span className="material-symbols-outlined text-base">
-              {activeMutation.error?.message?.includes("Already voted") ? "info" : "error"}
+              {activeMutation.error?.message?.includes("Already voted") || activeMutation.error?.message?.includes("Invite code already used") ? "info" : "error"}
             </span>
             {activeMutation.error?.message?.includes("Already voted")
               ? "You have already voted on this poll."
-              : activeMutation.error?.message ?? "Failed to cast vote"}
+              : activeMutation.error?.message?.includes("Invite code already used")
+                ? "This invite code has already been used. Each code can only be used once."
+                : activeMutation.error?.message ?? "Failed to cast vote"}
           </p>
         )}
 
