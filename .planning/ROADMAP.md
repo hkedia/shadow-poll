@@ -233,8 +233,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 **Goal**: All state-changing operations (poll creation, vote casting, invite code submission) execute as real on-chain transactions via the browser's Midnight wallet, and poll detail pages are readable by unauthenticated visitors
 **Depends on**: Phase 8
 **Requirements**: POLL-01, POLL-02, POLL-03, POLL-04, POLL-06, INFRA-01, INFRA-02, INFRA-03, INFRA-04
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 09-01-PLAN.md — Restore direct contract service calls in use-create-poll.ts and use-vote-mutation.ts (remove phantom fetch routes)
-- [ ] 09-02-PLAN.md — Fix usePoll() unauthenticated access + add ?id= filter to polls-handler + verify Phase 7 Neon Postgres layer
+- [x] 09-01-PLAN.md — Restore direct contract service calls in use-create-poll.ts and use-vote-mutation.ts (remove phantom fetch routes)
+- [x] 09-02-PLAN.md — Fix usePoll() unauthenticated access + add ?id= filter to polls-handler + verify Phase 7 Neon Postgres layer
