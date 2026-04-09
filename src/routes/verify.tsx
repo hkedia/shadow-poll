@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { useSearchParams, Link } from "react-router";
 import { useVerifyProof } from "@/lib/queries/use-verify-proof";
 import { useMetadata } from "@/lib/queries/use-metadata";
-import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { Spinner } from "@/components/ui/spinner";
 
 function VerifyContent() {
@@ -10,8 +9,7 @@ function VerifyContent() {
   const pollId = searchParams.get("pollId") ?? "";
   const nullifier = searchParams.get("nullifier") ?? "";
 
-  const { connect } = useWalletContext();
-  const { isValid, isLoading, isError, error, needsWallet, refetch } = useVerifyProof(pollId, nullifier);
+  const { isValid, isLoading, isError, error, refetch } = useVerifyProof(pollId, nullifier);
   const { data: metadataResponse } = useMetadata(pollId);
 
   // Missing params
@@ -32,32 +30,6 @@ function VerifyContent() {
           <span className="material-symbols-outlined">arrow_back</span>
           Back to Polls
         </Link>
-      </div>
-    );
-  }
-
-  // Needs wallet
-  if (needsWallet) {
-    return (
-      <div className="text-center py-20 max-w-md mx-auto">
-        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-          <span className="material-symbols-outlined text-primary text-4xl">wallet</span>
-        </div>
-        <h2 className="text-2xl font-headline font-bold text-on-surface mb-3">
-          Connect Wallet to Verify
-        </h2>
-        <p className="text-on-surface-variant mb-8">
-          Verifying a participation proof requires reading from the Midnight blockchain.
-          Connect your 1am.xyz wallet to proceed.
-        </p>
-        <button
-          type="button"
-          onClick={connect}
-          className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-bold text-lg flex items-center justify-center gap-3 mx-auto active:scale-95 transition-all shadow-lg"
-        >
-          <span className="material-symbols-outlined">wallet</span>
-          Connect Wallet
-        </button>
       </div>
     );
   }
