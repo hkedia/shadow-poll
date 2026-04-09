@@ -81,7 +81,7 @@ Progress: [█████████2] 92%
 
 - D-60: Hybrid off-chain participation proof — no new contract circuit, nullifier-based
 - D-61: Dual sharing format — verification URL + client-side SVG badge download
-- D-62: Verify page reads on-chain vote_nullifiers map live via indexer (wallet required)
+- D-62: Verify page reads on-chain vote_nullifiers via server-side API (wallet NOT required)
 - D-63: Global-only analytics at /stats — total polls, total votes, active count, public/invite split, avg votes/poll, most-voted poll
 
 ## Accumulated Context
@@ -168,9 +168,10 @@ None.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260409-rnc | Fix scroll-to-top on page navigation and auto-dismiss hamburger menu on mobile | 2026-04-09 | 35ed7f8 | [260409-rnc-fix-scroll-to-top-on-page-navigation-and](./quick/260409-rnc-fix-scroll-to-top-on-page-navigation-and/) |
+| 260409-rxk | Make verify page work without wallet connection | 2026-04-09 | 6b7a3a6 | [260409-rxk-make-verify-page-work-without-wallet-con](./quick/260409-rxk-make-verify-page-work-without-wallet-con/) |
 
 ## Session Continuity
 
-Last session: 2026-04-09T13:05:40.199Z
-Stopped at: Completed 11-01-PLAN.md
+Last session: 2026-04-09T14:53:05Z
+Stopped at: Completed 260409-rxk-PLAN.md
 Resume file: None
