@@ -1,0 +1,11 @@
+node_modules
+.git
+.planning
+.env*
+midnight-level-db
+dist
+*.tsbuildinfo
+AGENTS.md
+README.md
+CLAUDE.md
+opencode.jsonc

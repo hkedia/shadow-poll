@@ -1,0 +1,37 @@
+# fly.toml — Shadow Poll deployment to fly.io
+# Deploy with: fly deploy
+# Set secrets: fly secrets set DATABASE_URL=postgres://... VITE_POLL_CONTRACT_ADDRESS=0x...
+
+app = "shadow-poll"
+primary_region = "lhr"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[build.args]
+  VITE_POLL_CONTRACT_ADDRESS = ""
+
+[env]
+  PORT = "3000"
+  NODE_ENV = "production"
+  INDEXER_URI = "https://indexer.preview.midnight.network/api/v3/graphql"
+  INDEXER_WS_URI = "wss://indexer.preview.midnight.network/api/v3/graphql/ws"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[http_service.concurrency]
+  type = "connections"
+  hard_limit = 200
+  soft_limit = 150
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "get"
+  path = "/api/health"
+  timeout = "5s"

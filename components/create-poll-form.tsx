@@ -33,7 +33,7 @@ export function CreatePollForm() {
 
   const [title, setTitle] = useState("");
   const [options, setOptions] = useState(["", ""]);
-  const [selectedDuration, setSelectedDuration] = useState(DURATION_OPTIONS[2].blocks);
+  const [selectedDuration, setSelectedDuration] = useState(DURATION_OPTIONS[3].blocks);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [pollType, setPollType] = useState<"public" | "invite_only">("public");
   const [inviteCodeCount, setInviteCodeCount] = useState(10);

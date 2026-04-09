@@ -10,11 +10,13 @@ import { cors } from "hono/cors";
 import { metadataRoutes } from "./metadata-handler";
 import { pollsRoutes } from "./polls-handler";
 import { indexerRoutes } from "./indexer-handler";
+import { healthRoutes } from "./health-handler";
 
 export const apiRoutes = new Hono();
 
 apiRoutes.use("/api/*", cors());
 
+apiRoutes.route("/", healthRoutes);
 apiRoutes.route("/", metadataRoutes);
 apiRoutes.route("/", pollsRoutes);
 apiRoutes.route("/", indexerRoutes);
