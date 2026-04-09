@@ -6,8 +6,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { InviteCodePanel } from "@/components/invite-code-panel";
 import type { InviteCode } from "@/lib/midnight/invite-codes";
 
-/** Approximate blocks per day on Midnight Preview (~20 sec/block). */
-const BLOCKS_PER_DAY = BigInt(4320);
+/** Approximate blocks per day on Midnight Preview (~10 sec/block). */
+const BLOCKS_PER_DAY = BigInt(8640);
 
 /** Duration options for poll expiration. */
 const DURATION_OPTIONS = [

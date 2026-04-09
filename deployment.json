@@ -1,7 +1,7 @@
 {
-  "contractAddress": "03207a5c6eab8f88b18fcd4661daa6a9f66b74c553862c39f4359d831b14e73c",
+  "contractAddress": "7aa409f5f1790928832e5b41fe6da09f7658666ecd262cd3901ea00da1bc688b",
   "network": "preview",
-  "deployedAt": "2026-04-08T17:52:53.048Z",
-  "blockHeight": "211647",
+  "deployedAt": "2026-04-09T00:48:52.216Z",
+  "blockHeight": "215796",
   "indexerUri": "https://indexer.preview.midnight.network/api/v3/graphql"
 }

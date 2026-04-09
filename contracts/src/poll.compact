@@ -135,37 +135,11 @@ export circuit create_poll(
   // Store poll data on-chain
   polls.insert(poll_id, poll_data);
 
-  // Initialise tally counters for each option (up to 10, using flat key scheme).
-  // Each tally key = hash(poll_id, option_index_as_bytes).
-  // All disclosed values so no further disclose needed.
-  tallies.insertDefault(derive_tally_key(poll_id, 0 as Uint<8> as Bytes<32>));
-  if (d_option_count > 1 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 1 as Uint<8> as Bytes<32>));
-  }
-  if (d_option_count > 2 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 2 as Uint<8> as Bytes<32>));
-  }
-  if (d_option_count > 3 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 3 as Uint<8> as Bytes<32>));
-  }
-  if (d_option_count > 4 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 4 as Uint<8> as Bytes<32>));
-  }
-  if (d_option_count > 5 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 5 as Uint<8> as Bytes<32>));
-  }
-  if (d_option_count > 6 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 6 as Uint<8> as Bytes<32>));
-  }
-  if (d_option_count > 7 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 7 as Uint<8> as Bytes<32>));
-  }
-  if (d_option_count > 8 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 8 as Uint<8> as Bytes<32>));
-  }
-  if (d_option_count > 9 as Uint<8>) {
-    tallies.insertDefault(derive_tally_key(poll_id, 9 as Uint<8> as Bytes<32>));
-  }
+  // Tally counters are NOT pre-initialised here.
+  // Initialisation is deferred to the first vote on each option (lazy init in
+  // cast_vote and cast_invite_vote via insertDefault before increment).
+  // This keeps the create_poll circuit small enough for ProofStation to prove —
+  // pre-initialising up to 10 counters in one circuit made the ZK payload too large.
 
   // Increment global poll count
   poll_count.increment(1);
@@ -215,7 +189,10 @@ export circuit cast_vote(
   vote_nullifiers.insert(d_nullifier, true);
 
   // Increment the tally for the chosen option using the flat key scheme.
+  // insertDefault lazily creates the Counter at 0 if this is the first vote on
+  // this option — avoids pre-initialising all counters in create_poll.
   const tally_key = derive_tally_key(d_poll_id, d_option_index as Bytes<32>);
+  tallies.insertDefault(tally_key);
   tallies.lookup(tally_key).increment(1);
 }
 
@@ -261,8 +238,9 @@ export circuit cast_invite_vote(
   assert(!vote_nullifiers.member(d_nullifier), "Already voted on this poll");
   vote_nullifiers.insert(d_nullifier, true);
 
-  // Increment tally
+  // Increment tally (lazy init on first vote, same pattern as cast_vote).
   const tally_key = derive_tally_key(d_poll_id, d_option_index as Bytes<32>);
+  tallies.insertDefault(tally_key);
   tallies.lookup(tally_key).increment(1);
 }
 

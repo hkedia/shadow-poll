@@ -205,6 +205,7 @@ export default function PollDetailPage() {
             options={options}
             tallies={tallies}
             expirationBlock={poll.data.expiration_block}
+            currentBlock={currentBlock > BigInt(0) ? currentBlock : undefined}
           />
         ) : (
           <Skeleton className="h-96 w-full bg-surface-container-high rounded-xl" />

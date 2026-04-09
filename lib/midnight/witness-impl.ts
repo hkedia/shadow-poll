@@ -73,38 +73,35 @@ export async function getSecretKeyFromWallet(
  * Queries the current block height from the Midnight indexer.
  *
  * Uses a simple GraphQL query to the indexer's HTTP endpoint.
- * Falls back to BigInt(0) if the query fails (the ZK proof will still be
- * generated; the prover just needs a plausible block number — the contract's
- * assertion verifies it).
+ * Throws if the query fails — callers must handle failure explicitly.
+ * A zero or missing block number would silently corrupt expiration_block
+ * calculations, so we surface the error rather than swallowing it.
  *
  * @param indexerUri - The indexer GraphQL HTTP endpoint URI
  */
 export async function getCurrentBlockNumber(indexerUri: string): Promise<bigint> {
-  try {
-    const response = await fetch(indexerUri, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: "{ blockHeight { latest } }",
-      }),
-    });
+  const response = await fetch(indexerUri, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: "{ block { height } }",
+    }),
+  });
 
-    if (!response.ok) {
-      console.warn(`Indexer block height query failed with status ${response.status}`);
-      return BigInt(0);
-    }
-
-    const json = await response.json();
-    const latest = json?.data?.blockHeight?.latest;
-
-    if (latest !== undefined && latest !== null) {
-      return BigInt(latest);
-    }
-
-    console.warn("Indexer did not return block height, falling back to 0");
-    return BigInt(0);
-  } catch (err) {
-    console.warn("Failed to query current block number from indexer:", err);
-    return BigInt(0);
+  if (!response.ok) {
+    throw new Error(
+      `Indexer block height query failed with status ${response.status}`,
+    );
   }
+
+  const json = await response.json();
+  const latest = json?.data?.block?.height;
+
+  if (latest === undefined || latest === null) {
+    throw new Error(
+      "Indexer did not return a block height — cannot compute expiration block",
+    );
+  }
+
+  return BigInt(latest);
 }

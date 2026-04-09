@@ -43,13 +43,16 @@ export function hexToBytes(hex: string): Uint8Array {
 }
 
 /**
- * Converts a bigint to a 32-byte Uint8Array (big-endian).
- * Matches the Compact `as Bytes<32>` cast behavior.
+ * Converts a bigint to a 32-byte Uint8Array (little-endian).
+ * Matches the Compact runtime's `convertFieldToBytes(32, value)` behavior,
+ * which is used by the compiled contract for tally key derivation
+ * (`option_index as Bytes<32>` compiles to `convertFieldToBytes(32, option_index)`).
+ * LSB is at index 0 (little-endian), NOT index 31 (big-endian).
  */
 export function bigintToBytes32(value: bigint): Uint8Array {
   const bytes = new Uint8Array(32);
   let remaining = value;
-  for (let i = 31; i >= 0; i--) {
+  for (let i = 0; i < 32; i++) {
     bytes[i] = Number(remaining & BigInt(0xff));
     remaining >>= BigInt(8);
   }

@@ -10,7 +10,7 @@ import type { PollMetadata } from "@/lib/midnight/metadata-store";
 /**
  * Featured poll card — the large md:col-span-8 card in the bento grid.
  */
-function FeaturedPollCard({ poll }: { poll: PollWithId }) {
+function FeaturedPollCard({ poll, currentBlock }: { poll: PollWithId; currentBlock: bigint }) {
   const metadataQuery = useMetadata(poll.id);
   const metadata: PollMetadata | null = metadataQuery.data?.metadata ?? null;
   const isMetadataLoading = metadataQuery.isLoading;
@@ -63,7 +63,7 @@ function FeaturedPollCard({ poll }: { poll: PollWithId }) {
                 {Number(poll.data.option_count).toString()} options
               </span>
             </div>
-            <ExpirationBadge expirationBlock={poll.data.expiration_block} />
+            <ExpirationBadge expirationBlock={poll.data.expiration_block} currentBlock={currentBlock} />
           </div>
         </div>
       </div>
@@ -155,13 +155,15 @@ export default function ActivePollsPage() {
       {!isLoading && !isError && polls && polls.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {polls.map((poll, index) => {
+            const currentBlock = BigInt(data!.currentBlockHeight);
+            const tallies = data!.tallies.get(poll.id) ?? null;
             if (index === 0) {
-              return <FeaturedPollCard key={poll.id} poll={poll} />;
+              return <FeaturedPollCard key={poll.id} poll={poll} currentBlock={currentBlock} />;
             }
             const colSpan = index % 3 === 0 ? "md:col-span-8" : "md:col-span-4";
             return (
               <div key={poll.id} className={colSpan}>
-                <PollCard poll={poll} />
+                <PollCard poll={poll} tallies={tallies} currentBlock={currentBlock} />
               </div>
             );
           })}

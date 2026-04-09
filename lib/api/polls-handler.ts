@@ -22,6 +22,10 @@
  *       pollType: 0 | 1,        // 0 = public_poll, 1 = invite_only
  *       expirationBlock: string, // bigint as string (JSON-safe)
  *       creator: string,         // hex-encoded creator bytes
+ *       tallies: {
+ *         counts: string[],      // per-option vote counts (bigint as string)
+ *         total: string,         // total vote count (bigint as string)
+ *       }
  *     }>
  *   }
  */
@@ -29,6 +33,7 @@
 import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-public-data-provider";
 import { ledger as parseLedger } from "@/contracts/managed/contract";
 import { fetchLatestBlock, IndexerQueryError } from "@/lib/midnight/indexer-client";
+import { readTallies, hexToBytes } from "@/lib/midnight/ledger-utils";
 
 const INDEXER_URI =
   process.env.INDEXER_URI ?? "https://indexer.preview.midnight.network/api/v3/graphql";
@@ -82,6 +87,7 @@ export async function handlePollsRequest(req: Request): Promise<Response> {
     const polls: any[] = [];
 
     for (const [idBytes, data] of ledgerState.polls) {
+      const tallyResult = await readTallies(ledgerState, idBytes, Number(data.option_count));
       polls.push({
         id: bytesToHex(idBytes),
         metadataHash: bytesToHex(data.metadata_hash),
@@ -89,6 +95,10 @@ export async function handlePollsRequest(req: Request): Promise<Response> {
         pollType: Number(data.poll_type),
         expirationBlock: data.expiration_block.toString(),
         creator: bytesToHex(data.creator),
+        tallies: {
+          counts: tallyResult.counts.map((c) => c.toString()),
+          total: tallyResult.total.toString(),
+        },
       });
     }
 

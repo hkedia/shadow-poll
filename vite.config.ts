@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import wasm from "vite-plugin-wasm";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 const logger = createLogger();
 const originalWarnOnce = logger.warnOnce.bind(logger);
@@ -17,6 +18,13 @@ export default defineConfig({
     wasm(),
     react(),
     tailwindcss(),
+    nodePolyfills({
+      include: ["buffer", "process", "events"],
+      globals: {
+        Buffer: true,
+        process: true,
+      },
+    }),
   ],
   resolve: {
     alias: {

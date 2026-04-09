@@ -78,7 +78,12 @@ export default function ClosedPollsPage() {
       {!isLoading && !isError && polls && polls.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {polls.map((poll) => (
-            <PollCard key={poll.id} poll={poll} />
+            <PollCard
+              key={poll.id}
+              poll={poll}
+              tallies={data!.tallies.get(poll.id) ?? null}
+              currentBlock={BigInt(data!.currentBlockHeight)}
+            />
           ))}
         </div>
       )}

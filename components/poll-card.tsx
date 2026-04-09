@@ -8,13 +8,16 @@ import { Skeleton } from "./ui/skeleton";
 interface PollCardProps {
   poll: PollWithId;
   tallies?: PollTallies | null;
+  currentBlock?: bigint;
 }
 
 /**
- * Card for the trending polls list. Self-fetches metadata via useMetadata hook.
+ * Card for the trending polls list. Self-fetches metadata.
+ * Tallies are passed as a prop from the parent listing page (from the server-side
+ * /api/polls response) — no wallet required.
  * Reference: .design/trending_polls/code.html — md:col-span-4 poll cards.
  */
-export function PollCard({ poll, tallies }: PollCardProps) {
+export function PollCard({ poll, tallies, currentBlock }: PollCardProps) {
   const metadataQuery = useMetadata(poll.id);
   const metadata: PollMetadata | null = metadataQuery.data?.metadata ?? null;
   const isMetadataLoading = metadataQuery.isLoading;
@@ -64,7 +67,7 @@ export function PollCard({ poll, tallies }: PollCardProps) {
         <div className="flex justify-between items-end gap-4">
           <div className="text-sm">
             <div className="font-bold text-on-surface">{totalVotes} votes</div>
-            <ExpirationBadge expirationBlock={poll.data.expiration_block} />
+            <ExpirationBadge expirationBlock={poll.data.expiration_block} currentBlock={currentBlock} />
           </div>
           <div className="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all">
             <span className="material-symbols-outlined">arrow_forward</span>

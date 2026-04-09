@@ -5,13 +5,14 @@ interface ResultsPanelProps {
   options: string[];
   tallies: PollTallies | null;
   expirationBlock: bigint;
+  currentBlock?: bigint;
 }
 
 /**
  * Progress bars with live tallies for poll results.
  * Reference: .design/view_poll/code.html — "Live Results" glass panel.
  */
-export function ResultsPanel({ options, tallies, expirationBlock }: ResultsPanelProps) {
+export function ResultsPanel({ options, tallies, expirationBlock, currentBlock }: ResultsPanelProps) {
   const total = tallies?.total ?? BigInt(0);
 
   /**
@@ -79,7 +80,7 @@ export function ResultsPanel({ options, tallies, expirationBlock }: ResultsPanel
       {/* Footer */}
       <div className="pt-4 border-t border-outline-variant/10 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-on-surface-variant">
         <span>{total.toString()} total votes</span>
-        <ExpirationBadge expirationBlock={expirationBlock} />
+        <ExpirationBadge expirationBlock={expirationBlock} currentBlock={currentBlock} />
       </div>
     </div>
   );

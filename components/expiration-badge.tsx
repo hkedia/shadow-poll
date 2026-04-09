@@ -5,7 +5,7 @@ interface ExpirationBadgeProps {
 
 /**
  * Shows time remaining until a poll expires based on block numbers.
- * Assumes ~20 seconds per block on Midnight Preview network.
+ * Assumes ~10 seconds per block on Midnight Preview network.
  */
 export function ExpirationBadge({ expirationBlock, currentBlock }: ExpirationBadgeProps) {
   // Fallback: show raw block number when current block is unknown
@@ -13,7 +13,7 @@ export function ExpirationBadge({ expirationBlock, currentBlock }: ExpirationBad
     return (
       <div className="flex items-center gap-2 text-on-surface-variant text-sm">
         <span className="material-symbols-outlined text-lg">schedule</span>
-        <span>Block #{expirationBlock.toString()}</span>
+        <span>Expires at block {expirationBlock.toString()}</span>
       </div>
     );
   }
@@ -31,7 +31,7 @@ export function ExpirationBadge({ expirationBlock, currentBlock }: ExpirationBad
 
   // Calculate remaining blocks and approximate time
   const remainingBlocks = Number(expirationBlock - currentBlock);
-  const remainingSeconds = remainingBlocks * 20; // ~20 seconds per block
+  const remainingSeconds = remainingBlocks * 10; // ~10 seconds per block on Midnight Preview
   const remainingMinutes = Math.floor(remainingSeconds / 60);
   const remainingHours = Math.floor(remainingMinutes / 60);
   const remainingDays = Math.floor(remainingHours / 24);

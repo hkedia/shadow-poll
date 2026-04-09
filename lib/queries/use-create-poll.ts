@@ -71,6 +71,15 @@ export function useCreatePoll() {
       // 3. Get witness inputs from wallet and indexer
       const secretKey = await getSecretKeyFromWallet(providers.walletProvider);
       const blockNumber = await getCurrentBlockNumber(providers.indexerConfig.indexerUri);
+
+      // Guard: a zero block number would produce an expiration_block in the deep past,
+      // immediately marking the poll as closed. Fail loudly rather than silently corrupt.
+      if (blockNumber === BigInt(0)) {
+        throw new Error(
+          "Could not read current block number from the indexer. Please check your connection and try again.",
+        );
+      }
+
       const expirationBlock = blockNumber + input.expirationBlocks;
 
       // 4. Find the deployed contract (per D-09-03: browser calls directly)
