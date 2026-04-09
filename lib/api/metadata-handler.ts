@@ -3,14 +3,16 @@
 /**
  * Metadata API handler for Shadow Poll.
  *
- * Uses Web standard Request/Response for Bun.serve() compatibility.
+ * Hono sub-router for /api/polls/metadata endpoints.
+ * Business logic (handleGet, handlePost) unchanged from original Bun.serve() version.
  *
- * Handles GET and POST for /api/polls/metadata:
- *   GET ?pollId=<hex>  → single poll metadata
- *   GET (no params)    → all polls metadata, ordered by created_at DESC
- *   POST { pollId, metadata, metadataHash } → upsert poll metadata
+ * Routes:
+ *   GET /api/polls/metadata       → all polls metadata, ordered by created_at DESC
+ *   GET /api/polls/metadata?pollId=<hex> → single poll metadata
+ *   POST /api/polls/metadata      → upsert poll metadata
  */
 
+import { Hono } from "hono";
 import {
   validatePollMetadata,
   validateMetadataHash,
@@ -20,6 +22,8 @@ import {
 } from "@/lib/midnight/metadata-store";
 import { sql } from "@/lib/db/client";
 import { runMigrations } from "@/lib/db/migrations";
+
+export const metadataRoutes = new Hono();
 
 interface PollMetadataRow {
   poll_id: string;
@@ -51,7 +55,7 @@ function json(data: unknown, status = 200): Response {
   });
 }
 
-export async function handleMetadataRequest(req: Request): Promise<Response> {
+metadataRoutes.get("/api/polls/metadata", async (c) => {
   try {
     await runMigrations();
   } catch (err) {
@@ -59,13 +63,19 @@ export async function handleMetadataRequest(req: Request): Promise<Response> {
     return json({ error: "Database unavailable — please try again later" }, 503);
   }
 
-  if (req.method === "GET") {
-    return handleGet(req);
-  } else if (req.method === "POST") {
-    return handlePost(req);
+  return handleGet(c.req.raw);
+});
+
+metadataRoutes.post("/api/polls/metadata", async (c) => {
+  try {
+    await runMigrations();
+  } catch (err) {
+    console.error("[metadata] Migration failed:", err);
+    return json({ error: "Database unavailable — please try again later" }, 503);
   }
-  return json({ error: "Method not allowed" }, 405);
-}
+
+  return handlePost(c.req.raw);
+});
 
 async function handleGet(req: Request): Promise<Response> {
   const url = new URL(req.url);

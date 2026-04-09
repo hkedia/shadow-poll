@@ -1,32 +1,26 @@
 /**
  * Indexer API handler for Shadow Poll.
  *
- * Exposes the Midnight indexer GraphQL client to the server API layer.
- * All routes are read-only (GET only) — no mutations are performed here.
+ * Hono sub-router for /api/indexer/* endpoints.
+ * Business logic (handleStatus, handleBlock, handleContract) unchanged from original Bun.serve() version.
  *
- * Routes handled by this module (registered in server.ts):
- *
- *   GET /api/indexer/status
- *     Returns current block height, contract existence, and state preview.
- *     Query param: contractAddress (optional, defaults to env VITE_POLL_CONTRACT_ADDRESS)
- *
- *   GET /api/indexer/block
- *     Returns the latest confirmed block info (height, hash, timestamp, author).
- *
- *   GET /api/indexer/contract?address=<hex>
- *     Returns the deploy/update action for a given contract address.
- *     Includes block info for when the contract was last touched.
- *
- * These endpoints are additive — the existing Midnight SDK usage for
- * wallet-connected operations (create poll, cast vote) is unchanged.
+ * Routes:
+ *   GET /api/indexer/status                    → block height, contract existence, state preview
+ *   GET /api/indexer/block                     → latest confirmed block info
+ *   GET /api/indexer/contract?address=<hex>    → contract deploy/update action
  */
 
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import {
   fetchLatestBlock,
   fetchContractAction,
   fetchPollContractStatus,
   IndexerQueryError,
 } from "@/lib/midnight/indexer-client";
+
+export const indexerRoutes = new Hono();
+indexerRoutes.use("/api/indexer*", cors());
 
 /** Default contract address from Vite env (also available server-side via process.env). */
 const DEFAULT_CONTRACT_ADDRESS =
@@ -42,31 +36,17 @@ function json(data: unknown, status = 200): Response {
   });
 }
 
-/**
- * Routes GET /api/indexer/* requests to the appropriate handler.
- */
-export async function handleIndexerRequest(req: Request): Promise<Response> {
-  if (req.method !== "GET") {
-    return json({ error: "Method not allowed — indexer endpoints are GET only" }, 405);
-  }
+indexerRoutes.get("/api/indexer/status", async (c) => {
+  return handleStatus(new URL(c.req.url));
+});
 
-  const url = new URL(req.url);
-  const subpath = url.pathname.replace(/^\/api\/indexer/, "");
+indexerRoutes.get("/api/indexer/block", async (c) => {
+  return handleBlock();
+});
 
-  if (subpath === "/status" || subpath === "/status/") {
-    return handleStatus(url);
-  }
-
-  if (subpath === "/block" || subpath === "/block/") {
-    return handleBlock();
-  }
-
-  if (subpath === "/contract" || subpath === "/contract/") {
-    return handleContract(url);
-  }
-
-  return json({ error: `Unknown indexer route: ${subpath}` }, 404);
-}
+indexerRoutes.get("/api/indexer/contract", async (c) => {
+  return handleContract(new URL(c.req.url));
+});
 
 // ---------------------------------------------------------------------------
 // Route handlers

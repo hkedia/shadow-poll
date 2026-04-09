@@ -1,39 +1,23 @@
 /**
  * Polls API handler for Shadow Poll.
  *
- * Server-side handler that fetches all polls directly from the Midnight indexer
- * without requiring a wallet connection. Uses the SDK's IndexerPublicDataProvider
- * (which works in Bun) plus the compiled contract's ledger parser.
+ * Hono sub-router for /api/polls endpoint.
+ * Business logic (handlePollsRequest) unchanged from original Bun.serve() version.
  *
- * Routes handled by this module (registered in server.ts):
- *
- *   GET /api/polls
- *     Returns all polls from the on-chain contract state as a JSON array.
- *     Also returns the current block height so the client can determine
- *     active vs closed status.
- *
- * Response shape:
- *   {
- *     currentBlockHeight: number,
- *     polls: Array<{
- *       id: string,             // hex-encoded poll ID
- *       metadataHash: string,   // hex-encoded metadata hash
- *       optionCount: number,
- *       pollType: 0 | 1,        // 0 = public_poll, 1 = invite_only
- *       expirationBlock: string, // bigint as string (JSON-safe)
- *       creator: string,         // hex-encoded creator bytes
- *       tallies: {
- *         counts: string[],      // per-option vote counts (bigint as string)
- *         total: string,         // total vote count (bigint as string)
- *       }
- *     }>
- *   }
+ * Routes:
+ *   GET /api/polls            → all polls from on-chain contract state
+ *   GET /api/polls?id=<hex>   → single poll by ID
  */
 
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-public-data-provider";
 import { ledger as parseLedger } from "@/contracts/managed/contract";
 import { fetchLatestBlock, IndexerQueryError } from "@/lib/midnight/indexer-client";
 import { readTallies, hexToBytes } from "@/lib/midnight/ledger-utils";
+
+export const pollsRoutes = new Hono();
+pollsRoutes.use("/api/polls*", cors());
 
 const INDEXER_URI =
   process.env.INDEXER_URI ?? "https://indexer.preview.midnight.network/api/v3/graphql";
@@ -58,14 +42,14 @@ function bytesToHex(bytes: Uint8Array): string {
     .join("");
 }
 
+pollsRoutes.get("/api/polls", async (c) => {
+  return handlePollsRequest(c.req.raw);
+});
+
 /**
  * Handles GET /api/polls
  */
-export async function handlePollsRequest(req: Request): Promise<Response> {
-  if (req.method !== "GET") {
-    return json({ error: "Method not allowed" }, 405);
-  }
-
+async function handlePollsRequest(req: Request): Promise<Response> {
   if (!CONTRACT_ADDRESS) {
     return json({ error: "VITE_POLL_CONTRACT_ADDRESS not configured" }, 503);
   }
