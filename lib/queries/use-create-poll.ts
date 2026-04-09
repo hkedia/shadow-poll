@@ -6,6 +6,12 @@ import { computeMetadataHash, validatePollMetadata } from "@/lib/midnight/metada
 import { bytesToHex } from "@/lib/midnight/ledger-utils";
 import { generateInviteCodes, storeInviteCodes } from "@/lib/midnight/invite-codes";
 import type { InviteCode } from "@/lib/midnight/invite-codes";
+import {
+  findPollContract,
+  callCreatePoll,
+  callAddInviteCodes,
+  getContractAddress,
+} from "@/lib/midnight/contract-service";
 
 /** Input for creating a new poll. */
 export interface CreatePollInput {
@@ -22,13 +28,6 @@ export interface CreatePollResult {
   pollId: string; // hex-encoded poll ID
   inviteCodes?: InviteCode[]; // populated only for invite_only polls
 }
-
-type CreatePollResponse = {
-  private?: {
-    result?: Uint8Array;
-  };
-  result?: Uint8Array;
-};
 
 /**
  * Mutation hook for creating a new poll on-chain.
@@ -69,35 +68,44 @@ export function useCreatePoll() {
         options: input.options,
       });
 
-      // 3. Get witness inputs from wallet and indexer (still needed for expiration block)
+      // 3. Get witness inputs from wallet and indexer
       const secretKey = await getSecretKeyFromWallet(providers.walletProvider);
       const blockNumber = await getCurrentBlockNumber(providers.indexerConfig.indexerUri);
       const expirationBlock = blockNumber + input.expirationBlocks;
 
-      // 4. Call server-side API route to create poll on-chain
-      const response = await fetch("/api/polls/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: input.title,
-          description: input.description,
-          options: input.options,
-          expirationBlocks: input.expirationBlocks,
-          pollType: input.pollType,
-          inviteCodeCount: input.inviteCodeCount,
-          metadataHash: bytesToHex(metadataHash),
-          // Note: In real implementation, we'd also pass the secret key or have the server derive from its own seed.
-        }),
+      // 4. Find the deployed contract (per D-09-03: browser calls directly)
+      const contractAddress = getContractAddress();
+      if (!contractAddress) {
+        throw new Error("VITE_POLL_CONTRACT_ADDRESS not configured");
+      }
+      const contract = await findPollContract(
+        providers,
+        contractAddress,
+        secretKey,
+        blockNumber,
+      );
+
+      // 5. Call create_poll circuit on-chain
+      const result = await callCreatePoll(contract, {
+        metadataHash,
+        optionCount: input.options.length,
+        pollType: input.pollType === "invite_only" ? 1 : 0,
+        expirationBlock,
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to create poll");
+      // 6. Extract real poll ID bytes from circuit result
+      // create_poll returns CircuitResults<PS, Uint8Array> — result lives at result.private.result
+      // Confirmed by contracts/managed/contract/index.d.ts: create_poll returns Uint8Array
+      // and by @midnight-ntwrk/midnight-js-contracts/dist/call.d.ts: CallResultPrivate.result = ReturnType
+      const rawResult = result?.private?.result ?? result?.result;
+      if (!rawResult) {
+        throw new Error("Contract did not return a poll ID — check result shape in console");
       }
+      const pollIdBytes =
+        rawResult instanceof Uint8Array ? rawResult : new Uint8Array(rawResult);
+      const pollId = bytesToHex(pollIdBytes);
 
-      const { pollId } = await response.json();
-
-      // 5. Store metadata off-chain via existing API route (D-30)
+      // 7. Store metadata off-chain via API route (D-30)
       await fetch("/api/polls/metadata", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,17 +121,19 @@ export function useCreatePoll() {
         }),
       });
 
-      // 6. For invite-only polls: generate codes, store in localStorage (no on-chain submission yet)
+      // 8. For invite-only polls: generate codes, submit each hash on-chain, store locally (D-09-08/09)
       let inviteCodes: InviteCode[] | undefined;
-
       if (input.pollType === "invite_only" && input.inviteCodeCount && input.inviteCodeCount > 0) {
-        // Generate invite codes off-chain
-        const pollIdBytes = new Uint8Array(32); // Mock bytes, real pollId is hex string
         const codeSet = await generateInviteCodes(input.inviteCodeCount, pollIdBytes);
         inviteCodes = codeSet.codes;
-        // Store codes in localStorage for the creator to share
+        // Submit each code hash on-chain (callAddInviteCodes = one tx per code)
+        for (const code of inviteCodes) {
+          await callAddInviteCodes(contract, {
+            pollId: pollIdBytes,
+            codeHash: code.hash,
+          });
+        }
         storeInviteCodes(pollId, inviteCodes);
-        // TODO: Submit code hashes on-chain via server-side API
       }
 
       return { pollId, inviteCodes };

@@ -3,6 +3,15 @@ import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { pollKeys } from "./use-poll";
 import type { PollTallies } from "@/lib/midnight/ledger-utils";
 import { hexToBytes } from "@/lib/midnight/ledger-utils";
+import {
+  findPollContract,
+  callCastVote,
+  getContractAddress,
+} from "@/lib/midnight/contract-service";
+import {
+  getSecretKeyFromWallet,
+  getCurrentBlockNumber,
+} from "@/lib/midnight/witness-impl";
 
 /** Parameters for casting a vote. */
 export interface CastVoteParams {
@@ -29,20 +38,28 @@ export function useVoteMutation() {
         throw new Error("Wallet not connected");
       }
 
-      // Call server-side API route to cast vote
-      const response = await fetch("/api/polls/vote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pollId: params.pollId,
-          optionIndex: params.optionIndex,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to cast vote");
+      const contractAddress = getContractAddress();
+      if (!contractAddress) {
+        throw new Error("No contract deployed");
       }
+
+      // Get witness inputs from wallet and indexer (per D-09-05)
+      const secretKey = await getSecretKeyFromWallet(providers.walletProvider);
+      const blockNumber = await getCurrentBlockNumber(providers.indexerConfig.indexerUri);
+
+      // Connect to the deployed contract — always fresh (avoid stale block height)
+      const contract = await findPollContract(
+        providers,
+        contractAddress,
+        secretKey,
+        blockNumber,
+      );
+
+      // Call cast_vote circuit on-chain
+      await callCastVote(contract, {
+        pollId: hexToBytes(params.pollId),
+        optionIndex: params.optionIndex,
+      });
     },
 
     onMutate: async (params: CastVoteParams) => {
