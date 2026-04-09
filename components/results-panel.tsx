@@ -14,6 +14,7 @@ interface ResultsPanelProps {
  */
 export function ResultsPanel({ options, tallies, expirationBlock, currentBlock }: ResultsPanelProps) {
   const total = tallies?.total ?? BigInt(0);
+  const isExpired = currentBlock !== undefined && currentBlock > BigInt(0) && expirationBlock <= currentBlock;
 
   /**
    * Calculate percentage for an option. Returns a number with one decimal place.
@@ -35,11 +36,13 @@ export function ResultsPanel({ options, tallies, expirationBlock, currentBlock }
     <div className="bg-[rgba(35,36,58,0.6)] backdrop-blur-[30px] p-5 sm:p-8 rounded-xl border border-outline-variant/10 space-y-8">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-end">
-        <h3 className="font-headline text-2xl font-bold">Live Results</h3>
-        <div className="flex items-center gap-2 text-tertiary">
-          <div className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-          <span className="text-xs font-bold uppercase tracking-widest">Live Updates</span>
-        </div>
+        <h3 className="font-headline text-2xl font-bold">{isExpired ? "Final Results" : "Live Results"}</h3>
+        {!isExpired && (
+          <div className="flex items-center gap-2 text-tertiary">
+            <div className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-widest">Live Updates</span>
+          </div>
+        )}
       </div>
 
       {/* Progress bars for each option */}

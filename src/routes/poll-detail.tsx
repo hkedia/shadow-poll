@@ -141,7 +141,7 @@ export default function PollDetailPage() {
           {/* Trust badge */}
           <div className="flex items-center gap-3 text-tertiary text-sm font-semibold tracking-wider uppercase">
             <span className="material-symbols-outlined text-lg">verified_user</span>
-            Secure Anonymous Voting Active
+            {isExpired ? "Poll Closed" : "Secure Anonymous Voting Active"}
           </div>
 
           {/* Invite-only indicator */}
