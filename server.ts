@@ -1,8 +1,8 @@
 /**
- * Shadow Poll — Bun.serve() production server.
+ * Shadow Poll — Hono + Bun production server.
  *
- * Lightweight Bun server that handles:
- *   1. API routes (/api/polls/metadata → metadata handler)
+ * Hono web framework with Bun adapter handles:
+ *   1. API routes (/api/* → Hono route handlers)
  *   2. ZK keys static files (/zk-keys/* from public/ with CORS)
  *   3. Public static files (favicon, logo, etc. from public/)
  *   4. Vite build output (from dist/)
@@ -16,70 +16,62 @@
  *   DATABASE_URL — Neon Postgres connection string (for metadata API)
  */
 
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { join } from "path";
+import { apiRoutes } from "./lib/api/routes";
 
-const DIST_DIR = join(import.meta.dir, "dist");
-const PUBLIC_DIR = join(import.meta.dir, "public");
+const app = new Hono();
 const PORT = Number(process.env.PORT) || 3000;
+
+// --- API routes (metadata, polls, indexer) ---
+app.route("/", apiRoutes);
+
+// --- CORS headers for zk-keys ---
+app.all("/zk-keys/*", cors({ origin: "*", allowMethods: ["GET", "OPTIONS"], allowHeaders: ["Content-Type"] }));
+app.get("/zk-keys/*", async (c) => {
+  const filePath = join(import.meta.dir, "public", c.req.path);
+  const file = Bun.file(filePath);
+  if (await file.exists()) {
+    return new Response(file, {
+      headers: { "Cache-Control": "public, max-age=31536000, immutable" },
+    });
+  }
+  return c.notFound();
+});
+
+// --- Public static files (favicon, logo, etc.) ---
+app.get("/*", async (c, next) => {
+  if (c.req.path === "/") return next();
+  const filePath = join(import.meta.dir, "public", c.req.path);
+  const file = Bun.file(filePath);
+  if (await file.exists()) {
+    return new Response(file);
+  }
+  return next();
+});
+
+// --- Vite build output (dist/) ---
+app.get("/*", async (c, next) => {
+  if (c.req.path === "/") return next();
+  const filePath = join(import.meta.dir, "dist", c.req.path);
+  const file = Bun.file(filePath);
+  if (await file.exists()) {
+    return new Response(file);
+  }
+  return next();
+});
+
+// --- SPA fallback: serve index.html for all other routes ---
+app.get("*", async (c) => {
+  return new Response(Bun.file(join(import.meta.dir, "dist", "index.html")), {
+    headers: { "Content-Type": "text/html" },
+  });
+});
 
 Bun.serve({
   port: PORT,
-  async fetch(req) {
-    const url = new URL(req.url);
-
-    // --- API routes ---
-    if (url.pathname === "/api/polls/metadata") {
-      const { handleMetadataRequest } = await import("./lib/api/metadata-handler");
-      return handleMetadataRequest(req);
-    }
-
-    if (url.pathname === "/api/polls" || url.pathname === "/api/polls/") {
-      const { handlePollsRequest } = await import("./lib/api/polls-handler");
-      return handlePollsRequest(req);
-    }
-
-    // --- Indexer API routes (direct GraphQL queries to Midnight indexer) ---
-    if (url.pathname.startsWith("/api/indexer/")) {
-      const { handleIndexerRequest } = await import("./lib/api/indexer-handler");
-      return handleIndexerRequest(req);
-    }
-
-    // --- CORS headers for zk-keys ---
-    if (url.pathname.startsWith("/zk-keys/")) {
-      const file = Bun.file(join(PUBLIC_DIR, url.pathname));
-      if (await file.exists()) {
-        return new Response(file, {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Cache-Control": "public, max-age=31536000, immutable",
-          },
-        });
-      }
-    }
-
-    // --- Other public/ static files (favicon, logo, etc.) ---
-    if (url.pathname !== "/") {
-      const publicFile = Bun.file(join(PUBLIC_DIR, url.pathname));
-      if (await publicFile.exists()) {
-        return new Response(publicFile);
-      }
-    }
-
-    // --- Static files from dist/ (Vite build output) ---
-    if (url.pathname !== "/") {
-      const distFile = Bun.file(join(DIST_DIR, url.pathname));
-      if (await distFile.exists()) {
-        return new Response(distFile);
-      }
-    }
-
-    // --- SPA fallback: serve index.html for all other routes ---
-    return new Response(Bun.file(join(DIST_DIR, "index.html")), {
-      headers: { "Content-Type": "text/html" },
-    });
-  },
+  fetch: app.fetch,
 });
 
 console.log(`Shadow Poll server running on http://localhost:${PORT}`);
