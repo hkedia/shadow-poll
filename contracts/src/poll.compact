@@ -230,6 +230,8 @@ export circuit cast_invite_vote(
   const invite_key = derive_invite_key(d_poll_id, invite_code);
   const d_invite_key = disclose(invite_key);
   assert(invite_codes.member(d_invite_key), "Invalid invite code");
+  assert(invite_codes.lookup(d_invite_key), "Invite code already used");
+  invite_codes.insert(d_invite_key, false);
 
   // Duplicate vote prevention via nullifier (CONT-06, D-51)
   const sk = local_secret_key();
@@ -244,17 +246,17 @@ export circuit cast_invite_vote(
   tallies.lookup(tally_key).increment(1);
 }
 
-// Add a single invite code hash to an invite-only poll.
+// Add multiple invite code hashes to an invite-only poll in a single transaction.
 // Requirements: POLL-06 (management), D-54 (separate circuit)
 // Only the poll creator can add invite codes.
-// The code_hash is the pre-computed hash(poll_id, raw_invite_code) — computed
-// off-chain by the creator's browser and submitted as a disclosed value.
+// code_hashes is a fixed-size Vector of up to 10 pre-computed hash(poll_id, invite_code)
+// values. Unused slots must be padded with zero bytes. The circuit skips zero-byte entries.
+// Max 10 codes per call matches the max 10 poll options (D-23).
 export circuit add_invite_codes(
   poll_id: Bytes<32>,
-  code_hash: Bytes<32>
+  code_hashes: Vector<10, Bytes<32>>
 ): [] {
   const d_poll_id = disclose(poll_id);
-  const d_code_hash = disclose(code_hash);
 
   // Verify poll exists
   assert(polls.member(d_poll_id), "Poll not found");
@@ -269,6 +271,13 @@ export circuit add_invite_codes(
   const d_caller_pk = disclose(caller_pk);
   assert(d_caller_pk == poll_data.creator, "Only the poll creator can add invite codes");
 
-  // Store the invite code hash
-  invite_codes.insert(d_code_hash, true);
+  // Store each non-zero invite code hash on-chain.
+  // Unused slots are padded with zeros by the caller and skipped here.
+  const zero = pad(32, "\x00");
+  for (const code_hash of code_hashes) {
+    const d_code_hash = disclose(code_hash);
+    if (d_code_hash != zero) {
+      invite_codes.insert(d_code_hash, true);
+    }
+  }
 }
