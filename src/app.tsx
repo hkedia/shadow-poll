@@ -5,7 +5,7 @@ import { WalletProvider } from "@/lib/midnight/wallet-context";
 import { WalletButton } from "@/components/wallet-button";
 import { WalletOnboarding } from "@/components/wallet-onboarding";
 import { QueryProvider } from "@/lib/queries/query-provider";
-import { ScrollToTop } from "@/src/components/scroll-to-top";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { lazy, Suspense } from "react";
 
 const Home = lazy(() => import("@/src/routes/home"));
