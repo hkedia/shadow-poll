@@ -12,33 +12,42 @@ Users can vote on polls anonymously with cryptographic guarantees — no one can
 
 ### Validated
 
-- ✓ Next.js 16 App Router scaffold with TypeScript — existing
-- ✓ Tailwind CSS v4 styling pipeline — existing
-- ✓ Midnight Network SDK packages installed — existing
-- ✓ GraphQL dependencies installed (graphql + graphql-yoga) — existing
-- ✓ ESLint with Next.js config — existing
-- ✓ Bun package manager configured — existing
+- ✓ shadcn/ui with Aether Privacy dark design tokens, glass-blur app shell — v1.0
+- ✓ 1am.xyz wallet detection, connection, and provider factory — v1.0
+- ✓ Auto-reconnect on page refresh — v1.0
+- ✓ Compact smart contract for poll creation (title, description, options, type) — v1.0
+- ✓ Compact smart contract for vote casting (public polls) — v1.0
+- ✓ Compact contract compilation pipeline in /contracts — v1.0
+- ✓ ZK proving/verifying keys served from public folder — v1.0
+- ✓ Invite-only poll votes verified via ZK proof of valid invite code — v1.0
+- ✓ Contract prevents same wallet from voting twice — v1.0
+- ✓ Public poll creation via on-chain transaction — v1.0
+- ✓ Invite-only poll creation with off-chain invite code generation — v1.0
+- ✓ Vote casting via on-chain transaction (public polls) — v1.0
+- ✓ Vote casting with invite code via on-chain transaction — v1.0
+- ✓ Client-side ZK proof generation for participation verification — v1.0
+- ✓ Third parties can verify a participation proof — v1.0
+- ✓ Proof sharing via link or visual badge — v1.0
+- ✓ Poll data reading via Midnight Preview public indexer GraphQL — v1.0
+- ✓ GraphQL client configured for indexer queries — v1.0
+- ✓ Thin API routes proxy indexer queries and serve static artifacts — v1.0
+- ✓ Vote tallies update optimistically before on-chain confirmation — v1.0
+- ✓ Home / Trending Polls page with live data — v1.0
+- ✓ Create Poll page with toggle between Public and Invite-Only — v1.0
+- ✓ Poll Detail / Voting page (/poll/[id]) with live vote tallies — v1.0
+- ✓ Stats / Analytics page with global analytics — v1.0
+- ✓ Dark theme UI with shadcn/ui components — v1.0
+- ✓ Wallet connection controls in navigation with status and truncated address — v1.0
+- ✓ Poll expiration (block-number-based) — v1.0
+- ✓ Neon serverless Postgres for poll metadata persistence — v1.0
+- ✓ Vite + React Router + Bun.serve() migration — v1.0
+- ✓ Hono API framework migration — v1.0
+- ✓ Docker containerization — v1.0
+- ✓ Comprehensive test coverage with Vitest and testkit-js — v1.0
 
 ### Active
 
-- [ ] 1am.xyz wallet detection, connection, and provider factory
-- [ ] Reusable useMidnightWallet hook/context with status, address, providers
-- [ ] Compact smart contract for poll creation (title, description, options, type)
-- [ ] Compact smart contract for vote casting (with optional invite code verification)
-- [ ] Contract compilation pipeline in /contracts
-- [ ] Public poll creation via on-chain transaction
-- [ ] Invite-only poll creation with off-chain invite code generation + ZK verification
-- [ ] Vote casting via on-chain transaction (public polls)
-- [ ] Vote casting with invite code via on-chain transaction (invite-only polls)
-- [ ] Client-side ZK proof generation for participation verification
-- [ ] Poll data reading via Midnight Preview public indexer GraphQL endpoint
-- [ ] Home / Trending Polls page with live data
-- [ ] Create Poll page with toggle between Public and Invite-Only
-- [ ] Poll Detail / Voting page (/poll/[id]) with live vote tallies
-- [ ] Stats / Analytics page with global analytics (aggregate counts, trends, participation)
-- [ ] Dark theme UI with shadcn/ui components
-- [ ] Wallet connection controls in navigation with status and truncated address
-- [ ] Thin API routes for indexer queries and serving static contract artifacts
+_(No active requirements — v1.0 shipped complete. Next milestone TBD.)_
 
 ### Out of Scope
 
@@ -48,7 +57,8 @@ Users can vote on polls anonymously with cryptographic guarantees — no one can
 - Multi-chain support — Midnight Preview network only
 - Real-time WebSocket subscriptions — polling/refetch is sufficient for v1
 - Admin dashboard or moderation tools — decentralized, no central authority
-- Token economics or incentive mechanisms — pure polling utility
+- Token economics or incentive mechanisms beyond poll-creation fee
+- Mainnet deployment — Preview network (testnet) only for v1
 
 ## Context
 
@@ -62,7 +72,9 @@ Users can vote on polls anonymously with cryptographic guarantees — no one can
 
 **Provider Architecture:** The Midnight JS SDK requires assembling a provider set: ZK config provider (serves proving/verifying keys), indexer data provider, wallet provider (for transaction signing), and proof provider (for ZK proof generation). These are composed into a single Midnight provider for contract interactions.
 
-**Prior Art:** This is a greenfield application on the scaffold. No business logic exists yet — only the Next.js 16 scaffold with dependencies installed.
+**Tech Stack:** React 19 + React Router 7 + TanStack Query, bundled by Vite 8. Styling with Tailwind CSS 4 and shadcn/ui. API via Hono on Bun. Database via Neon Postgres (serverless). Blockchain via Midnight SDK (compact-js, ledger-v8, midnight-js-contracts).
+
+**Shipped v1.0:** ~88 TypeScript/TSX files, 13 phases, 31 plans, 206 commits. Timeline: 2026-04-08 to 2026-04-10.
 
 ## Constraints
 
@@ -78,23 +90,20 @@ Users can vote on polls anonymously with cryptographic guarantees — no one can
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Keep Next.js 16 (not downgrade to 15) | Already installed, newer features available | — Pending |
-| Off-chain invite codes with ZK verification | Simpler UX than on-chain code generation; privacy preserved via ZK proof at vote time | — Pending |
-| Client-side ZK proof generation | Keeps proving trust-minimized; no server involvement in proof creation | — Pending |
-| Public Midnight Preview indexer for data | No need to run own indexer infrastructure for testnet | — Pending |
-| Global analytics only (no per-user dashboard) | Consistent with privacy-first design; per-user tracking would require identity correlation | — Pending |
-| shadcn/ui with dark theme | Modern component library, good DX, matches crypto/privacy app aesthetic | — Pending |
+| Keep Next.js 16 (not downgrade to 15) | Already installed, newer features available | ✓ Validated — Later migrated to Vite |
+| Off-chain invite codes with ZK verification | Simpler UX than on-chain code generation; privacy preserved via ZK proof at vote time | ✓ Validated — Works well |
+| Client-side ZK proof generation | Keeps proving trust-minimized; no server involvement in proof creation | ✓ Validated |
+| Public Midnight Preview indexer for data | No need to run own indexer infrastructure for testnet | ✓ Validated |
+| Global analytics only (no per-user dashboard) | Consistent with privacy-first design; per-user tracking would require identity correlation | ✓ Validated |
+| shadcn/ui with dark theme | Modern component library, good DX, matches crypto/privacy app aesthetic | ✓ Validated |
+| Vite + React Router + Bun.serve() | Next.js Turbopack incompatible with Midnight SDK WASM loading | ✓ Validated — Resolved WASM issues |
+| Hono for API layer | Structured routing, built-in middleware, type-safe request handling | ✓ Validated — Better DX than raw Bun.serve() |
+| Neon serverless Postgres | HTTP-based driver, no persistent connections, ideal for serverless | ✓ Validated |
+| Docker containerization | Reproducible deployments, local testing | ✓ Validated |
 
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
-
-**After each phase transition** (via `/gsd-transition`):
-1. Requirements invalidated? → Move to Out of Scope with reason
-2. Requirements validated? → Move to Validated with phase reference
-3. New requirements emerged? → Add to Active
-4. Decisions to log? → Add to Key Decisions
-5. "What This Is" still accurate? → Update if drifted
 
 **After each milestone** (via `/gsd-complete-milestone`):
 1. Full review of all sections
@@ -103,4 +112,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-08 after initialization*
+*Last updated: 2026-04-10 after v1.0 milestone*
