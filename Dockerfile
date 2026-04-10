@@ -29,6 +29,9 @@ COPY --from=build /app/dist ./dist/
 # Copy static assets (favicon, logo, ZK proving/verifying keys)
 COPY public ./public/
 
+# Copy deployment.json (contract address from deploy script)
+COPY deployment.json ./
+
 # Copy compiled contract artifacts (needed by server.ts at runtime)
 COPY contracts/managed ./contracts/managed/
 
