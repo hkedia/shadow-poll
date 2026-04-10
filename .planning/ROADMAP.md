@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility
 - [x] **Phase 8: Vite Migration** - Replace Next.js + Turbopack with Vite + React Router + Bun.serve() to resolve Midnight SDK WASM runtime loading failures and align build tooling with the app's SPA architecture (completed 2026-04-09)
 - [ ] **Phase 12: Docker Deployment** - Package app as Docker container, add health check, deploy to fly.io
-- [x] **Phase 13: Comprehensive testing with testkit-js for Midnight contracts and app-wide test coverage** - Integrate testkit-js for Compact contract testing, add Vitest test suite for all app components and services (completed 2026-04-10)
+- [x] **Phase 13: Comprehensive testing with testkit-js for Midnight contracts and app-wide test coverage** - Integrate testkit-js for Compact contract testing, add Vitest test suite for all app components and services (completed 2026-04-10) ✓ MILESTONE 1 COMPLETE
 
 ## Phase Details
 
@@ -286,6 +286,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 10. Invite Code Improvements | 1/1 | Complete   | 2026-04-09 |
 | 11. Hono API Migration | 1/1 | Complete | 2026-04-09 |
 | 12. Docker Deployment | 0/1 | Pending | — |
+| 13. Comprehensive Testing | 6/6 | Complete | 2026-04-10 | ✓ MILESTONE 1 |
 
 ### Phase 9: Fix Core Integration Gaps
 **Goal**: All state-changing operations (poll creation, vote casting, invite code submission) execute as real on-chain transactions via the browser's Midnight wallet, and poll detail pages are readable by unauthenticated visitors
@@ -321,6 +322,7 @@ Plans:
 **Goal:** Integrate testkit-js for Compact contract testing and achieve comprehensive app-wide test coverage with Vitest and Testing Library
 **Requirements**: TEST-01, TEST-02, TEST-03, TEST-04, TEST-05, TEST-06, TEST-07, TEST-08, TEST-09, TEST-10
 **Depends on:** Phase 12
+**Status:** ✓ COMPLETE (2026-04-10)
 **Plans:** 6/6 plans complete
 
 **Success Criteria** (what must be TRUE):
