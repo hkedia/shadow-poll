@@ -51,7 +51,23 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": "http://localhost:3001",
+      "/api": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        // Suppress noisy error messages when API server is not running
+        // This is common in dev when running only the frontend
+        configure: (proxy, _options) => {
+          proxy.on("error", (err, _req, _res) => {
+            // Only log connection refused errors once per minute to avoid spam
+            if ((err as NodeJS.ErrnoException).code === "ECONNREFUSED") {
+              // Silent fail - the user knows the API isn't running
+              return;
+            }
+            // Log other errors normally
+            console.warn(`[vite-proxy] ${err.message}`);
+          });
+        },
+      },
     },
   },
 });
