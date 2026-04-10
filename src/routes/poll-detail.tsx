@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
 import { usePoll } from "@/lib/queries/use-poll";
 import { useWalletContext } from "@/lib/midnight/wallet-context";
-import { WalletOnboarding } from "@/components/wallet-onboarding";
-import { getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
 import { VotePanel } from "@/components/vote-panel";
 import { ResultsPanel } from "@/components/results-panel";
 import { ProofPanel } from "@/components/proof-panel";
@@ -16,33 +13,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function PollDetailPage() {
   const { id } = useParams<{ id: string }>();
   const pollId = id!;
-  const { status, providers } = useWalletContext();
+  const { status } = useWalletContext();
   const isConnected = status === "connected";
 
-  const { poll, tallies, metadata, isLoading, isError, error, refetch } = usePoll(pollId);
-  // Track current block number for expiration check
-  const [currentBlock, setCurrentBlock] = useState<bigint>(BigInt(0));
-
-  useEffect(() => {
-    if (!providers?.indexerConfig?.indexerUri) return;
-
-    let cancelled = false;
-    getCurrentBlockNumber(providers.indexerConfig.indexerUri).then((block) => {
-      if (!cancelled) setCurrentBlock(block);
-    });
-
-    // Refresh block number periodically
-    const interval = setInterval(() => {
-      getCurrentBlockNumber(providers.indexerConfig.indexerUri).then((block) => {
-        if (!cancelled) setCurrentBlock(block);
-      });
-    }, 30_000);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, [providers?.indexerConfig?.indexerUri]);
+  const { poll, tallies, metadata, currentBlockHeight, isLoading, isError, error, refetch } = usePoll(pollId);
+  // Derive current block from server API (no wallet required)
+  const currentBlock = currentBlockHeight != null ? BigInt(currentBlockHeight) : BigInt(0);
 
   const isExpired =
     poll !== null &&
@@ -55,9 +31,7 @@ export default function PollDetailPage() {
   // Loading state
   if (isLoading) {
     return (
-      <>
-        <WalletOnboarding requiresWallet />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-7 space-y-6">
             <Skeleton className="h-6 w-48 bg-surface-container-highest" />
             <Skeleton className="h-16 w-full bg-surface-container-highest" />
@@ -74,16 +48,13 @@ export default function PollDetailPage() {
             <Skeleton className="h-32 w-full bg-surface-container-low rounded-xl" />
           </div>
         </div>
-      </>
     );
   }
 
   // Error state
   if (isError) {
     return (
-      <>
-        <WalletOnboarding requiresWallet />
-        <div className="text-center py-20">
+      <div className="text-center py-20">
           <span className="material-symbols-outlined text-error text-4xl mb-4 block">error</span>
           <p className="text-on-surface-variant text-lg mb-4">
             {error?.message ?? "Failed to load poll"}
@@ -96,16 +67,13 @@ export default function PollDetailPage() {
             Try Again
           </button>
         </div>
-      </>
     );
   }
 
   // Not found state
   if (!poll) {
     return (
-      <>
-        <WalletOnboarding requiresWallet />
-        <div className="text-center py-20">
+      <div className="text-center py-20">
           <span className="material-symbols-outlined text-on-surface-variant text-6xl mb-6 block">
             search_off
           </span>
@@ -122,15 +90,12 @@ export default function PollDetailPage() {
             <span className="material-symbols-outlined">arrow_back</span>
             Back to Polls
           </Link>
-        </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <WalletOnboarding requiresWallet />
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-8 md:pt-12">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-8 md:pt-12">
       {/* Left Column: Poll Identity & Voting */}
       <div className="lg:col-span-7 space-y-10">
         <div className="space-y-4">
@@ -224,6 +189,5 @@ export default function PollDetailPage() {
         </div>
       </div>
     </div>
-    </>
   );
 }
