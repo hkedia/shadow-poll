@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 260410-ikj
-last_updated: "2026-04-10T08:04:08.364Z"
-last_activity: 2026-04-10 - Completed quick task 260410-ikj: Show appropriate error message for invalid invite codes
+stopped_at: Completed 260410-j32
+last_updated: "2026-04-10T08:15:00.000Z"
+last_activity: 2026-04-10 - Completed quick task 260410-j32: Move all tests to top-level tests folder
 progress:
   total_phases: 13
   completed_phases: 12
@@ -195,9 +195,10 @@ None.
 | 260410-hvl | Remove VITE_POLL_CONTRACT_ADDRESS env var and use deployment.json instead | 2026-04-10 | 86cbdc7 | [260410-hvl-remove-vite-poll-contract-address-env-va](./quick/260410-hvl-remove-vite-poll-contract-address-env-va/) |
 | 260410-i2o | Fix @/ path alias with deployment.json in Docker | 2026-04-10 | 7c7eec4 | [260410-i2o-fix-path-alias-issue-with-deployment-jso](./quick/260410-i2o-fix-path-alias-issue-with-deployment-jso/) |
 | 260410-ikj | Show appropriate error message for invalid invite codes instead of generic failed to cast vote message | 2026-04-10 | 4decab7 | [260410-ikj-show-appropriate-error-message-for-inval](./quick/260410-ikj-show-appropriate-error-message-for-inval/) |
+| 260410-j32 | Move all tests to a top-level tests folder and consolidate lib/test utilities | 2026-04-10 | 8795061 | [260410-j32-move-all-tests-to-a-top-level-tests-fold](./quick/260410-j32-move-all-tests-to-a-top-level-tests-fold/) |
 
 ## Session Continuity
 
-Last session: 2026-04-10T08:04:08.353Z
-Stopped at: Completed 260410-ikj
+Last session: 2026-04-10T08:14:29.205Z
+Stopped at: Completed 260410-j32
 Resume file: None
