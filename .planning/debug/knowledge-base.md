@@ -20,3 +20,11 @@ Resolved debug sessions. Used by `gsd-debugger` to surface known-pattern hypothe
 - **Files changed:** components/header-nav.tsx, components/mobile-drawer.tsx, lib/midnight/contract-service.ts, lib/midnight/types.ts, lib/queries/use-stats.ts, lib/queries/use-participation-proof.ts, lib/queries/use-verify-proof.ts
 ---
 
+## wallet-modal-session-persistence — Wallet error modal dismissed permanently due to sessionStorage, never reappears after navigation or refresh
+- **Date:** 2026-04-10
+- **Error patterns:** wallet, modal, sessionStorage, dismissed, navigation, route, error, not_detected, connect
+- **Root cause:** The wallet error modal used `sessionStorage` to persist dismissal state with keys like `wallet-modal-dismissed-${status}`. Session storage persists across page reloads in the same tab, so once dismissed, the modal never reappeared even after navigation to new routes or page refresh. This was problematic because users who dismissed the modal on one page would never see it again when navigating to another page that also requires wallet connection.
+- **Fix:** Removed all sessionStorage usage from `wallet-onboarding.tsx`. Changed to use local React state only (`useState(false)`). Added `useEffect` to reset dismissed state when the error status changes. Modal now appears whenever there's an error state (`not_detected`, `error`) and can be dismissed temporarily, but will reappear on new navigation or if user tries to connect again.
+- **Files changed:** components/wallet-onboarding.tsx
+---
+
