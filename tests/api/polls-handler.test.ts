@@ -9,7 +9,7 @@ import { Hono } from 'hono';
 import { pollsRoutes } from '@/lib/api/polls-handler';
 
 vi.mock('@/lib/midnight/indexer-client', () => ({
-  fetchLatestBlock: vi.fn(),
+  fetchLatestBlock: vi.fn().mockResolvedValue({ height: 0 }),
   IndexerQueryError: class IndexerQueryError extends Error {
     constructor(message: string) {
       super(message);
