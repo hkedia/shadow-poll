@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 Phase: 11 (hono-api-migration) — EXECUTING
 Plan: 1 of 1
 Status: Phase complete — ready for verification
-Last activity: 2026-04-10 - Completed quick task 260410-bjv: Refactor wallet onboarding to dismissible app-wide banner
+Last activity: 2026-04-10 - Completed quick task 260410-c68: Replace wallet banner with modal dialog for error states
 
 Progress: [█████████2] 92%
 
@@ -183,9 +183,10 @@ None.
 | 260410-ag2 | Replace raw block numbers with human-readable expiration dates | 2026-04-10 | 68ab310 | [260410-ag2-update-poll-page-live-results-to-show-ex](./quick/260410-ag2-update-poll-page-live-results-to-show-ex/) |
 | 260410-ars | Make poll page show live results without wallet — only require wallet for voting and participation card | 2026-04-10 | 2ff00d7 | [260410-ars-make-poll-page-show-live-results-vote-co](./quick/260410-ars-make-poll-page-show-live-results-vote-co/) |
 | 260410-bjv | Refactor wallet onboarding to dismissible app-wide banner handling all wallet states | 2026-04-10 | 2c2c49d | [260410-bjv-refactor-wallet-onboarding-to-be-non-blo](./quick/260410-bjv-refactor-wallet-onboarding-to-be-non-blo/) |
+| 260410-c68 | Replace wallet banner with modal dialog for error states | 2026-04-10 | eff32fd | [260410-c68-replace-wallet-banner-with-modal-dialog-](./quick/260410-c68-replace-wallet-banner-with-modal-dialog-/) |
 
 ## Session Continuity
 
-Last session: 2026-04-10T03:04:53.667Z
-Stopped at: Completed 260410-bjv-PLAN.md
+Last session: 2026-04-10T03:15:53.668Z
+Stopped at: Completed 260410-c68
 Resume file: None
