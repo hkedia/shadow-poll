@@ -1,54 +1,53 @@
+import { blockToApproximateDate, formatExpirationDate, formatRelativeTime } from "@/lib/utils";
+
 interface ExpirationBadgeProps {
   expirationBlock: bigint;
   currentBlock?: bigint;
 }
 
 /**
- * Shows time remaining until a poll expires based on block numbers.
- * Assumes ~10 seconds per block on Midnight Preview network.
+ * Shows human-readable expiration time for a poll.
+ * Displays absolute date + relative time (e.g., "Expires Dec 15 (~2 days left)")
+ * instead of raw block numbers. Falls back to loading state while block height resolves.
  */
 export function ExpirationBadge({ expirationBlock, currentBlock }: ExpirationBadgeProps) {
-  // Fallback: show raw block number when current block is unknown
+  // Loading state: current block not yet fetched
   if (currentBlock === undefined) {
     return (
       <div className="flex items-center gap-2 text-on-surface-variant text-sm">
         <span className="material-symbols-outlined text-lg">schedule</span>
-        <span>Expires at block {expirationBlock.toString()}</span>
+        <span>Loading expiration...</span>
       </div>
     );
   }
 
   const isExpired = expirationBlock <= currentBlock;
 
+  // Expired: show closed status with expiration date
   if (isExpired) {
+    const expiredDate = blockToApproximateDate(expirationBlock, currentBlock);
+    const formattedDate = formatExpirationDate(expiredDate);
+    const label = formattedDate ? `Closed · Expired ${formattedDate}` : "Closed";
+
     return (
       <div className="flex items-center gap-2 text-on-surface-variant text-sm">
         <span className="material-symbols-outlined text-lg">lock</span>
-        <span>Closed</span>
+        <span>{label}</span>
       </div>
     );
   }
 
-  // Calculate remaining blocks and approximate time
+  // Active: show absolute date + relative time
+  const expirationDate = blockToApproximateDate(expirationBlock, currentBlock);
   const remainingBlocks = Number(expirationBlock - currentBlock);
   const remainingSeconds = remainingBlocks * 10; // ~10 seconds per block on Midnight Preview
-  const remainingMinutes = Math.floor(remainingSeconds / 60);
-  const remainingHours = Math.floor(remainingMinutes / 60);
-  const remainingDays = Math.floor(remainingHours / 24);
-
-  let label: string;
-  if (remainingDays > 0) {
-    label = `~${remainingDays} day${remainingDays !== 1 ? "s" : ""} left`;
-  } else if (remainingHours > 0) {
-    label = `~${remainingHours} hour${remainingHours !== 1 ? "s" : ""} left`;
-  } else {
-    label = `~${Math.max(1, remainingMinutes)} min left`;
-  }
+  const dateStr = formatExpirationDate(expirationDate);
+  const relativeStr = formatRelativeTime(remainingSeconds);
 
   return (
     <div className="flex items-center gap-2 text-on-surface-variant text-sm">
       <span className="material-symbols-outlined text-lg">schedule</span>
-      <span>{label}</span>
+      <span>{dateStr ? `Expires ${dateStr} (${relativeStr})` : relativeStr}</span>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { PollTallies } from "@/lib/midnight/ledger-utils";
+import { blockToApproximateDate, formatExpirationDate } from "@/lib/utils";
 import { ExpirationBadge } from "./expiration-badge";
 
 interface ResultsPanelProps {
@@ -73,7 +74,14 @@ export function ResultsPanel({ options, tallies, expirationBlock, currentBlock }
 
       {/* Footer */}
       <div className="pt-4 border-t border-outline-variant/10 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-on-surface-variant">
-        <span>{total.toString()} total votes</span>
+        <span>
+          {total.toString()} total votes
+          {(() => {
+            const expDate = blockToApproximateDate(expirationBlock, currentBlock);
+            const formatted = formatExpirationDate(expDate);
+            return formatted ? ` · ${formatted}` : "";
+          })()}
+        </span>
         <ExpirationBadge expirationBlock={expirationBlock} currentBlock={currentBlock} />
       </div>
     </div>
