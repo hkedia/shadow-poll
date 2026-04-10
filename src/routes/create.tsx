@@ -1,12 +1,8 @@
 import { CreatePollForm } from "@/components/create-poll-form";
-import { WalletOnboarding } from "@/components/wallet-onboarding";
 
 export default function CreatePollPage() {
   return (
     <div className="max-w-4xl mx-auto w-full">
-      {/* Show the blocking wallet onboarding modal on this page */}
-      <WalletOnboarding requiresWallet />
-      <WalletOnboarding requiresWallet />
       {/* Hero header */}
       <div className="pt-8 md:pt-12 mb-12 text-left md:text-center md:max-w-2xl md:mx-auto">
         <h1 className="font-headline text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 text-on-surface text-balance">

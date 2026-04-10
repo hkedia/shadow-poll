@@ -1,6 +1,4 @@
 import { Link } from "react-router";
-import { useWalletContext } from "@/lib/midnight/wallet-context";
-import { InstallPrompt } from "@/components/install-prompt";
 
 /** Feature card for the landing page feature grid */
 function FeatureCard({
@@ -316,14 +314,7 @@ function LandingContent() {
   );
 }
 
-/** Home page — landing for visitors, redirects connected users to trending */
+/** Home page — always shows landing content */
 export default function HomePage() {
-  const { status } = useWalletContext();
-
-  if (status === "not_detected") {
-    return <InstallPrompt />;
-  }
-
-  // Landing page for all states (connected, disconnected, connecting, etc.)
   return <LandingContent />;
 }
