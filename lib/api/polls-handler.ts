@@ -15,7 +15,7 @@ import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-p
 import { ledger as parseLedger } from "@/contracts/managed/contract";
 import { fetchLatestBlock, IndexerQueryError } from "@/lib/midnight/indexer-client";
 import { readTallies, hexToBytes } from "@/lib/midnight/ledger-utils";
-import deployment from "@/deployment.json";
+import deployment from "../../deployment.json";
 
 export const pollsRoutes = new Hono();
 pollsRoutes.use("/api/polls*", cors());

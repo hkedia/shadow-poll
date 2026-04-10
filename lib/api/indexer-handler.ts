@@ -22,7 +22,7 @@ import {
   fetchPollContractStatus,
   IndexerQueryError,
 } from "@/lib/midnight/indexer-client";
-import deployment from "@/deployment.json";
+import deployment from "../../deployment.json";
 
 export const indexerRoutes = new Hono();
 indexerRoutes.use("/api/indexer*", cors());
