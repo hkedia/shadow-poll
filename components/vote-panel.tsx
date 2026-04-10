@@ -175,16 +175,36 @@ export function VotePanel({ options, pollId, isExpired, isConnected, pollType }:
         {activeMutation.isError && (() => {
           const msg = activeMutation.error?.message ?? "";
           let friendly: string;
+          let isInfo = false;
+
           if (msg.includes("Already voted")) {
             friendly = "You have already voted on this poll.";
+            isInfo = true;
           } else if (msg.includes("Invite code already used")) {
             friendly = "This invite code has already been used. Each code can only be used once.";
+            isInfo = true;
+          } else if (msg.includes("Invalid invite code")) {
+            friendly = "This invite code is not valid for this poll.";
+            isInfo = true;
+          } else if (msg.includes("Poll has expired")) {
+            friendly = "This poll has expired and no longer accepts votes.";
+            isInfo = true;
+          } else if (msg.includes("Poll not found")) {
+            friendly = "This poll could not be found. It may have been removed.";
+            isInfo = true;
+          } else if (msg.includes("Invalid option index")) {
+            friendly = "Invalid vote option. Please refresh the page and try again.";
+            isInfo = false;
+          } else if (msg.includes("Use cast_vote for public polls") || msg.includes("Use cast_invite_vote for invite-only polls")) {
+            friendly = "Wrong vote method for this poll type. Please refresh the page and try again.";
+            isInfo = false;
           } else if (msg.includes("Transaction submission error") || msg.includes("Operation failed")) {
             friendly = "Transaction failed to submit. Please try again — your wallet may need to be reconnected.";
+            isInfo = false;
           } else {
             friendly = "Failed to cast vote. Please try again.";
+            isInfo = false;
           }
-          const isInfo = msg.includes("Already voted") || msg.includes("Invite code already used");
           return (
             <p className="mt-4 text-error text-sm flex items-center gap-2">
               <span className="material-symbols-outlined text-base">{isInfo ? "info" : "error"}</span>
