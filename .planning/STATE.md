@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 260410-hvl
+stopped_at: Completed 260410-i2o
 last_updated: "2026-04-10T06:05:00.000Z"
-last_activity: 2026-04-10 - Completed quick task 260410-hvl: Remove VITE_POLL_CONTRACT_ADDRESS env var and use deployment.json instead
+last_activity: 2026-04-10 - Completed quick task 260410-i2o: Fix @/ path alias with deployment.json in Docker
 progress:
   total_phases: 13
   completed_phases: 12
@@ -191,6 +191,7 @@ None.
 | 260410-fu0 | Update Dockerfile for tests and remove unused dependencies | 2026-04-10 | be45f4f | [260410-fu0-update-dockerfile-for-tests-and-remove-u](./quick/260410-fu0-update-dockerfile-for-tests-and-remove-u/) |
 | 260410-g31 | Fix Vite proxy error handling when API server is not running | 2026-04-10 | 8c3a893 | [260410-g31-fix-vite-proxy-error-handling-when-api-s](./quick/260410-g31-fix-vite-proxy-error-handling-when-api-s/) |
 | 260410-hvl | Remove VITE_POLL_CONTRACT_ADDRESS env var and use deployment.json instead | 2026-04-10 | 86cbdc7 | [260410-hvl-remove-vite-poll-contract-address-env-va](./quick/260410-hvl-remove-vite-poll-contract-address-env-va/) |
+| 260410-i2o | Fix @/ path alias with deployment.json in Docker | 2026-04-10 | 7c7eec4 | [260410-i2o-fix-path-alias-issue-with-deployment-jso](./quick/260410-i2o-fix-path-alias-issue-with-deployment-jso/) |
 
 ## Session Continuity
 
