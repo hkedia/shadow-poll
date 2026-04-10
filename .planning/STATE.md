@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 260410-i2o
-last_updated: "2026-04-10T06:05:00.000Z"
-last_activity: 2026-04-10 - Completed quick task 260410-i2o: Fix @/ path alias with deployment.json in Docker
+stopped_at: Completed 260410-ikj
+last_updated: "2026-04-10T08:04:08.364Z"
+last_activity: 2026-04-10 - Completed quick task 260410-ikj: Show appropriate error message for invalid invite codes
 progress:
   total_phases: 13
   completed_phases: 12
@@ -72,6 +72,7 @@ Progress: [█████████2] 92%
 | Phase quick P260410-ag2 | 2min | 1 tasks | 3 files |
 | Phase quick/260410-ars P01 | 6min | 2 tasks | 2 files |
 | Phase quick/260410-bjv P01 | 8min | 2 tasks | 7 files |
+| Phase quick/260410-ikj-show-appropriate-error-message-for-inval P01 | 1min | 1 tasks | 1 files |
 
 ## Phase 7 Design Decisions (from discussion)
 
@@ -165,6 +166,7 @@ Recent decisions affecting current work:
 - [Phase quick/260410-bjv]: D-bjv-01: WalletOnboarding uses sessionStorage keyed by status for per-state dismissal
 - [Phase quick/260410-bjv]: D-bjv-02: App-level mount inside WalletProvider — banner appears on all pages
 - [Phase quick/260410-bjv]: D-bjv-03: Removed requiresWallet prop — component self-selects visibility from context
+- [Phase quick/260410-ikj]: Informational contract errors (Already voted, Invite code already used, Invalid invite code, Poll has expired, Poll not found) show info icon; technical errors show error icon
 
 ### Roadmap Evolution
 
@@ -192,9 +194,10 @@ None.
 | 260410-g31 | Fix Vite proxy error handling when API server is not running | 2026-04-10 | 8c3a893 | [260410-g31-fix-vite-proxy-error-handling-when-api-s](./quick/260410-g31-fix-vite-proxy-error-handling-when-api-s/) |
 | 260410-hvl | Remove VITE_POLL_CONTRACT_ADDRESS env var and use deployment.json instead | 2026-04-10 | 86cbdc7 | [260410-hvl-remove-vite-poll-contract-address-env-va](./quick/260410-hvl-remove-vite-poll-contract-address-env-va/) |
 | 260410-i2o | Fix @/ path alias with deployment.json in Docker | 2026-04-10 | 7c7eec4 | [260410-i2o-fix-path-alias-issue-with-deployment-jso](./quick/260410-i2o-fix-path-alias-issue-with-deployment-jso/) |
+| 260410-ikj | Show appropriate error message for invalid invite codes instead of generic failed to cast vote message | 2026-04-10 | 4decab7 | [260410-ikj-show-appropriate-error-message-for-inval](./quick/260410-ikj-show-appropriate-error-message-for-inval/) |
 
 ## Session Continuity
 
-Last session: 2026-04-10T04:00:25.060Z
-Stopped at: Completed 260410-g31
+Last session: 2026-04-10T08:04:08.353Z
+Stopped at: Completed 260410-ikj
 Resume file: None
