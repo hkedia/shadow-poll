@@ -30,37 +30,19 @@ function WalletModal({
   error: string | null;
   connect: () => Promise<void>;
 }) {
-  const storageKey = `wallet-modal-dismissed-${status}`;
-  const [dismissed, setDismissed] = useState(() => {
-    try {
-      return sessionStorage.getItem(storageKey) === "true";
-    } catch {
-      return false;
-    }
-  });
-
-  // When status changes to a different modal-worthy state, the key changes
-  // so this effect resets dismissed state for the new key
-  useEffect(() => {
-    setDismissed(() => {
-      try {
-        return sessionStorage.getItem(storageKey) === "true";
-      } catch {
-        return false;
-      }
-    });
-  }, [storageKey]);
+  // Local state only - no persistence. Modal reappears on navigation or re-render.
+  const [dismissed, setDismissed] = useState(false);
 
   const handleDismiss = () => {
     setDismissed(true);
-    try {
-      sessionStorage.setItem(storageKey, "true");
-    } catch {
-      // sessionStorage unavailable
-    }
   };
 
-  // Modal is controlled — open when not dismissed, close when dismissed
+  // Reset dismissed state when status changes so modal shows again for new errors
+  useEffect(() => {
+    setDismissed(false);
+  }, [status]);
+
+  // Modal is controlled — open when not dismissed
   const isOpen = !dismissed;
 
   return (
