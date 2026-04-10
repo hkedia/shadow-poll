@@ -5,7 +5,7 @@ milestone_name: milestone
 status: completed
 stopped_at: Milestone 1 completed
 last_updated: "2026-04-10T08:32:00.000Z"
-last_activity: 2026-04-10 - Completed quick task 260410-jhm: Fix polls-handler.test.ts 500 status failure
+last_activity: 2026-04-10 - Completed quick task 260410-kb8: prepare a comprehensive readme
 progress:
   total_phases: 13
   completed_phases: 12
@@ -197,6 +197,7 @@ None.
 | 260410-ikj | Show appropriate error message for invalid invite codes instead of generic failed to cast vote message | 2026-04-10 | 4decab7 | [260410-ikj-show-appropriate-error-message-for-inval](./quick/260410-ikj-show-appropriate-error-message-for-inval/) |
 | 260410-j32 | Move all tests to a top-level tests folder and consolidate lib/test utilities | 2026-04-10 | 8795061 | [260410-j32-move-all-tests-to-a-top-level-tests-fold](./quick/260410-j32-move-all-tests-to-a-top-level-tests-fold/) |
 | 260410-jhm | Fix polls-handler.test.ts 500 status failure (fetchLatestBlock mock missing return value) | 2026-04-10 | f246ba2 | - |
+| 260410-kb8 | prepare a comprehensive readme for the app. it should the app logo and name, tech stack, folder structure(only code), testing setup and other important details. an arhcitecture diagram using mermaid. details on how someone can setup the app for running locally. Ultimately this app will be opensource which others can use as a reference for building apps on midnight, so the readme sould be really good | 2026-04-10 | d02276c | [260410-kb8-prepare-a-comprehensive-readme-for-the-a](./quick/260410-kb8-prepare-a-comprehensive-readme-for-the-a/) |
 
 ## Session Continuity
 
