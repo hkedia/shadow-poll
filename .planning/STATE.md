@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 260410-d7c
-last_updated: "2026-04-10T04:58:04.015Z"
+stopped_at: Completed 260410-fu0
+last_updated: "2026-04-10T06:00:00.000Z"
 last_activity: 2026-04-10
 progress:
   total_phases: 13
@@ -188,6 +188,7 @@ None.
 | 260410-c68 | Replace wallet banner with modal dialog for error states | 2026-04-10 | eff32fd | [260410-c68-replace-wallet-banner-with-modal-dialog-](./quick/260410-c68-replace-wallet-banner-with-modal-dialog-/) |
 | 260410-cxl | Remove sessionStorage from wallet modal - show on every error state | 2026-04-10 | 2dc6ea7 | [260410-cxl-remove-sessionstorage-from-wallet-modal-](./quick/260410-cxl-remove-sessionstorage-from-wallet-modal-/) |
 | 260410-d7c | Fix wallet detection to show modal instantly when no wallet detected | 2026-04-10 | 252d117 | [260410-d7c-fix-wallet-detection-to-show-modal-insta](./quick/260410-d7c-fix-wallet-detection-to-show-modal-insta/) |
+| 260410-fu0 | Update Dockerfile for tests and remove unused dependencies | 2026-04-10 | be45f4f | [260410-fu0-update-dockerfile-for-tests-and-remove-u](./quick/260410-fu0-update-dockerfile-for-tests-and-remove-u/) |
 
 ## Session Continuity
 
