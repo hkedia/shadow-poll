@@ -329,29 +329,6 @@ docker-compose up
 
 The Docker setup handles `DATABASE_URL` via environment variable injection. Ensure your `.env.local` is properly configured before building.
 
-## Contributing
-
-Shadow Poll is an open-source project and contributions are welcome.
-
-### Guidelines
-
-- Follow existing code conventions:
-  - Files: `kebab-case.ts`
-  - Components: `PascalCase.tsx`
-  - Functions/variables: `camelCase`
-- Use `import type { X }` for type-only imports
-- Use `@/` path alias for project root imports
-- Ensure all tests pass before submitting PRs: `bun test`
-- Run linting: `bun run lint`
-
-### Code Review
-
-All submissions require review. Pull requests are validated against:
-
-- ESLint compliance (`bun run lint`)
-- Test suite pass (`bun test`)
-- TypeScript compilation
-
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
