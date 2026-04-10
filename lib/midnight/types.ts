@@ -113,11 +113,6 @@ export interface MidnightProviderSet {
 
 export interface WalletState {
   status: ConnectionStatus;
-  /** True when the current connection attempt is an automatic reconnect on page load
-   *  (not triggered by user interaction). Used to suppress approval-prompt UI during
-   *  silent autoconnect — the 1am wallet silently reconnects already-authorized sites
-   *  without showing a popup, so the "approve the connection" overlay would be misleading. */
-  isAutoConnecting: boolean;
   /** Full shielded address string — used as the display address */
   address: string | null;
   truncatedAddress: string | null;
@@ -130,14 +125,5 @@ export interface WalletState {
 export interface WalletContextValue extends WalletState {
   connect: () => Promise<void>;
   disconnect: () => void;
-  /**
-   * Triggers the full 1am.xyz wallet detection polling loop and silently
-   * reconnects if the user previously authorized this site.
-   *
-   * Only called by WalletAutoConnect on pages that require wallet interaction
-   * (/create, /poll/[id]). Never called globally so the polling loop doesn't
-   * fire on every page load.
-   */
-  triggerAutoConnect: () => Promise<void>;
   isDetected: boolean;
 }
