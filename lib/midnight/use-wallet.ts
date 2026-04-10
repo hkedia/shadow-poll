@@ -8,32 +8,17 @@ function truncateAddress(address: string): string {
 }
 
 /**
- * Detects the 1am.xyz wallet using the official polling pattern from 1am.xyz/ai.txt.
- * Polls window.midnight['1am'] with up to 50 attempts × 100ms = 5 seconds total.
- * This handles the race condition where the extension injects after the page loads.
+ * Detects the 1am.xyz wallet by checking window.midnight['1am'] synchronously.
+ * Returns immediately - no polling delay for better UX.
+ * The wallet extension injects synchronously on page load, so immediate check is sufficient.
  *
- * @returns The wallet's InitialAPI, or null if not found within the timeout
+ * @returns The wallet's InitialAPI, or null if not found
  */
 function detectWallet(): Promise<unknown | null> {
   return new Promise((resolve) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const wallet = (window as any)?.midnight?.["1am"];
-    if (wallet) {
-      resolve(wallet);
-      return;
-    }
-    let attempts = 0;
-    const interval = setInterval(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const w = (window as any)?.midnight?.["1am"];
-      if (w) {
-        clearInterval(interval);
-        resolve(w);
-      } else if (++attempts > 50) {
-        clearInterval(interval);
-        resolve(null);
-      }
-    }, 100);
+    resolve(wallet || null);
   });
 }
 
@@ -111,6 +96,8 @@ export function useWallet() {
   // connect — triggered by user interaction
   const connect = useCallback(async () => {
     if (typeof window === "undefined") return;
+    // Set connecting state immediately for better UX
+    setState((s) => ({ ...s, status: "connecting", error: null }));
     const walletApi = await detectWallet();
     if (!walletApi) {
       setState((s) => ({ ...s, status: "not_detected" }));
