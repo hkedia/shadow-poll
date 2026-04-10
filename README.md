@@ -6,7 +6,7 @@
 
 **Anonymous polling on Midnight blockchain**
 
-Shadow Poll is an open-source reference implementation of a confidential polling application built on the Midnight blockchain. Vote anonymously with cryptographic guarantees — no one can link a voter to their choice, but anyone can verify a vote was legitimately cast.
+Shadow Poll is a confidential polling application built on the Midnight blockchain. Vote anonymously with cryptographic guarantees — no one can link a voter to their choice, but anyone can verify a vote was legitimately cast.
 
 ## Architecture
 
