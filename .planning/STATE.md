@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 Phase: 11 (hono-api-migration) — EXECUTING
 Plan: 1 of 1
 Status: Phase complete — ready for verification
-Last activity: 2026-04-10 - Completed quick task 260410-cxl: Remove sessionStorage from wallet modal - show on every error state
+Last activity: 2026-04-10 - Completed quick task 260410-d7c: Fix wallet detection to show modal instantly when no wallet detected
 
 Progress: [█████████2] 92%
 
@@ -185,9 +185,10 @@ None.
 | 260410-bjv | Refactor wallet onboarding to dismissible app-wide banner handling all wallet states | 2026-04-10 | 2c2c49d | [260410-bjv-refactor-wallet-onboarding-to-be-non-blo](./quick/260410-bjv-refactor-wallet-onboarding-to-be-non-blo/) |
 | 260410-c68 | Replace wallet banner with modal dialog for error states | 2026-04-10 | eff32fd | [260410-c68-replace-wallet-banner-with-modal-dialog-](./quick/260410-c68-replace-wallet-banner-with-modal-dialog-/) |
 | 260410-cxl | Remove sessionStorage from wallet modal - show on every error state | 2026-04-10 | 2dc6ea7 | [260410-cxl-remove-sessionstorage-from-wallet-modal-](./quick/260410-cxl-remove-sessionstorage-from-wallet-modal-/) |
+| 260410-d7c | Fix wallet detection to show modal instantly when no wallet detected | 2026-04-10 | 252d117 | [260410-d7c-fix-wallet-detection-to-show-modal-insta](./quick/260410-d7c-fix-wallet-detection-to-show-modal-insta/) |
 
 ## Session Continuity
 
-Last session: 2026-04-10T03:48:42.523Z
-Stopped at: Completed 260410-cxl
+Last session: 2026-04-10T04:00:25.060Z
+Stopped at: Completed 260410-d7c
 Resume file: None
