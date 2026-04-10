@@ -27,22 +27,24 @@ describe('witness-impl', () => {
       const secretKey = new Uint8Array(32).fill(99);
       const witnesses = createWitnesses<unknown>(secretKey, 1000n);
 
-      const context = { privateState: {} };
-      const [newContext, returnedKey] = witnesses.local_secret_key(context);
+      const privateState = {};
+      const context = { privateState };
+      const [newPrivateState, returnedKey] = witnesses.local_secret_key(context);
 
       expect(returnedKey).toEqual(secretKey);
-      expect(newContext).toBe(context); // Context passed through unchanged
+      expect(newPrivateState).toBe(privateState); // Private state passed through unchanged
     });
 
     it('should return block number from current_block_number witness', () => {
       const blockNumber = 5000n;
       const witnesses = createWitnesses<unknown>(new Uint8Array(32), blockNumber);
 
-      const context = { privateState: {} };
-      const [newContext, returnedBlock] = witnesses.current_block_number(context);
+      const privateState = {};
+      const context = { privateState };
+      const [newPrivateState, returnedBlock] = witnesses.current_block_number(context);
 
       expect(returnedBlock).toBe(blockNumber);
-      expect(newContext).toBe(context); // Context passed through unchanged
+      expect(newPrivateState).toBe(privateState); // Private state passed through unchanged
     });
 
     it('should maintain private state through witnesses', () => {

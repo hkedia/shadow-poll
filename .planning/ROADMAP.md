@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility
 - [x] **Phase 8: Vite Migration** - Replace Next.js + Turbopack with Vite + React Router + Bun.serve() to resolve Midnight SDK WASM runtime loading failures and align build tooling with the app's SPA architecture (completed 2026-04-09)
 - [ ] **Phase 12: Docker Deployment** - Package app as Docker container, add health check, deploy to fly.io
-- [ ] **Phase 13: Comprehensive testing with testkit-js for Midnight contracts and app-wide test coverage** - Integrate testkit-js for Compact contract testing, add Vitest test suite for all app components and services
+- [x] **Phase 13: Comprehensive testing with testkit-js for Midnight contracts and app-wide test coverage** - Integrate testkit-js for Compact contract testing, add Vitest test suite for all app components and services (completed 2026-04-10)
 
 ## Phase Details
 
@@ -321,7 +321,7 @@ Plans:
 **Goal:** Integrate testkit-js for Compact contract testing and achieve comprehensive app-wide test coverage with Vitest and Testing Library
 **Requirements**: TEST-01, TEST-02, TEST-03, TEST-04, TEST-05, TEST-06, TEST-07, TEST-08, TEST-09, TEST-10
 **Depends on:** Phase 12
-**Plans:** 6 plans
+**Plans:** 6/6 plans complete
 
 **Success Criteria** (what must be TRUE):
   1. @midnight-ntwrk/testkit-js is installed and configured for contract testing
@@ -333,11 +333,11 @@ Plans:
   7. `bun run test` executes all test suites successfully
 
 Plans:
-- [ ] 13-01-PLAN.md — Test infrastructure setup: install testkit-js, configure Vitest multi-project, create test utilities with mocked providers
-- [ ] 13-02-PLAN.md — Contract circuit tests: test poll.compact circuits using testkit-js simulator
-- [ ] 13-03-PLAN.md — Service layer tests: test contract-service.ts, invite-codes.ts, ledger-utils.ts, witness-impl.ts
-- [ ] 13-04-PLAN.md — Data hook tests: test useCreatePoll, useVoteMutation, useMetadata, usePoll with QueryClient
-- [ ] 13-05-PLAN.md — API route tests: test health, metadata, polls, indexer handlers with Hono test client
-- [ ] 13-06-PLAN.md — Utility and component tests: test utils.ts, PollCard, VoteButton, InviteCodePanel
+- [x] 13-01-PLAN.md — Test infrastructure setup: install testkit-js, configure Vitest multi-project, create test utilities with mocked providers
+- [x] 13-02-PLAN.md — Contract circuit tests: test poll.compact circuits using testkit-js simulator
+- [x] 13-03-PLAN.md — Service layer tests: test contract-service.ts, invite-codes.ts, ledger-utils.ts, witness-impl.ts
+- [x] 13-04-PLAN.md — Data hook tests: test useCreatePoll, useVoteMutation, useMetadata, usePoll with QueryClient
+- [x] 13-05-PLAN.md — API route tests: test health, metadata, polls, indexer handlers with Hono test client
+- [x] 13-06-PLAN.md — Utility and component tests: test utils.ts, PollCard, VoteButton, InviteCodePanel
 
 **UI hint**: no

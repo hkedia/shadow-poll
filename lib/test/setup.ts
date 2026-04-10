@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 
 // Mock window.matchMedia for component tests
@@ -16,15 +16,22 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Mock localStorage
+// Mock localStorage with actual storage
+const localStorageStore = new Map<string, string>();
 const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
+  getItem: vi.fn((key: string) => localStorageStore.get(key) ?? null),
+  setItem: vi.fn((key: string, value: string) => localStorageStore.set(key, value)),
+  removeItem: vi.fn((key: string) => localStorageStore.delete(key)),
+  clear: vi.fn(() => localStorageStore.clear()),
 };
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
+  writable: true,
+});
+
+// Clear localStorage before each test
+beforeEach(() => {
+  localStorageStore.clear();
 });
 
 // Mock crypto.getRandomValues for invite code generation

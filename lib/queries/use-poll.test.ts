@@ -157,8 +157,11 @@ describe('usePoll', () => {
     expect(result.current.isLoading).toBe(true);
   });
 
-  it('should not fetch when pollId is null', async () => {
-    const fetchSpy = vi.fn();
+  it('should not fetch poll data when pollId is null', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ height: 1000 }),
+    });
     global.fetch = fetchSpy;
 
     const { result } = renderHook(
@@ -166,8 +169,14 @@ describe('usePoll', () => {
       { wrapper: createWrapper() }
     );
 
-    expect(result.current.isLoading).toBe(false);
-    expect(fetchSpy).not.toHaveBeenCalled();
+    // Wait for block query to complete
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    
+    // Block height is still fetched, but poll-specific endpoints should not be called
+    const pollFetchCalls = fetchSpy.mock.calls.filter(
+      (call: string[]) => call[0]?.includes('/api/polls')
+    );
+    expect(pollFetchCalls).toHaveLength(0);
   });
 
   it('should refetch both poll and tallies', async () => {

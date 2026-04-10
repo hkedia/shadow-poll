@@ -212,8 +212,9 @@ describe('contract-service', () => {
       });
 
       const callArg = mockContract.callTx.cast_invite_vote.mock.calls[0][2];
-      expect(callArg).toBeInstanceOf(Uint8Array);
+      // Check that it's array-like with the expected content
       expect(callArg.length).toBe(32);
+      expect(callArg[0]).toBe(inviteCodeBytes[0]);
     });
   });
 

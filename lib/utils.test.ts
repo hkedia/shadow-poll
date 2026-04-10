@@ -89,8 +89,8 @@ describe('utils', () => {
 
     it('should calculate correct duration', () => {
       // Assuming 10 seconds per block
-      const currentBlock = 0n;
-      const targetBlock = 6n; // 1 minute = 6 blocks * 10 seconds
+      const currentBlock = 100n;
+      const targetBlock = 106n; // 1 minute = 6 blocks * 10 seconds
       
       const date = blockToApproximateDate(targetBlock, currentBlock);
       const expectedMs = 6 * 10 * 1000; // 6 blocks * 10 seconds * 1000ms

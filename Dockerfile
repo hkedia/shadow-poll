@@ -41,6 +41,9 @@ COPY server.ts ./
 COPY lib ./lib/
 COPY tsconfig.json ./
 
+# Remove test files from production image
+RUN find ./lib -name "*.test.ts" -type f -delete
+
 # Run as non-root user for security
 USER bun
 

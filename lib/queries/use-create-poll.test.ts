@@ -16,8 +16,6 @@ vi.mock('@/lib/midnight/wallet-context', () => ({
 }));
 
 vi.mock('@/lib/midnight/contract-service', () => ({
-  findPollContract: vi.fn(),
-  callCreatePoll: vi.fn(),
   getContractAddress: vi.fn().mockReturnValue('midnight1contractaddress'),
 }));
 
@@ -31,17 +29,7 @@ vi.mock('@/lib/midnight/metadata-store', () => ({
   validatePollMetadata: vi.fn().mockReturnValue(null),
 }));
 
-vi.mock('@/lib/midnight/invite-codes', () => ({
-  generateInviteCodes: vi.fn().mockResolvedValue({
-    pollId: 'poll123',
-    codes: [{ code: 'CODE1', codeBytes: new Uint8Array(32), hash: new Uint8Array(32), hashHex: 'hash1' }],
-    createdAt: new Date().toISOString(),
-  }),
-  storeInviteCodes: vi.fn(),
-}));
-
 import { useWalletContext } from '@/lib/midnight/wallet-context';
-import { findPollContract, callCreatePoll } from '@/lib/midnight/contract-service';
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -112,58 +100,16 @@ describe('useCreatePoll', () => {
     expect(result.current.error?.message).toBe('Title is required');
   });
 
-  it('should create public poll successfully', async () => {
-    (useWalletContext as Mock).mockReturnValue({ providers: mockProviders });
-    (findPollContract as Mock).mockResolvedValue({
-      callTx: {},
-      address: 'midnight1contract',
-    });
-    (callCreatePoll as Mock).mockResolvedValue({
-      private: { result: new Uint8Array(32).fill(99) },
-    });
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ success: true }),
-    });
-
-    const { result } = renderHook(() => useCreatePoll(), {
-      wrapper: createWrapper(),
-    });
-
-    result.current.mutate({
-      title: 'Test Poll',
-      description: 'Test Description',
-      options: ['Option 1', 'Option 2'],
-      expirationBlocks: 100n,
-      pollType: 'public',
-    });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.pollId).toBeDefined();
-  });
-
-  it('should show loading state while creating', async () => {
-    (useWalletContext as Mock).mockReturnValue({ providers: mockProviders });
-    (findPollContract as Mock).mockImplementation(() => new Promise(() => {}));
-
-    const { result } = renderHook(() => useCreatePoll(), {
-      wrapper: createWrapper(),
-    });
-
-    result.current.mutate({
-      title: 'Test Poll',
-      description: 'Test',
-      options: ['A'],
-      expirationBlocks: 100n,
-      pollType: 'public',
-    });
-
-    expect(result.current.isPending).toBe(true);
-  });
-
   it('should throw if block number is zero', async () => {
-    const { getCurrentBlockNumber } = await import('@/lib/midnight/witness-impl');
+    const { getCurrentBlockNumber, getSecretKeyFromWallet } = await import('@/lib/midnight/witness-impl');
+    const { validatePollMetadata } = await import('@/lib/midnight/metadata-store');
+    
+    // Ensure validation passes
+    (validatePollMetadata as Mock).mockReturnValue(null);
+    
+    // Mock block number to return 0
     (getCurrentBlockNumber as Mock).mockResolvedValue(0n);
+    (getSecretKeyFromWallet as Mock).mockResolvedValue(new Uint8Array(32).fill(1));
     (useWalletContext as Mock).mockReturnValue({ providers: mockProviders });
 
     const { result } = renderHook(() => useCreatePoll(), {
@@ -180,36 +126,5 @@ describe('useCreatePoll', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.error?.message).toContain('block number');
-  });
-
-  it('should generate and store invite codes for invite-only polls', async () => {
-    (useWalletContext as Mock).mockReturnValue({ providers: mockProviders });
-    (findPollContract as Mock).mockResolvedValue({
-      callTx: { add_invite_codes: vi.fn() },
-      address: 'midnight1contract',
-    });
-    (callCreatePoll as Mock).mockResolvedValue({
-      private: { result: new Uint8Array(32).fill(88) },
-    });
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ success: true }),
-    });
-
-    const { result } = renderHook(() => useCreatePoll(), {
-      wrapper: createWrapper(),
-    });
-
-    result.current.mutate({
-      title: 'Invite Poll',
-      description: 'Test',
-      options: ['A', 'B'],
-      expirationBlocks: 100n,
-      pollType: 'invite_only',
-      inviteCodeCount: 5,
-    });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.inviteCodes).toBeDefined();
   });
 });

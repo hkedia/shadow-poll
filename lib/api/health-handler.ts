@@ -1,6 +1,8 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 
 export const healthRoutes = new Hono();
+healthRoutes.use("/api/health", cors());
 
 healthRoutes.get("/api/health", async (c) => {
   try {
