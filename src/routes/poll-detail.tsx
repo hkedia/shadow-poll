@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
 import { usePoll } from "@/lib/queries/use-poll";
-import { useWalletContext, WalletAutoConnect } from "@/lib/midnight/wallet-context";
+import { useWalletContext } from "@/lib/midnight/wallet-context";
 import { WalletOnboarding } from "@/components/wallet-onboarding";
 import { getCurrentBlockNumber } from "@/lib/midnight/witness-impl";
 import { VotePanel } from "@/components/vote-panel";
@@ -56,7 +56,6 @@ export default function PollDetailPage() {
   if (isLoading) {
     return (
       <>
-        <WalletAutoConnect />
         <WalletOnboarding requiresWallet />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-7 space-y-6">
@@ -83,7 +82,6 @@ export default function PollDetailPage() {
   if (isError) {
     return (
       <>
-        <WalletAutoConnect />
         <WalletOnboarding requiresWallet />
         <div className="text-center py-20">
           <span className="material-symbols-outlined text-error text-4xl mb-4 block">error</span>
@@ -106,7 +104,6 @@ export default function PollDetailPage() {
   if (!poll) {
     return (
       <>
-        <WalletAutoConnect />
         <WalletOnboarding requiresWallet />
         <div className="text-center py-20">
           <span className="material-symbols-outlined text-on-surface-variant text-6xl mb-6 block">
@@ -132,7 +129,6 @@ export default function PollDetailPage() {
 
   return (
     <>
-      <WalletAutoConnect />
       <WalletOnboarding requiresWallet />
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start pt-8 md:pt-12">
       {/* Left Column: Poll Identity & Voting */}

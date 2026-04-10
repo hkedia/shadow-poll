@@ -1,13 +1,11 @@
 import { CreatePollForm } from "@/components/create-poll-form";
-import { WalletAutoConnect } from "@/lib/midnight/wallet-context";
 import { WalletOnboarding } from "@/components/wallet-onboarding";
 
 export default function CreatePollPage() {
   return (
     <div className="max-w-4xl mx-auto w-full">
-      {/* Trigger wallet detection and silent reconnect on this page only */}
-      <WalletAutoConnect />
       {/* Show the blocking wallet onboarding modal on this page */}
+      <WalletOnboarding requiresWallet />
       <WalletOnboarding requiresWallet />
       {/* Hero header */}
       <div className="pt-8 md:pt-12 mb-12 text-left md:text-center md:max-w-2xl md:mx-auto">
