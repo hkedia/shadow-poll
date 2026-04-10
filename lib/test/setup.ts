@@ -28,12 +28,25 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 // Mock crypto.getRandomValues for invite code generation
-global.crypto = {
-  ...global.crypto,
-  getRandomValues: (array: Uint8Array) => {
-    for (let i = 0; i < array.length; i++) {
-      array[i] = Math.floor(Math.random() * 256);
-    }
-    return array;
+// In jsdom, global.crypto exists but we need to mock getRandomValues
+Object.defineProperty(global, 'crypto', {
+  value: {
+    ...global.crypto,
+    getRandomValues: (array: Uint8Array) => {
+      for (let i = 0; i < array.length; i++) {
+        array[i] = Math.floor(Math.random() * 256);
+      }
+      return array;
+    },
+    subtle: {
+      digest: async (algorithm: string, data: Uint8Array) => {
+        // Simple mock SHA-256 - returns deterministic hash for testing
+        const hash = new Uint8Array(32);
+        for (let i = 0; i < 32; i++) {
+          hash[i] = (data[i % data.length] + i) % 256;
+        }
+        return hash;
+      },
+    },
   },
-} as Crypto;
+});
