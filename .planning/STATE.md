@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 Phase: 11 (hono-api-migration) — EXECUTING
 Plan: 1 of 1
 Status: Phase complete — ready for verification
-Last activity: 2026-04-09
+Last activity: 2026-04-10 - Completed quick task 260410-9xs: Remove wallet autoconnect feature from the app
 
 Progress: [█████████2] 92%
 
@@ -169,6 +169,7 @@ None.
 |---|-------------|------|--------|-----------|
 | 260409-rnc | Fix scroll-to-top on page navigation and auto-dismiss hamburger menu on mobile | 2026-04-09 | 35ed7f8 | [260409-rnc-fix-scroll-to-top-on-page-navigation-and](./quick/260409-rnc-fix-scroll-to-top-on-page-navigation-and/) |
 | 260409-rxk | Make verify page work without wallet connection | 2026-04-09 | 6b7a3a6 | [260409-rxk-make-verify-page-work-without-wallet-con](./quick/260409-rxk-make-verify-page-work-without-wallet-con/) |
+| 260410-9xs | Remove wallet autoconnect feature from the app | 2026-04-10 | 226ca5f | [260410-9xs-remove-wallet-autoconnect-feature-from-t](./quick/260410-9xs-remove-wallet-autoconnect-feature-from-t/) |
 
 ## Session Continuity
 
