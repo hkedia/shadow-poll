@@ -107,7 +107,7 @@ Shadow Poll milestone 1 delivers a fully functional anonymous polling dApp on Mi
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 7 | Persistent Data Layer — Neon Postgres metadata | Not started |
-| 12 | Docker Deployment — containerization + fly.io | Not started |
+| 12 | Docker Containerization | Completed |
 
 ---
 

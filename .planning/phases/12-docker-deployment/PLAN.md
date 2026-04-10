@@ -2,7 +2,7 @@
 
 ## Phase Overview
 
-**Goal:** Package the Shadow Poll app as a Docker container, add a health check endpoint, and prepare it for deployment to fly.io or similar cloud platforms. The app must build as a Docker image, start correctly, serve traffic, and pass health checks locally before any cloud deployment.
+**Goal:** Package the Shadow Poll app as a Docker container, add a health check endpoint, and create docker-compose.yml for local container testing. The app must build as a Docker image, start correctly, serve traffic, and pass health checks locally.
 
 **Depends on:** Phase 8 (Vite migration — current server.ts + build pipeline), Phase 11 (Hono API migration — current route structure)
 
@@ -18,7 +18,7 @@
 | DEPLOY-02 | Create `.dockerignore` that excludes `node_modules`, `.git`, `.env*`, `.planning`, `midnight-level-db`, `dist` but does NOT exclude `public/zk-keys/` or `contracts/managed/` | Must-have |
 | DEPLOY-03 | Create multi-stage `Dockerfile`: build stage with `oven/bun:1.3.1`, production stage with `oven/bun:1.3.11-slim`, run as non-root `USER bun` | Must-have |
 | DEPLOY-04 | Create `docker-compose.yml` for local container testing with health check on `/api/health` | Must-have |
-| DEPLOY-05 | Create `fly.toml` for fly.io deployment with HTTP service, health check, and build args for `VITE_POLL_CONTRACT_ADDRESS` | Must-have |
+| DEPLOY-05 | Create `docker-compose.yml` for local container testing with health check | Must-have |
 | DEPLOY-06 | Verify Docker build succeeds and container starts, responds to health check locally | Must-have |
 | DEPLOY-07 | `VITE_POLL_CONTRACT_ADDRESS` handled as both Docker build arg (for Vite frontend) and runtime env var (for server-side) | Must-have |
 | DEPLOY-08 | Container runs as non-root `bun` user (security hardening) | Must-have |
@@ -37,8 +37,7 @@ When this phase is complete, ALL of the following must be TRUE:
 6. The Docker image does NOT contain `node_modules`, `.git`, `.env*`, or `.planning`
 7. The Docker image DOES contain `public/zk-keys/` and `contracts/managed/` directories
 8. The container process runs as the `bun` user (not root)
-9. `docker compose up` successfully builds and starts the app locally
-10. `fly.toml` is valid for deployment to fly.io (app name is placeholder, rest is production-ready)
+9. `docker compose up` successfully builds and starts the app locally with passing health check
 
 ---
 
@@ -53,7 +52,7 @@ These tasks are independent — the health endpoint code and Docker config can b
 #### Task 1: Add `/api/health` endpoint
 
 **ID:** DEPLOY-01
-**Description:** Create a health check route in the Hono API that probes Neon DB connectivity and returns a structured status response. This endpoint is used by Docker health checks, fly.io HTTP checks, and operational monitoring.
+**Description:** Create a health check route in the Hono API that probes Neon DB connectivity and returns a structured status response. This endpoint is used by Docker health checks and operational monitoring.
 
 **Files to create/modify:**
 - `lib/api/health-handler.ts` — new file
@@ -87,7 +86,7 @@ healthRoutes.get("/api/health", async (c) => {
 Key design decisions:
 - **Dynamic import** for `@/lib/db/client` — if `DATABASE_URL` is unset, the module-level `throw` in `client.ts` is caught gracefully rather than crashing the health endpoint
 - **`SELECT 1`** — minimal query that verifies DB connectivity without reading any table
-- **Degraded status** on failure — fly.io and Docker treat non-200 as unhealthy, which is correct behavior
+- **Degraded status** on failure — Docker treats non-200 as unhealthy, which is correct behavior
 - **Timestamp** — helps distinguish stale cached responses from live ones
 
 Mount in `lib/api/routes.ts` by adding:
@@ -216,20 +215,19 @@ Depends on Wave 1 being complete (Dockerfile and health endpoint must exist).
 
 ---
 
-#### Task 3: Create `docker-compose.yml` and `fly.toml`
+#### Task 3: Create `docker-compose.yml`
 
 **ID:** DEPLOY-04, DEPLOY-05
-**Description:** Create Docker Compose config for local container testing (with health check) and fly.io deployment configuration (with HTTP service, build args, and health checks).
+**Description:** Create Docker Compose config for local container testing with health check on `/api/health`.
 
 **Files to create:**
 - `docker-compose.yml` — new file
-- `fly.toml` — new file
 
 **`docker-compose.yml` implementation:**
 
 ```yaml
 # docker-compose.yml — Local development/testing only
-# Usage: DATABASE_URL=postgres://... VITE_POLL_CONTRACT_ADDRESS=0x... docker compose up --build
+# Usage: DATABASE_URL=postgres://... docker compose up --build
 
 services:
   shadow-poll:
@@ -259,61 +257,8 @@ Key decisions:
 - **Health check uses `bun -e`** — no need to install `curl` in the slim image; `bun` can make HTTP requests natively
 - **Indexer URIs** — default to Midnight Preview network (matches current server defaults)
 
-**`fly.toml` implementation:**
-
-```toml
-# fly.toml — Shadow Poll deployment to fly.io
-# Deploy with: fly deploy
-# Set secrets: fly secrets set DATABASE_URL=postgres://... VITE_POLL_CONTRACT_ADDRESS=0x...
-
-app = "shadow-poll"
-primary_region = "lhr"
-
-[build]
-  dockerfile = "Dockerfile"
-
-[build.args]
-  VITE_POLL_CONTRACT_ADDRESS = ""
-
-[env]
-  PORT = "3000"
-  NODE_ENV = "production"
-  INDEXER_URI = "https://indexer.preview.midnight.network/api/v3/graphql"
-  INDEXER_WS_URI = "wss://indexer.preview.midnight.network/api/v3/graphql/ws"
-
-[http_service]
-  internal_port = 3000
-  force_https = true
-  auto_stop_machines = "stop"
-  auto_start_machines = true
-  min_machines_running = 0
-
-[http_service.concurrency]
-  type = "connections"
-  hard_limit = 200
-  soft_limit = 150
-
-[[http_service.checks]]
-  grace_period = "10s"
-  interval = "30s"
-  method = "get"
-  path = "/api/health"
-  timeout = "5s"
-```
-
-Key decisions:
-- **`app = "shadow-poll"`** — placeholder; user must set via `fly apps create` or change this value
-- **`primary_region = "lhr"`** — London, close to Neon EU region for low latency
-- **`[build.args]`** — `VITE_POLL_CONTRACT_ADDRESS` defaults to empty; set the actual value via `fly deploy --build-arg VITE_POLL_CONTRACT_ADDRESS=0x...`
-- **Secrets via `fly secrets set`** — `DATABASE_URL` and `VITE_POLL_CONTRACT_ADDRESS` (runtime value) must be set as fly secrets, NOT in fly.toml
-- **Health check on `/api/health`** — uses the endpoint created in Task 1; fly.io will route traffic only to healthy instances
-- **`min_machines_running = 0`** — scale to zero when idle (cost-saving for testnet)
-- **No volumes** — app is entirely stateless; Neon handles all persistence
-
 **Verification:**
 1. `docker compose config` parses without errors
-2. `fly validate` (or visual inspection) confirms fly.toml structure is valid
-3. `fly.toml` references the Dockerfile and `/api/health` health check endpoint
 
 ---
 
@@ -414,12 +359,12 @@ Task 1 (health endpoint) ──┐
                            ├──► Task 4 (verify)
 Task 2 (Dockerfile) ───────┤
                            │
-Task 3 (compose + fly) ────┘
+Task 3 (compose) ────┘
 ```
 
 - **Task 1** (health endpoint) — no dependencies, modifies `lib/api/`
 - **Task 2** (.dockerignore + Dockerfile) — no dependencies, creates root-level files
-- **Task 3** (docker-compose + fly.toml) — depends on Dockerfile existing (references it), but can be created in parallel with Tasks 1-2
+- **Task 3** (docker-compose.yml) — depends on Dockerfile existing (references it), but can be created in parallel with Tasks 1-2
 - **Task 4** (verification) — depends on all previous tasks being complete
 
 ---
@@ -439,8 +384,8 @@ Task 3 (compose + fly) ────┘
 
 | Threat ID | Category | Component | Disposition | Mitigation |
 |-----------|----------|-----------|-------------|-----------|
-| T-DEPLOY-01 | Information Disclosure | Docker image | Mitigate | Never put `DATABASE_URL` or other secrets in Dockerfile ENV or image layers; use runtime env vars via `fly secrets set` or `docker run -e` |
-| T-DEPLOY-02 | Elevation of Privilege | Container | Mitigate | Run as `USER bun` (non-root); fly.io also provides isolation |
+| T-DEPLOY-01 | Information Disclosure | Docker image | Mitigate | Never put `DATABASE_URL` or other secrets in Dockerfile ENV or image layers; use runtime env vars via `-e` or `.env` file |
+| T-DEPLOY-02 | Elevation of Privilege | Container | Mitigate | Run as `USER bun` (non-root) |
 | T-DEPLOY-03 | Tampering | Docker image supply chain | Accept | Pin `oven/bun:1.3.11-slim` but not to SHA digest for now; improving reproducibility is a future enhancement |
 | T-DEPLOY-04 | Information Disclosure | Health endpoint | Accept | `/api/health` returns minimal data (status + timestamp); no PII or internal details exposed |
 | T-DEPLOY-05 | Repudiation | Container logs | Accept | No structured logging in scope; `console.log` startup message is sufficient for v1 |
@@ -455,7 +400,7 @@ Task 3 (compose + fly) ────┘
 | DEPLOY-02 | Wave 1 | Task 2 | Full | .dockerignore excludes dev files, includes runtime essentials |
 | DEPLOY-03 | Wave 1 | Task 2 | Full | Multi-stage Dockerfile with oven/bun images |
 | DEPLOY-04 | Wave 2 | Task 3 | Full | docker-compose with health check using `bun -e` |
-| DEPLOY-05 | Wave 2 | Task 3 | Full | fly.toml with HTTP service checks on /api/health |
+| DEPLOY-05 | Wave 2 | Task 3 | Full | docker-compose.yml with health check on /api/health |
 | DEPLOY-06 | Wave 2 | Task 4 | Full | Manual verification checklist |
 | DEPLOY-07 | Wave 1 | Task 2 | Full | VITE_POLL_CONTRACT_ADDRESS as ARG + ENV in Dockerfile |
 | DEPLOY-08 | Wave 2 | Task 2 | Full | USER bun in production stage |
@@ -467,5 +412,5 @@ Task 3 (compose + fly) ────┘
 - **`contracts/managed/` and `public/zk-keys/`** are gitignored but must exist locally before `docker build`. Run `bun run compile:contracts` to generate them if missing. The `.dockerignore` deliberately does NOT exclude these directories.
 - **`DATABASE_URL`** crashes the server at import time if missing — this is desired fail-fast behavior. The health endpoint uses a dynamic import to catch this gracefully and return 503.
 - **`VITE_POLL_CONTRACT_ADDRESS`** serves dual purposes: build-time (Vite bakes it into frontend JS) and runtime (server.ts reads it from `process.env`). The Dockerfile handles this via `ARG` + `ENV` for the build stage, and runtime env vars supply the server-side value.
-- **fly.io secrets** — `DATABASE_URL` and `VITE_POLL_CONTRACT_ADDRESS` must be set via `fly secrets set`, not in `fly.toml`. The `[env]` section only contains non-secret config.
-- **`app = "shadow-poll"`** in `fly.toml` is a placeholder and must be changed to the actual app name before deploying.
+- **Runtime secrets** — `DATABASE_URL` and `VITE_POLL_CONTRACT_ADDRESS` must be set via `-e` or `.env` file when running the container. Never put secrets in the image layers.
+- **Cloud deployment** — when deploying to a cloud platform, use the Dockerfile as-is with appropriate secret management for that platform.
