@@ -28,6 +28,13 @@ interface PollOnChain {
   pollType: number;
   expirationBlock: string;
   creator: string;
+  tallies: { counts: string[]; total: string };
+}
+
+/** Server response envelope for single poll endpoint */
+interface SinglePollApiResponse {
+  currentBlockHeight: number;
+  poll: PollOnChain;
 }
 
 /**
@@ -37,7 +44,8 @@ interface PollOnChain {
  * - Unauthenticated: fetches via GET /api/polls?id= (no wallet required)
  * - Authenticated: uses live indexer via fetchPollWithTallies() (wallet connected)
  *
- * Tallies remain wallet-gated (require live indexer reads).
+ * Tallies are available without wallet — fetched from server API when unauthenticated,
+ * or from live indexer when wallet is connected.
  *
  * @param pollId - Hex-encoded poll ID. Pass null/undefined to disable.
  */
@@ -45,14 +53,24 @@ export function usePoll(pollId: string | null | undefined) {
   const { providers, status } = useWalletContext();
   const isConnected = status === "connected" && providers !== null;
 
+  // Fetch current block height from server API — no wallet required
+  const blockQuery = useQuery({
+    queryKey: ["currentBlock"],
+    queryFn: async (): Promise<number> => {
+      const res = await fetch("/api/indexer/block");
+      if (!res.ok) throw new Error("Failed to fetch block height");
+      const data = await res.json() as { height: number };
+      return data.height;
+    },
+    refetchInterval: 30_000,
+  });
+
   // Fetch on-chain poll data — enabled for all visitors (no wallet required)
   const pollQuery = useQuery({
     queryKey: pollKeys.detail(pollId ?? ""),
     queryFn: async (): Promise<PollWithId | null> => {
       if (!pollId) return null;
 
-      // Unauthenticated path: fetch via server API (no wallet required)
-      // Per D-09-06/07: remove isConnected gate for read queries
       const contractAddress = getContractAddress();
 
       if (!providers || !contractAddress) {
@@ -84,23 +102,37 @@ export function usePoll(pollId: string | null | undefined) {
       const result = await fetchPollWithTallies(providers, contractAddress, pollId);
       return result?.poll ?? null;
     },
-    enabled: !!pollId, // Removed isConnected gate (per D-09-06)
+    enabled: !!pollId,
     refetchInterval: 15_000,
   });
 
-  // Fetch on-chain vote tallies — wallet-gated (require live indexer reads)
+  // Fetch on-chain vote tallies — no wallet required
   const talliesQuery = useQuery({
     queryKey: pollKeys.tallies(pollId ?? ""),
     queryFn: async (): Promise<PollTallies | null> => {
-      if (!providers || !pollId) return null;
+      if (!pollId) return null;
 
       const contractAddress = getContractAddress();
-      if (!contractAddress) return null;
 
+      if (!providers || !contractAddress) {
+        // No wallet — fetch tallies from server API (same data, no live indexer needed)
+        const res = await fetch(`/api/polls?id=${encodeURIComponent(pollId)}`);
+        if (!res.ok) return null;
+        const data = await res.json() as SinglePollApiResponse;
+        const t = data.poll?.tallies;
+        if (!t) return null;
+        return {
+          pollId,
+          counts: t.counts.map((c) => BigInt(c)),
+          total: BigInt(t.total),
+        };
+      }
+
+      // Authenticated path: use live indexer for fresher data
       const result = await fetchPollWithTallies(providers, contractAddress, pollId);
       return result?.tallies ?? null;
     },
-    enabled: isConnected && !!pollId,
+    enabled: !!pollId,
     refetchInterval: 15_000,
   });
 
@@ -111,6 +143,7 @@ export function usePoll(pollId: string | null | undefined) {
     poll: pollQuery.data ?? null,
     tallies: talliesQuery.data ?? null,
     metadata: metadataQuery.data?.metadata ?? null,
+    currentBlockHeight: blockQuery.data ?? null,
     isLoading: pollQuery.isLoading || talliesQuery.isLoading,
     isError: pollQuery.isError || talliesQuery.isError,
     error: pollQuery.error || talliesQuery.error,
