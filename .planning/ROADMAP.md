@@ -18,9 +18,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Core Polling** - End-to-end public poll creation, voting, and browsing with live tallies (completed 2026-04-08)
 - [x] **Phase 5: Invite-Only Polls** - Private polls with off-chain invite codes, ZK verification, and duplicate vote prevention (completed 2026-04-08)
 - [x] **Phase 6: ZK Proofs & Analytics** - Client-side participation proofs and global stats dashboard (in progress) (completed 2026-04-08)
-- [ ] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility
+- [x] **Phase 7: Persistent Data Layer** - Replace in-memory poll metadata store with Neon serverless Postgres for Vercel production compatibility (completed 2026-04-08)
 - [x] **Phase 8: Vite Migration** - Replace Next.js + Turbopack with Vite + React Router + Bun.serve() to resolve Midnight SDK WASM runtime loading failures and align build tooling with the app's SPA architecture (completed 2026-04-09)
-- [ ] **Phase 12: Docker Deployment** - Package app as Docker container, add health check, deploy to fly.io
+- [x] **Phase 12: Docker Deployment** - Package app as Docker container, add health check, deploy to fly.io (completed 2026-04-10)
 - [x] **Phase 13: Comprehensive testing with testkit-js for Midnight contracts and app-wide test coverage** - Integrate testkit-js for Compact contract testing, add Vitest test suite for all app components and services (completed 2026-04-10) ✓ MILESTONE 1 COMPLETE
 
 ## Phase Details
@@ -137,7 +137,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 07-01-PLAN.md — Install @neondatabase/serverless, create DB client + migrations, rewrite route handler
+- [x] 07-01-PLAN.md — Install @neondatabase/serverless, create DB client + migrations, rewrite route handler
 
 **UI hint**: no
 
@@ -193,7 +193,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 12-01-PLAN.md — Add /api/health endpoint, create Dockerfile + .dockerignore, create docker-compose.yml + fly.toml, verify Docker build and local container test
+- [x] 12-01-PLAN.md — Add /api/health endpoint, create Dockerfile + .dockerignore, create docker-compose.yml + fly.toml, verify Docker build and local container test
 
 **UI hint**: no
 
@@ -281,11 +281,12 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Core Polling | 3/3 | Complete | 2026-04-08 |
 | 5. Invite-Only Polls | 3/3 | Complete | 2026-04-08 |
 | 6. ZK Proofs & Analytics | 2/2 | Complete   | 2026-04-08 |
-| 7. Persistent Data Layer | 0/1 | Pending | — |
+| 7. Persistent Data Layer | 1/1 | Complete | 2026-04-08 |
 | 8. Vite Migration | 4/4 | Complete | 2026-04-09 |
+| 9. Fix Core Integration Gaps | 1/1 | Complete | 2026-04-09 |
 | 10. Invite Code Improvements | 1/1 | Complete   | 2026-04-09 |
 | 11. Hono API Migration | 1/1 | Complete | 2026-04-09 |
-| 12. Docker Deployment | 0/1 | Pending | — |
+| 12. Docker Deployment | 1/1 | Complete | 2026-04-10 |
 | 13. Comprehensive Testing | 6/6 | Complete | 2026-04-10 | ✓ MILESTONE 1 |
 
 ### Phase 9: Fix Core Integration Gaps
