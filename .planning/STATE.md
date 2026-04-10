@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 11-01-PLAN.md
-last_updated: "2026-04-09T13:05:40.215Z"
-last_activity: 2026-04-09
+stopped_at: Completed 260410-ag2-PLAN.md
+last_updated: "2026-04-10T02:10:47.390Z"
+last_activity: "2026-04-10 - Completed quick task 260410-9xs: Remove wallet autoconnect feature from the app"
 progress:
-  total_phases: 11
+  total_phases: 12
   completed_phases: 11
   total_plans: 24
   completed_plans: 24
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 Phase: 11 (hono-api-migration) — EXECUTING
 Plan: 1 of 1
 Status: Phase complete — ready for verification
-Last activity: 2026-04-10 - Completed quick task 260410-9xs: Remove wallet autoconnect feature from the app
+Last activity: 2026-04-10 - Completed quick task 260410-ag2: Update poll page live results to show expiration time instead of block number
 
 Progress: [█████████2] 92%
 
@@ -68,6 +68,7 @@ Progress: [█████████2] 92%
 | Phase 09 P01 | 325s | 2 tasks | 2 files |
 | Phase 09 P02 | 144s | 2 tasks | 3 files |
 | Phase 11-hono-api-migration P01 | 7min | 3 tasks | 6 files |
+| Phase quick P260410-ag2 | 2min | 1 tasks | 3 files |
 
 ## Phase 7 Design Decisions (from discussion)
 
@@ -154,6 +155,7 @@ Recent decisions affecting current work:
 - [Phase 11]: D-11-02: Kept manual CORS headers alongside Hono cors() middleware
 - [Phase 11]: D-11-03: Kept runMigrations() inside handlers not middleware
 - [Phase 11]: D-11-04: Used Bun.file() for static serving instead of Hono serveStatic()
+- [Phase quick]: SECONDS_PER_BLOCK=10 as single source of truth in lib/utils.ts for block-to-date conversion
 
 ### Roadmap Evolution
 
@@ -170,9 +172,10 @@ None.
 | 260409-rnc | Fix scroll-to-top on page navigation and auto-dismiss hamburger menu on mobile | 2026-04-09 | 35ed7f8 | [260409-rnc-fix-scroll-to-top-on-page-navigation-and](./quick/260409-rnc-fix-scroll-to-top-on-page-navigation-and/) |
 | 260409-rxk | Make verify page work without wallet connection | 2026-04-09 | 6b7a3a6 | [260409-rxk-make-verify-page-work-without-wallet-con](./quick/260409-rxk-make-verify-page-work-without-wallet-con/) |
 | 260410-9xs | Remove wallet autoconnect feature from the app | 2026-04-10 | 226ca5f | [260410-9xs-remove-wallet-autoconnect-feature-from-t](./quick/260410-9xs-remove-wallet-autoconnect-feature-from-t/) |
+| 260410-ag2 | Replace raw block numbers with human-readable expiration dates | 2026-04-10 | 68ab310 | [260410-ag2-update-poll-page-live-results-to-show-ex](./quick/260410-ag2-update-poll-page-live-results-to-show-ex/) |
 
 ## Session Continuity
 
-Last session: 2026-04-09T14:53:05Z
-Stopped at: Completed 260409-rxk-PLAN.md
+Last session: 2026-04-10T02:10:47.379Z
+Stopped at: Completed 260410-ag2-PLAN.md
 Resume file: None
