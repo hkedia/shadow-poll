@@ -15,6 +15,7 @@ import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-p
 import { ledger as parseLedger } from "@/contracts/managed/contract";
 import { fetchLatestBlock, IndexerQueryError } from "@/lib/midnight/indexer-client";
 import { readTallies, hexToBytes } from "@/lib/midnight/ledger-utils";
+import deployment from "@/deployment.json";
 
 export const pollsRoutes = new Hono();
 pollsRoutes.use("/api/polls*", cors());
@@ -23,8 +24,7 @@ const INDEXER_URI =
   process.env.INDEXER_URI ?? "https://indexer.preview.midnight.network/api/v3/graphql";
 const INDEXER_WS_URI =
   process.env.INDEXER_WS_URI ?? "wss://indexer.preview.midnight.network/api/v3/graphql/ws";
-const CONTRACT_ADDRESS =
-  process.env.VITE_POLL_CONTRACT_ADDRESS ?? "";
+const CONTRACT_ADDRESS = deployment.contractAddress ?? "";
 
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
@@ -51,7 +51,7 @@ pollsRoutes.get("/api/polls", async (c) => {
  */
 async function handlePollsRequest(req: Request): Promise<Response> {
   if (!CONTRACT_ADDRESS) {
-    return json({ error: "VITE_POLL_CONTRACT_ADDRESS not configured" }, 503);
+    return json({ error: "contract address not found in deployment.json" }, 503);
   }
 
   try {

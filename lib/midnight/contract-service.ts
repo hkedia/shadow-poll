@@ -27,6 +27,7 @@ import { bytesToHex, hexToBytes, readPoll, readTallies } from "./ledger-utils";
 import type { PollWithId, PollTallies } from "./ledger-utils";
 import type { MidnightProviderSet } from "./types";
 import type { PollData } from "@/contracts/managed/contract";
+import deployment from "@/deployment.json";
 
 /** Parameters for creating a new poll on-chain. */
 export interface CreatePollParams {
@@ -257,16 +258,12 @@ export async function callAddInviteCodes(contract: any, params: AddInviteCodesPa
 }
 
 /**
- * Returns the canonical contract address from the environment variable.
- *
- * Strategy (per open question 1): Uses VITE_POLL_CONTRACT_ADDRESS.
- * If set, findPollContract uses it. If empty, the app deploys on first use.
+ * Returns the canonical contract address from deployment.json.
  *
  * @returns The contract address string, or null if not configured
  */
 export function getContractAddress(): string | null {
-  const address = import.meta.env.VITE_POLL_CONTRACT_ADDRESS;
-  return address && address.trim().length > 0 ? address.trim() : null;
+  return deployment.contractAddress ?? null;
 }
 
 /**

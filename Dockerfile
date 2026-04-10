@@ -11,10 +11,6 @@ RUN bun install --frozen-lockfile
 # public/zk-keys/ and contracts/managed/)
 COPY . .
 
-# Build arg for Vite env vars baked into frontend at build time
-ARG VITE_POLL_CONTRACT_ADDRESS=""
-ENV VITE_POLL_CONTRACT_ADDRESS=$VITE_POLL_CONTRACT_ADDRESS
-
 # Build frontend
 RUN bun run build
 

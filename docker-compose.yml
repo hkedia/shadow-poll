@@ -8,8 +8,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        VITE_POLL_CONTRACT_ADDRESS: ${VITE_POLL_CONTRACT_ADDRESS:-}
     ports:
       - "3000:3000"
     env_file:

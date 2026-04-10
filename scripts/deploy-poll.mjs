@@ -18,7 +18,7 @@
  *
  * Output:
  *   deployment.json  — { contractAddress, network, deployedAt, blockHeight }
- *   Set VITE_POLL_CONTRACT_ADDRESS=<address> in .env.local afterward.
+ *   The contract address is read from deployment.json by the app.
  */
 
 import { readFileSync, existsSync, writeFileSync } from 'fs';
@@ -619,10 +619,9 @@ async function deploy() {
   console.log('');
   console.log('  Next steps:');
   console.log('  ─────────────────────────────────────────────────────────');
-  console.log('  1. Add to .env.local:');
-  console.log(`       VITE_POLL_CONTRACT_ADDRESS=${contractAddress}`);
+  console.log('  1. The contract address has been saved to deployment.json');
   console.log('  2. Restart dev server:  bun run dev');
-  console.log('  3. For production: add to your hosting env vars');
+  console.log('  3. For production: deployment.json is bundled at build time');
   console.log('');
 
   await wallet.stop();

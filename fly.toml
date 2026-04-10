@@ -1,6 +1,6 @@
 # fly.toml — Shadow Poll deployment to fly.io
 # Deploy with: fly deploy
-# Set secrets: fly secrets set DATABASE_URL=postgres://... VITE_POLL_CONTRACT_ADDRESS=0x...
+# Set secrets: fly secrets set DATABASE_URL=postgres://...
 
 app = "shadow-poll"
 primary_region = "lhr"
@@ -9,7 +9,6 @@ primary_region = "lhr"
   dockerfile = "Dockerfile"
 
 [build.args]
-  VITE_POLL_CONTRACT_ADDRESS = ""
 
 [env]
   PORT = "3000"

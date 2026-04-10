@@ -22,13 +22,13 @@ import {
   fetchPollContractStatus,
   IndexerQueryError,
 } from "@/lib/midnight/indexer-client";
+import deployment from "@/deployment.json";
 
 export const indexerRoutes = new Hono();
 indexerRoutes.use("/api/indexer*", cors());
 
-/** Default contract address from Vite env (also available server-side via process.env). */
-const DEFAULT_CONTRACT_ADDRESS =
-  process.env.VITE_POLL_CONTRACT_ADDRESS ?? "";
+/** Default contract address from deployment.json. */
+const DEFAULT_CONTRACT_ADDRESS = deployment.contractAddress ?? "";
 
 /** Indexer URIs for Midnight Preview network. */
 const INDEXER_URI =
@@ -84,7 +84,7 @@ async function handleStatus(url: URL): Promise<Response> {
 
   if (!contractAddress) {
     return json(
-      { error: "contractAddress query param required (or set VITE_POLL_CONTRACT_ADDRESS)" },
+      { error: "contractAddress query param required (or set in deployment.json)" },
       400,
     );
   }

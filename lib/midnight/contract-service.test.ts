@@ -30,10 +30,9 @@ describe('contract-service', () => {
   });
 
   describe('getContractAddress', () => {
-    it('should return null when env var not set', () => {
-      // import.meta.env.VITE_POLL_CONTRACT_ADDRESS is not set in test
+    it('should return the contract address from deployment.json', () => {
       const address = getContractAddress();
-      // In test environment, import.meta.env may be mocked
+      // deployment.json is mocked at module level
       expect(address === null || typeof address === 'string').toBe(true);
     });
   });

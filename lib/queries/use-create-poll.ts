@@ -85,7 +85,7 @@ export function useCreatePoll() {
       // 4. Find the deployed contract (per D-09-03: browser calls directly)
       const contractAddress = getContractAddress();
       if (!contractAddress) {
-        throw new Error("VITE_POLL_CONTRACT_ADDRESS not configured");
+        throw new Error("contract address not found in deployment.json");
       }
       const contract = await findPollContract(
         providers,
