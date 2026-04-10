@@ -31,6 +31,7 @@
 - `bun run build` — Production build
 - `bun run serve` — Production server
 - `bun run lint` — ESLint check
+- `bun run test` — Run tests (Vitest)
 
 ## Key Paths
 
