@@ -30,10 +30,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
-      // Redirect isomorphic-ws to our shim that exports WebSocket as a named export.
-      // The SDK does `ws.WebSocket` but isomorphic-ws/browser.js exports the
-      // WebSocket constructor as default (not as a named export).
-      "isomorphic-ws": path.resolve(__dirname, "src/isomorphic-ws-shim.js"),
     },
   },
   build: {
@@ -46,8 +42,6 @@ export default defineConfig({
       "@midnight-ntwrk/ledger-v8",
       "@midnight-ntwrk/compact-runtime",
       "@midnight-ntwrk/onchain-runtime-v3",
-      // Use our shim instead of pre-bundling isomorphic-ws
-      "isomorphic-ws",
     ],
     include: [
       // CJS packages used by excluded Midnight SDK modules — must be
