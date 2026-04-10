@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 260410-ars-PLAN.md
-last_updated: "2026-04-10T02:35:50.187Z"
-last_activity: "2026-04-10 - Completed quick task 260410-ag2: Update poll page live results to show expiration time instead of block number"
+stopped_at: Completed 260410-bjv-PLAN.md
+last_updated: "2026-04-10T03:04:53.684Z"
+last_activity: 2026-04-10
 progress:
   total_phases: 12
   completed_phases: 11
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-04-08)
 Phase: 11 (hono-api-migration) — EXECUTING
 Plan: 1 of 1
 Status: Phase complete — ready for verification
-Last activity: 2026-04-10 - Completed quick task 260410-ars: Make poll page show live results without wallet
+Last activity: 2026-04-10 - Completed quick task 260410-bjv: Refactor wallet onboarding to dismissible app-wide banner
 
 Progress: [█████████2] 92%
 
@@ -70,6 +70,7 @@ Progress: [█████████2] 92%
 | Phase 11-hono-api-migration P01 | 7min | 3 tasks | 6 files |
 | Phase quick P260410-ag2 | 2min | 1 tasks | 3 files |
 | Phase quick/260410-ars P01 | 6min | 2 tasks | 2 files |
+| Phase quick/260410-bjv P01 | 8min | 2 tasks | 7 files |
 
 ## Phase 7 Design Decisions (from discussion)
 
@@ -160,6 +161,9 @@ Recent decisions affecting current work:
 - [Phase quick/260410-ars]: D-ARS-01: talliesQuery enabled without wallet; fetches from /api/polls?id= when unauthenticated
 - [Phase quick/260410-ars]: D-ARS-02: currentBlockHeight from /api/indexer/block via useQuery (30s refresh), not wallet-dependent getCurrentBlockNumber
 - [Phase quick/260410-ars]: D-ARS-03: WalletOnboarding overlay removed entirely — page viewable without wallet
+- [Phase quick/260410-bjv]: D-bjv-01: WalletOnboarding uses sessionStorage keyed by status for per-state dismissal
+- [Phase quick/260410-bjv]: D-bjv-02: App-level mount inside WalletProvider — banner appears on all pages
+- [Phase quick/260410-bjv]: D-bjv-03: Removed requiresWallet prop — component self-selects visibility from context
 
 ### Roadmap Evolution
 
@@ -178,9 +182,10 @@ None.
 | 260410-9xs | Remove wallet autoconnect feature from the app | 2026-04-10 | 226ca5f | [260410-9xs-remove-wallet-autoconnect-feature-from-t](./quick/260410-9xs-remove-wallet-autoconnect-feature-from-t/) |
 | 260410-ag2 | Replace raw block numbers with human-readable expiration dates | 2026-04-10 | 68ab310 | [260410-ag2-update-poll-page-live-results-to-show-ex](./quick/260410-ag2-update-poll-page-live-results-to-show-ex/) |
 | 260410-ars | Make poll page show live results without wallet — only require wallet for voting and participation card | 2026-04-10 | 2ff00d7 | [260410-ars-make-poll-page-show-live-results-vote-co](./quick/260410-ars-make-poll-page-show-live-results-vote-co/) |
+| 260410-bjv | Refactor wallet onboarding to dismissible app-wide banner handling all wallet states | 2026-04-10 | 2c2c49d | [260410-bjv-refactor-wallet-onboarding-to-be-non-blo](./quick/260410-bjv-refactor-wallet-onboarding-to-be-non-blo/) |
 
 ## Session Continuity
 
-Last session: 2026-04-10T02:35:50.175Z
-Stopped at: Completed 260410-ars-PLAN.md
+Last session: 2026-04-10T03:04:53.667Z
+Stopped at: Completed 260410-bjv-PLAN.md
 Resume file: None
