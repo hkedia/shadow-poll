@@ -160,7 +160,7 @@ Before running Shadow Poll, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/ourobeam/shadow-poll.git
+git clone https://github.com/hkedia/shadow-poll.git
 cd shadow-poll
 ```
 
