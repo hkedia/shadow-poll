@@ -7,8 +7,9 @@ WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
-# Copy all source code (including gitignored runtime essentials:
-# public/zk-keys/ and contracts/managed/)
+# Copy all source code including compiled contract artifacts
+# NOTE: contracts/managed/ and public/zk-keys/ must be compiled locally first:
+#   bun run compile:contracts
 COPY . .
 
 # Build frontend
@@ -27,13 +28,13 @@ RUN bun install --production --frozen-lockfile
 COPY --from=build /app/dist ./dist/
 
 # Copy static assets (favicon, logo, ZK proving/verifying keys)
-COPY public ./public/
+COPY --from=build /app/public ./public/
 
 # Copy deployment.json (contract address from deploy script)
 COPY deployment.json ./
 
 # Copy compiled contract artifacts (needed by server.ts at runtime)
-COPY contracts/managed ./contracts/managed/
+COPY --from=build /app/contracts/managed ./contracts/managed/
 
 # Copy server code and path alias config
 COPY server.ts ./

@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 
-const TIP_URL = "https://ourobeam.fkey.id/";
+const TIP_URL = "https://hkedia.fkey.id/";
 
 export function Footer() {
   return (
